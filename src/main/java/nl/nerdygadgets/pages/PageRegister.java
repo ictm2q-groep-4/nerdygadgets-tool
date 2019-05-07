@@ -1,11 +1,11 @@
 package nl.nerdygadgets.pages;
 
-import javafx.fxml.FXMLLoader;
-
 import java.util.Arrays;
 
 /**
+ * An enumeration for the registration of scenes.
  *
+ * @author Lucas Ouwens
  */
 public enum PageRegister {
 
@@ -14,13 +14,21 @@ public enum PageRegister {
 
     MAIN("MainScene", "main_scene.fxml");
 
+    /**
+     * A way to easily identify each PageRegister enum
+     */
     private String identifier;
+
+    /**
+     * The path + filename of the view(scene)
+     */
     private String filePath;
 
     /**
+     * The constructor which defines the values each enum must have.
      *
-     * @param identifier
-     * @param filePath
+     * @param identifier String an 'identifier' to easily load the scene
+     * @param filePath String the 'path' including the filename itself. Starts from the 'pages' folder. (Location of the 'view')
      */
     PageRegister(String identifier, String filePath) {
         this.identifier = identifier;
@@ -29,9 +37,9 @@ public enum PageRegister {
 
 
     /**
-     *
-     * @param identifier
-     * @return
+     * Easily get a PageRegister enum by its identifier, will return null if the identifier does not exist.
+     * @param identifier String the identifier
+     * @return PageRegister|null
      */
     public static PageRegister get(String identifier) {
         return Arrays.stream(PageRegister.values())
@@ -41,16 +49,16 @@ public enum PageRegister {
     }
 
     /**
-     *
-     * @return
+     * get the identifier of a specific enum
+     * @return String
      */
     public String getIdentifier() {
         return identifier;
     }
 
     /**
-     *
-     * @return
+     * Get the file path (path + filename) of a specific enum's view(scene).
+     * @return String
      */
     public String getFilePath() {
         return "/pages/" + filePath;

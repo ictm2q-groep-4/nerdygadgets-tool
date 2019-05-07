@@ -18,9 +18,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("Monitoring tool");
-        stage.setMinHeight(500);
-        stage.setMinWidth(500);
+        stage.setTitle("NerdyGadgets | multipurpose network tool");
+        stage.setWidth(1280);
+        stage.setHeight(720);
+
+        stage.setResizable(false);
+        stage.centerOnScreen();
+
         stage.show();
     }
 }

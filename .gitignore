@@ -24,3 +24,5 @@ hs_err_pid*
 
 # IntelliJ
 .idea
+src/main/java/META-INF/MANIFEST.MF
+nerdygadgets.iml

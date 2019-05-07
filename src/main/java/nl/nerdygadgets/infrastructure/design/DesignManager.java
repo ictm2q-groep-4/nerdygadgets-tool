@@ -21,11 +21,12 @@ public class DesignManager {
     }
 
     /**
-     *  Get access to the Singleton DesignManager class.
+     * Get access to the Singleton DesignManager class.
+     *
      * @return Database
      */
     public static DesignManager getDesignManager() {
-        if(designManagerInstance == null) {
+        if (designManagerInstance == null) {
             designManagerInstance = new DesignManager();
         }
 

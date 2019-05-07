@@ -71,7 +71,9 @@ public class NerdyGadgets extends Application {
      * @throws IOException
      */
     public void setScene(String identifier) throws IOException {
+        // load the view from the resources folder
         Parent view = FXMLLoader.load(getClass().getResource(PageRegister.get(identifier).getFilePath()));
+        // create a new scene using the view & set the scene to the new view.
         Scene scene = new Scene(view);
 
         getStage().setScene(scene);

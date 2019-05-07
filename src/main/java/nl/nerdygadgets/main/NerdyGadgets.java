@@ -56,6 +56,7 @@ public class NerdyGadgets extends Application {
 
     /**
      * get access to the Stage
+     *
      * @return Stage
      */
     public Stage getStage() {
@@ -64,7 +65,7 @@ public class NerdyGadgets extends Application {
 
     /**
      * Load a view by its identifier.
-     *
+     * <p>
      * Example, to load the nerdyGadgets view(see PageRegister.MAIN):
      *
      * @param identifier String
@@ -81,6 +82,7 @@ public class NerdyGadgets extends Application {
 
     /**
      * Get access to the main class, mainly for the usage of 'setScene'
+     *
      * @return NerdyGadgets
      */
     public static NerdyGadgets getNerdyGadgets() {

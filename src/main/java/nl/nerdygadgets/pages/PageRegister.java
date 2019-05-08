@@ -12,7 +12,11 @@ public enum PageRegister {
     // pages/<page>
     // pages/templates
 
-    MAIN("MainScene", "main_scene.fxml");
+    MAIN("MainScene", "main_scene.fxml"),
+    DESIGNER("InfrastructureDesigner", "InfrastructureDesigner.fxml"),
+    MONITOR("InfrastructureMonitor", "InfrastructureMonitor.fxml"),
+    OPTIMIZER("InfrastructureOptimizer", "InfrastructureOptimizer.fxml");
+
 
     /**
      * A way to easily identify each PageRegister enum

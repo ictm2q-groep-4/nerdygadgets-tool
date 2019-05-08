@@ -12,7 +12,7 @@ public enum PageRegister {
     // pages/<page>
     // pages/templates
 
-    MAIN("MainScene", "main_scene.fxml"),
+    MAIN("MainScene", "Main.fxml"),
     DESIGNER("InfrastructureDesigner", "InfrastructureDesigner.fxml"),
     MONITOR("InfrastructureMonitor", "InfrastructureMonitor.fxml"),
     OPTIMIZER("InfrastructureOptimizer", "InfrastructureOptimizer.fxml");

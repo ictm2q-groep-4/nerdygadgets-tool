@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="400.0" prefWidth="218.0">
+         <children>
+            <Button mnemonicParsing="false" text="Opslaan ontwerp">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Open ontwerp">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Start optimalitatie process">
+               <VBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <ComboBox prefWidth="150.0" promptText="Type Component">
+               <VBox.margin>
+                  <Insets left="10.0" top="20.0" />
+               </VBox.margin>
+            </ComboBox>
+            <Pane prefHeight="105.0" prefWidth="164.0">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+               <children>
+                  <ImageView fitHeight="46.0" fitWidth="40.0" layoutX="14.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../Downloads/download.jpg" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="18.0" layoutY="59.0" text="Webserver1" />
+                  <TextField layoutX="154.0" layoutY="18.0" prefHeight="25.0" prefWidth="63.0" text="99.99%" />
+                  <TextField layoutX="154.0" layoutY="55.0" prefHeight="25.0" prefWidth="63.0" text="Kosten" />
+                  <Label layoutX="56.0" layoutY="22.0" text="Beschikbaarheid:" />
+                  <Label layoutX="100.0" layoutY="59.0" text="Kosten:" />
+               </children>
+            </Pane>
+         </children>
+      </VBox>
+      <Pane prefHeight="400.0" prefWidth="384.0">
+         <children>
+            <ImageView fitHeight="46.0" fitWidth="40.0" layoutX="14.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../Downloads/download.jpg" />
+               </image>
+            </ImageView>
+            <Label layoutX="14.0" layoutY="168.0" text="Webserver1" />
+            <ImageView fitHeight="46.0" fitWidth="63.0" layoutX="248.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../Downloads/datbase.jpg" />
+               </image>
+            </ImageView>
+            <Label layoutX="242.0" layoutY="168.0" text="Database server" />
+            <ImageView fitHeight="64.0" fitWidth="63.0" layoutX="128.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../Downloads/LoadBalancer.jpg" />
+               </image>
+            </ImageView>
+            <Label layoutX="116.0" layoutY="82.0" text="DB loadbalancer" />
+            <ImageView fitHeight="46.0" fitWidth="42.0" layoutX="139.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../Downloads/firewall-icon-in-cartoon-style-vector-9153324.jpg" />
+               </image>
+            </ImageView>
+            <Label layoutX="138.0" layoutY="279.0" text="FireWall" />
+            <HBox layoutY="335.0" prefHeight="65.0" prefWidth="383.0">
+               <children>
+                  <Label text="Totale Beschikbaarheid:" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="99,99">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Text>
+                  <Label layoutX="10.0" layoutY="10.0" text="Totale Kosten:">
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </Label>
+                  <Text layoutX="145.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="42000">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Text>
+               </children>
+            </HBox>
+         </children>
+      </Pane>
+   </children>
+</HBox>

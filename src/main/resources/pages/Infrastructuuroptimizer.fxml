@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="443.0" prefWidth="918.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="413.0" prefWidth="328.0" style="-fx-border-color: black;">
+         <HBox.margin>
+            <Insets bottom="20.0" left="20.0" right="50.0" top="10.0" />
+         </HBox.margin>
+         <children>
+            <HBox prefHeight="91.0" prefWidth="326.0">
+               <children>
+                  <ComboBox prefHeight="25.0" prefWidth="135.0" promptText="Type">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <TextField text="Beschikbaarheid" />
+               </children>
+            </HBox>
+            <Pane prefHeight="140.0" prefWidth="171.0" style="-fx-border-color: black;">
+               <VBox.margin>
+                  <Insets bottom="20.0" top="10.0" />
+               </VBox.margin>
+               <children>
+                  <CheckBox layoutX="2.0" mnemonicParsing="false" prefHeight="140.0" prefWidth="174.0" />
+                  <ImageView fitHeight="43.0" fitWidth="33.0" layoutX="2.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../Downloads/download.jpg" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="109.0" layoutY="25.0" text="Kosten:" />
+                  <Label layoutX="84.0" layoutY="71.0" text="Beschikbaarheid:" />
+                  <Label layoutX="10.0" layoutY="45.0" text="Webserver 1" />
+                  <Text layoutX="152.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="50000" />
+                  <Text layoutX="176.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="99,99%" />
+               </children>
+            </Pane>
+            <Pane layoutX="11.0" layoutY="84.0" prefHeight="140.0" prefWidth="171.0" style="-fx-border-color: black;">
+               <children>
+                  <CheckBox layoutX="2.0" mnemonicParsing="false" prefHeight="140.0" prefWidth="328.0" />
+                  <ImageView fitHeight="43.0" fitWidth="33.0" layoutX="2.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../Downloads/download.jpg" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="109.0" layoutY="25.0" text="Kosten:" />
+                  <Label layoutX="84.0" layoutY="71.0" text="Beschikbaarheid:" />
+                  <Label layoutX="10.0" layoutY="45.0" text="Webserver 1" />
+                  <Text layoutX="155.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="50000" />
+                  <Text layoutX="174.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="99,99%" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="20.0" />
+               </VBox.margin>
+            </Pane>
+            <Pane layoutX="11.0" layoutY="244.0" prefHeight="140.0" prefWidth="171.0" style="-fx-border-color: black;">
+               <children>
+                  <CheckBox layoutX="2.0" mnemonicParsing="false" prefHeight="140.0" prefWidth="174.0" />
+                  <ImageView fitHeight="43.0" fitWidth="33.0" layoutX="2.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../../../../Downloads/download.jpg" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="109.0" layoutY="25.0" text="Kosten:" />
+                  <Label layoutX="84.0" layoutY="71.0" text="Beschikbaarheid:" />
+                  <Label layoutX="10.0" layoutY="45.0" text="Webserver 1" />
+                  <Text layoutX="161.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="50000" />
+                  <Text layoutX="174.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="99,99%" />
+               </children>
+            </Pane>
+         </children>
+      </VBox>
+   </children>
+</HBox>

@@ -10,6 +10,4 @@ public class HAL9003DB extends Component {
         public HAL9003DB  (int x, int y) {
             super(x,y);
         }
-
-
 }

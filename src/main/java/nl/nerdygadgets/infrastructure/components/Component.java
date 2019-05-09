@@ -4,6 +4,7 @@ package nl.nerdygadgets.infrastructure.components;
  *
  *
  * @author Joris Vos
+ * @author Djabir Omar Mohamed
  */
 public abstract class Component implements Statistic {
     /**

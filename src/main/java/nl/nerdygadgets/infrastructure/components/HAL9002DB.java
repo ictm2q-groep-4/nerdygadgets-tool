@@ -4,7 +4,7 @@ public class HAL9002DB implements Component {
 
     public final double availability = 95;
     public final  int price = 7700;
-    public final String type = "DBserver";
+    public final ComponentType componentType = ComponentType.DATABASESERVER;
     private int x;
     private int y;
 

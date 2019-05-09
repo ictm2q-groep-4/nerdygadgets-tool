@@ -4,7 +4,7 @@ public class HAL9002W implements Component {
 
     public final double availability = 90;
     public final  int price = 3200;
-    public final String type = "Webserver";
+    public final ComponentType componentType = ComponentType.WEBSERVER;
     private int x;
     private int y;
 

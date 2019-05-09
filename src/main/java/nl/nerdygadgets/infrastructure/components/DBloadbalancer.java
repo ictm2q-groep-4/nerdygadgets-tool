@@ -4,7 +4,7 @@ public class DBloadbalancer implements Component {
 
     public final double availability = 99.999;
     public final  int price = 2000;
-    public final String type = "DBloadbalancer";
+    public final ComponentType componentType = ComponentType.DBLOADBALANCER;
     private int x;
     private int y;
 

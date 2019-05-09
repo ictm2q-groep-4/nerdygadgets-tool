@@ -5,9 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import nl.nerdygadgets.infrastructure.design.XMLImporter;
 import nl.nerdygadgets.pages.PageRegister;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * The nerdyGadgets method for the application, it just starts everything.
@@ -29,6 +31,8 @@ public class NerdyGadgets extends Application {
 
 
     public static void main(String[] args) {
+
+        //Test();
         launch(args);
     }
 
@@ -88,4 +92,14 @@ public class NerdyGadgets extends Application {
     public static NerdyGadgets getNerdyGadgets() {
         return nerdyGadgets;
     }
+
+
+    // Test method for XMLImporter class
+    //
+//    public static void Test () {
+//        XMLImporter testimporter = XMLImporter.getXMLImporter();
+//        testimporter.setPath("src/main/java/nl/nerdygadgets/infrastructure/design/testfile.xml");
+//        testimporter.getComponents();
+//    }
+
 }

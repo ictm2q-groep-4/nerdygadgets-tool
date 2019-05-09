@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<root>
+    <component>
+        <name>DBServer01</name>
+        <x>5</x>
+        <y>14</y>
+    </component>
+    <component>
+        <name>DBServer02</name>
+        <x>7</x>
+        <y>12</y>
+    </component>
+</root>

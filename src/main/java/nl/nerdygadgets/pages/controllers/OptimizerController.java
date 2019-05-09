@@ -1,4 +1,6 @@
 package nl.nerdygadgets.pages.controllers;
 
-public class OptimizerController {
+import nl.nerdygadgets.pages.Controller;
+
+public class OptimizerController extends GenericController implements Controller {
 }

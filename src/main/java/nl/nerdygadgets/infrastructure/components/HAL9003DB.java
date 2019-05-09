@@ -1,33 +1,16 @@
 package nl.nerdygadgets.infrastructure.components;
 
-public class HAL9003DB {
+/**
+ *
+ *
+ * @author Joris Vos
+ */
+public class HAL9003DB extends Component {
+        public final double availability = 98;
+        public final  int price = 12200;
+        public final ComponentType componentType = ComponentType.DATABASESERVER;
 
-    public final double availability = 98;
-    public final  int price = 12200;
-    public final ComponentType componentType = ComponentType.DATABASESERVER;
-    private int x;
-    private int y;
-
-    public HAL9003DB  (int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
-    public void setY(int y) {
-
-        this.y = y;
-    }
-
-    public int getY() {
-        return this.y;
+        public HAL9003DB  (int x, int y) {
+            super(x,y);
         }
 }

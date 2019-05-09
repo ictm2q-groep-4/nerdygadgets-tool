@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.design.XMLImporter;
 import nl.nerdygadgets.pages.PageRegister;
 
@@ -32,7 +33,7 @@ public class NerdyGadgets extends Application {
 
     public static void main(String[] args) {
 
-        //Test();
+        XMLImporterTest();
         launch(args);
     }
 
@@ -96,10 +97,18 @@ public class NerdyGadgets extends Application {
 
     // Test method for XMLImporter class
     //
-//    public static void Test () {
-//        XMLImporter testimporter = XMLImporter.getXMLImporter();
-//        testimporter.setPath("src/main/java/nl/nerdygadgets/infrastructure/design/testfile.xml");
-//        testimporter.getComponents();
-//    }
+    public static void XMLImporterTest () {
+        XMLImporter testimporter = XMLImporter.getXMLImporter();
+        testimporter.setPath("src/main/java/nl/nerdygadgets/infrastructure/design/testfile.xml");
+        ArrayList<Component> components = new ArrayList<>();
+        components = testimporter.getComponents();
+
+        for (int i = 0; i < components.size(); i ++) {
+            System.out.println(components.get(i).getHostname());
+            System.out.println(components.get(i).getX());
+            System.out.println(components.get(i).getY());
+            System.out.println("--------------------");
+        }
+    }
 
 }

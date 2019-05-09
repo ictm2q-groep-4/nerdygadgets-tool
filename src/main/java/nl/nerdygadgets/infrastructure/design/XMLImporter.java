@@ -3,7 +3,6 @@ package nl.nerdygadgets.infrastructure.design;
 import nl.nerdygadgets.infrastructure.components.Component;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -36,8 +35,14 @@ public class XMLImporter {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
-            // parse the XML file and return the document
-            return dBuilder.parse(path);
+            // parse the XML file
+            Document doc = dBuilder.parse(path);
+
+            // normalize
+            doc.getDocumentElement().normalize();
+
+            // return the document
+            return doc;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,12 +60,13 @@ public class XMLImporter {
         // import XML file
         Document file = ImportFile();
         // create NodeList with all component tags
-        NodeList nodes = file.getElementsByTagName("component");
+        NodeList nodes = file.getElementsByTagName("root").item(0).getChildNodes();
         // init new ArrayList for the component objects
         ArrayList<Component> components = new ArrayList<>();
 
         for (int i = 0; i < nodes.getLength(); i ++) {
-            String name = null;
+            String hostname = null;
+            String type = null;
             int x = 0;
             int y = 0;
 
@@ -72,21 +78,52 @@ public class XMLImporter {
                 Element element = (Element) node;
 
                 // parse the element values
-                name = element.getElementsByTagName("name").item(0).getTextContent();
-                x = Integer.parseInt(element.getElementsByTagName("x").item(0).getTextContent());
-                y = Integer.parseInt(element.getElementsByTagName("y").item(0).getTextContent());
+                if (element.getTagName() != null) {
+                    type = element.getTagName();
+                    hostname = element.getElementsByTagName("name").item(0).getTextContent();
+                    x = Integer.parseInt(element.getElementsByTagName("x").item(0).getTextContent());
+                    y = Integer.parseInt(element.getElementsByTagName("y").item(0).getTextContent());
+
+                    // create objects and add them to components
+                    components.add(CreateDeviceObject(type, hostname, x, y));
+                }
             }
 
             // create new component object
             //components.add(new Component (name, x, y));
 
-            System.out.println("name: " + name);
-            System.out.println("x: " + x);
-            System.out.println("y: " + y);
-            System.out.println("---------------------------------");
+//            System.out.println(type);
+//            System.out.println(name);
+//            System.out.println(x);
+//            System.out.println(y);
+//            System.out.println("--------------------------");
         }
 
         return components;
+    }
+
+    /**
+     *  Method that creates the component objects
+     *
+     * @param type the device type and class name
+     * @param name the device name
+     * @param x the x coordinate of the device in the designer
+     * @param y the y coordinate of the device in the designer
+     * @return returns a component object of the right type
+     */
+    private Component CreateDeviceObject (String type, String hostname, int x, int y) {
+        String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
+
+        try {
+            Class<?> cls = Class.forName(fullClassPath);
+            Component component = (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
+            return component;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public void setPath (String path) {

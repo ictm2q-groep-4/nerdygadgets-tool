@@ -8,6 +8,11 @@ package nl.nerdygadgets.infrastructure.components;
  */
 public abstract class Component implements Statistic {
     /**
+     * This is the hostname
+     */
+    private String hostname;
+
+    /**
      * This is the x coordinate
      */
     private int x;
@@ -23,9 +28,10 @@ public abstract class Component implements Statistic {
      * @param x int
      * @param y int
      */
-    public Component(int x, int y) {
+    public Component(String hostname, int x, int y) {
+        this.hostname = hostname;
         this.x = x;
-        this.y =y;
+        this.y = y;
     }
 
     // region Getters
@@ -35,6 +41,7 @@ public abstract class Component implements Statistic {
     public int getY() {
         return y;
     }
+    public String getHostname () { return hostname; }
     // endregion
 
     // region Setters

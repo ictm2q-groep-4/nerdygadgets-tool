@@ -1,0 +1,7 @@
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.Label?>
+<AnchorPane>
+    <Rectangle arcHeight="5.0" fill="#a4a4a4" height="39.0" layoutX="409.0" layoutY="218.0" strokeType="INSIDE" width="41.0" />
+    <Label layoutX="396.0" layoutY="260.0" text="Hostname" />
+</AnchorPane>

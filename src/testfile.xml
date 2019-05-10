@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
-<root>
+<design>
     <HAL9001DB>
         <name>DBServer01</name>
-        <x>5</x>
-        <y>14</y>
+        <x>180</x>
+        <y>80</y>
     </HAL9001DB>
     <HAL9002DB>
         <name>DBServer02</name>
-        <x>7</x>
-        <y>12</y>
+        <x>0</x>
+        <y>0</y>
     </HAL9002DB>
-</root>
+</design>

@@ -32,8 +32,6 @@ public class NerdyGadgets extends Application {
 
 
     public static void main(String[] args) {
-
-        XMLImporterTest();
         launch(args);
     }
 
@@ -92,22 +90,6 @@ public class NerdyGadgets extends Application {
      */
     public static NerdyGadgets getNerdyGadgets() {
         return nerdyGadgets;
-    }
-
-
-    // Test method for XMLImporter class
-    //
-    public static void XMLImporterTest () {
-        XMLImporter testimporter = XMLImporter.getXMLImporter("src/main/java/nl/nerdygadgets/infrastructure/design/testfile.xml");
-        ArrayList<Component> components;
-        components = testimporter.getComponents();
-
-        for (int i = 0; i < components.size(); i ++) {
-            System.out.println(components.get(i).getHostname());
-            System.out.println(components.get(i).getX());
-            System.out.println(components.get(i).getY());
-            System.out.println("--------------------");
-        }
     }
 
 }

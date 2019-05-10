@@ -10,13 +10,13 @@ module nerdygadgets {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.xml;
-
     requires org.junit.jupiter.api;
 
     // Allow javafx.<package> to access nl.nerdygadgets.<...> packages.
     // See 'Reflection' for more information on why they need to be opened like this (access related)
     opens nl.nerdygadgets.pages.controllers to javafx.fxml;
     opens nl.nerdygadgets.main to javafx.graphics;
+    opens nl.nerdygadgets.infrastructure.design to java.xml;
 
     // finally, export.
     exports nl.nerdygadgets.pages.controllers;

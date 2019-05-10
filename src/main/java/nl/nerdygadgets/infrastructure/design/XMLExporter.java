@@ -97,7 +97,7 @@ class XMLExporter {
      */
     private void addElements(Document document) {
         // Root element
-        Element root = document.createElement("root");
+        Element root = document.createElement("design");
         document.appendChild(root);
 
 
@@ -106,6 +106,10 @@ class XMLExporter {
 
             Element component = document.createElement(components.get(i).getClass().getSimpleName());
             root.appendChild(component);
+
+            Element name = document.createElement("name");
+            component.appendChild(name);
+            name.appendChild(document.createTextNode(components.get(i).hostname));
 
             Element x = document.createElement("x");
             component.appendChild(x);

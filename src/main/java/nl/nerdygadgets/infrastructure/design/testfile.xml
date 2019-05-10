@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<root>
+<design>
     <HAL9001DB>
         <name>DBServer01</name>
         <x>5</x>
@@ -10,4 +10,4 @@
         <x>7</x>
         <y>12</y>
     </HAL9002DB>
-</root>
+</design>

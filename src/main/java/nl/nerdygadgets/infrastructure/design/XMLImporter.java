@@ -66,8 +66,15 @@ public class XMLImporter {
     public List<Component> getComponents () {
         // import XML file
         Document file = importFile();
-        // create NodeList with all component tags
-        NodeList nodes = file.getElementsByTagName("root").item(0).getChildNodes();
+        // create nodelist
+        NodeList nodes;
+
+        // try to fill the NodeList with all component tags
+        try {
+            nodes = file.getElementsByTagName("design").item(0).getChildNodes();
+        } catch (Exception e) {
+            return null;
+        }
         // init new ArrayList for the component objects
         ArrayList<Component> components = new ArrayList<>();
 

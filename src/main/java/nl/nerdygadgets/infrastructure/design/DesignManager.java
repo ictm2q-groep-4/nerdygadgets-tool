@@ -1,5 +1,6 @@
 package nl.nerdygadgets.infrastructure.design;
 
+import javafx.scene.control.Alert;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 
@@ -49,9 +50,16 @@ public class DesignManager {
     public Infrastructure load(File file) {
         Infrastructure infrastructure = new Infrastructure();
 
-        List<Component> components = XMLImporter.getXMLImporter(file.getPath()).getComponents();
-
-        infrastructure.addComponents(components);
+        List<Component> components;
+        if ((components = XMLImporter.getXMLImporter(file.getPath()).getComponents()) != null) {
+            infrastructure.addComponents(components);
+        } else {
+            // show error
+            Alert XMLalert = new Alert(Alert.AlertType.ERROR);
+            XMLalert.setTitle("Er is een fout opgetreden");
+            XMLalert.setHeaderText("Bestand is geen infrastructuur design");
+            XMLalert.showAndWait();
+        }
 
         return infrastructure;
     }

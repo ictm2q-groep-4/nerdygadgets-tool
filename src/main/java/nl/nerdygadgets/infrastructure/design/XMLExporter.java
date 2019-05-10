@@ -68,7 +68,6 @@ class XMLExporter {
 
         try {
             DocumentBuilder builder = documentFactory.newDocumentBuilder();
-//            newXMLExport(documentFactory, builder);
             Document document = builder.newDocument();
 
             this.addElements(document);

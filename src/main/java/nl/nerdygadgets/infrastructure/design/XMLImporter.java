@@ -4,14 +4,15 @@ import nl.nerdygadgets.infrastructure.components.Component;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  A Singleton class that parses XML files into infrastructure designs
  *
  * @author Lou Elzer
  */
-
 public class XMLImporter {
+
     /**
      * Variable which holds our only instance of this class
      */
@@ -32,7 +33,7 @@ public class XMLImporter {
     /**
      * Opens an XML file and turns it into a document
      *
-     * @return returns a document object
+     * @return Document
      */
     private Document importFile () {
         try {
@@ -59,9 +60,9 @@ public class XMLImporter {
     /**
      * Calls ImportFile() and turns the document into a Component ArrayList
      *
-     * @return returns an ArrayList filled with Component objects
+     * @return List<Component> returns an ArrayList filled with Component objects
      */
-    public ArrayList<Component> getComponents () {
+    public List<Component> getComponents () {
         // import XML file
         Document file = importFile();
         // create NodeList with all component tags
@@ -101,24 +102,23 @@ public class XMLImporter {
     /**
      *  Method that creates the component objects
      *
-     * @param type the device type and class name
-     * @param hostname the device name
-     * @param x the x coordinate of the device in the designer
-     * @param y the y coordinate of the device in the designer
-     * @return returns a component object of the right type
+     * @param       type the device type and class name
+     * @param       hostname the device name
+     * @param       x the x coordinate of the device in the designer
+     * @param       y the y coordinate of the device in the designer
+     * @return      Component returns a component object of the right type
      */
     private Component createDeviceObject (String type, String hostname, int x, int y) {
         String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
 
         try {
             Class<?> cls = Class.forName(fullClassPath);
-            Component component = (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
-            return component;
-
+            return (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -133,15 +133,14 @@ public class XMLImporter {
     /**
      * Get access to the XMLImporter class
      *
-     * @param path the path to the XML file
-     * @return returns the XMLImporter object
+     * @param       path the path to the XML file
+     * @return      XMLImporter returns the XMLImporter object
      */
     public static XMLImporter getXMLImporter (String path) {
         if (XMLImporterInstance == null) {
             XMLImporterInstance = new XMLImporter();
             XMLImporterInstance.setPath(path);
         }
-
         return XMLImporterInstance;
     }
 

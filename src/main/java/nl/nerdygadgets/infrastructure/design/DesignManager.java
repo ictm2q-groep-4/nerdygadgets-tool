@@ -5,6 +5,7 @@ import nl.nerdygadgets.infrastructure.components.Component;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Singleton manager for the design import/export (for infrastructure)
@@ -48,7 +49,7 @@ public class DesignManager {
     public Infrastructure load(File file) {
         Infrastructure infrastructure = new Infrastructure();
 
-        ArrayList<Component> components = XMLImporter.getXMLImporter(file.getPath()).getComponents();
+        List<Component> components = XMLImporter.getXMLImporter(file.getPath()).getComponents();
 
         infrastructure.addComponents(components);
 

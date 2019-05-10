@@ -1,11 +1,14 @@
 package nl.nerdygadgets.infrastructure.components;
+/**
+ *
+ *
+ * @author Joris Vos
+ * @author Djabir Omar Mohamed
+ */
+
 
 public class HAL9002DB extends Component {
-    public final double availability = 95;
-    public final  int price = 7700;
-    public final ComponentType componentType = ComponentType.DATABASESERVER;
-
-    public HAL9002DB (int x, int y) {
-        super(x,y);
+    public HAL9002DB (String hostname, int x, int y) {
+        super(hostname, 95, 7700, ComponentType.DATABASESERVER, x ,y);
     }
 }

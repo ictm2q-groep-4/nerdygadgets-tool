@@ -4,13 +4,10 @@ package nl.nerdygadgets.infrastructure.components;
  *
  *
  * @author Joris Vos
+ * @author Djabir Omar Mohamed
  */
 public class DBloadbalancer extends Component {
-    public final double availability = 99.999;
-    public final  int price = 2000;
-    public final ComponentType componentType = ComponentType.DBLOADBALANCER;
-
-    public DBloadbalancer  (int x, int y) {
-        super(x,y);
+    public DBloadbalancer  (String hostname, int x, int y) {
+        super(hostname, 99.999, 200, ComponentType.DBLOADBALANCER, x ,y);
     }
 }

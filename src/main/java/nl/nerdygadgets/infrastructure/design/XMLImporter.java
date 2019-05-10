@@ -9,6 +9,7 @@ import java.util.List;
 /**
  *  A Singleton class that parses XML files into infrastructure designs
  *
+ * @author Lucas Ouwens
  * @author Lou Elzer
  */
 public class XMLImporter {

@@ -51,7 +51,7 @@ public class DesignManager {
         Infrastructure infrastructure = new Infrastructure();
 
         List<Component> components;
-        if ((components = XMLImporter.getXMLImporter(file.getPath()).getComponents()) != null) {
+        if ((components = XMLImporter.getXMLImporter().getComponents(file.getPath())) != null) {
             infrastructure.addComponents(components);
         } else {
             // show error

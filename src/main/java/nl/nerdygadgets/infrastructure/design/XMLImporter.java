@@ -63,7 +63,8 @@ public class XMLImporter {
      *
      * @return List<Component> returns an ArrayList filled with Component objects
      */
-    public List<Component> getComponents () {
+    public List<Component> getComponents (String path) {
+        XMLImporterInstance.setPath(path);
         // import XML file
         Document file = importFile();
         // create nodelist
@@ -144,10 +145,9 @@ public class XMLImporter {
      * @param       path the path to the XML file
      * @return      XMLImporter returns the XMLImporter object
      */
-    public static XMLImporter getXMLImporter (String path) {
+    public static XMLImporter getXMLImporter () {
         if (XMLImporterInstance == null) {
             XMLImporterInstance = new XMLImporter();
-            XMLImporterInstance.setPath(path);
         }
         return XMLImporterInstance;
     }

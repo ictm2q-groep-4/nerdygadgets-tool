@@ -1,9 +1,7 @@
 package nl.nerdygadgets.infrastructure.design;
 
-import nl.nerdygadgets.infrastructure.components.Component;
-import nl.nerdygadgets.infrastructure.components.HAL9001DB;
+import nl.nerdygadgets.infrastructure.components.*;
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,9 +11,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,15 +25,20 @@ class XMLExporter {
      */
     private static XMLExporter XMLExporterInstance;
 
+    /**
+     * Contains the path to the location where file will be saved
+     */
     private String filePath;
+
+    /**
+     * Contains the components that were added to the design
+     */
     private List<Component> components;
 
     /**
      * A private constructor to block anything outside from making a new instance of this class.
      */
-    private XMLExporter() {
-        //
-    }
+    private XMLExporter() {}
 
     /**
      * Get access to the Singleton XMLExporter class.

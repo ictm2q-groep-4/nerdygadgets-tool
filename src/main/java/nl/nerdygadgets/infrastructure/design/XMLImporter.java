@@ -151,7 +151,4 @@ public class XMLImporter {
         }
         return XMLImporterInstance;
     }
-
-
-
 }

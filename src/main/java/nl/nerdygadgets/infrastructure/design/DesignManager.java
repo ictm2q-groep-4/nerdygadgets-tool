@@ -1,5 +1,6 @@
 package nl.nerdygadgets.infrastructure.design;
 
+
 import javafx.scene.control.Alert;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
@@ -25,7 +26,7 @@ public class DesignManager {
      * A private database constructor to block anything outside from making a new instance of this class.
      */
     private DesignManager() {
-        // ...
+
     }
 
     /**
@@ -40,6 +41,7 @@ public class DesignManager {
 
         return designManagerInstance;
     }
+
 
     /**
      * Load the infrastructure from an XML file.
@@ -62,6 +64,11 @@ public class DesignManager {
         }
 
         return infrastructure;
+    }
+
+
+    public void save(String filePath){
+        XMLImporter.XMLImporterr(filePath);
     }
 
 }

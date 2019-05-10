@@ -12,9 +12,14 @@ import java.util.ArrayList;
  */
 
 public class XMLImporter {
-    // Variable which holds our only instance of this class
+    /**
+     * Variable which holds our only instance of this class
+     */
     private static XMLImporter XMLImporterInstance;
-    // The path to the XML file
+
+    /**
+     * The path to the XML file
+     */
     private String path;
 
     /**
@@ -29,7 +34,7 @@ public class XMLImporter {
      *
      * @return returns a document object
      */
-    private Document ImportFile () {
+    private Document importFile () {
         try {
             // create factory and builder objects
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -58,7 +63,7 @@ public class XMLImporter {
      */
     public ArrayList<Component> getComponents () {
         // import XML file
-        Document file = ImportFile();
+        Document file = importFile();
         // create NodeList with all component tags
         NodeList nodes = file.getElementsByTagName("root").item(0).getChildNodes();
         // init new ArrayList for the component objects
@@ -85,18 +90,9 @@ public class XMLImporter {
                     y = Integer.parseInt(element.getElementsByTagName("y").item(0).getTextContent());
 
                     // create objects and add them to components
-                    components.add(CreateDeviceObject(type, hostname, x, y));
+                    components.add(createDeviceObject(type, hostname, x, y));
                 }
             }
-
-            // create new component object
-            //components.add(new Component (name, x, y));
-
-//            System.out.println(type);
-//            System.out.println(name);
-//            System.out.println(x);
-//            System.out.println(y);
-//            System.out.println("--------------------------");
         }
 
         return components;
@@ -106,12 +102,12 @@ public class XMLImporter {
      *  Method that creates the component objects
      *
      * @param type the device type and class name
-     * @param name the device name
+     * @param hostname the device name
      * @param x the x coordinate of the device in the designer
      * @param y the y coordinate of the device in the designer
      * @return returns a component object of the right type
      */
-    private Component CreateDeviceObject (String type, String hostname, int x, int y) {
+    private Component createDeviceObject (String type, String hostname, int x, int y) {
         String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
 
         try {
@@ -121,18 +117,29 @@ public class XMLImporter {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 
-    public void setPath (String path) {
+    /**
+     * Sets the XML file path
+     *
+     * @param path the path to the XML file
+     */
+    private void setPath (String path) {
         this.path = path;
     }
 
-    public static XMLImporter getXMLImporter () {
+    /**
+     * Get access to the XMLImporter class
+     *
+     * @param path the path to the XML file
+     * @return returns the XMLImporter object
+     */
+    public static XMLImporter getXMLImporter (String path) {
         if (XMLImporterInstance == null) {
             XMLImporterInstance = new XMLImporter();
+            XMLImporterInstance.setPath(path);
         }
 
         return XMLImporterInstance;

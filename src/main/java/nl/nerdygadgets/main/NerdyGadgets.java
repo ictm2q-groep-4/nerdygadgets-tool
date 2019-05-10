@@ -98,9 +98,8 @@ public class NerdyGadgets extends Application {
     // Test method for XMLImporter class
     //
     public static void XMLImporterTest () {
-        XMLImporter testimporter = XMLImporter.getXMLImporter();
-        testimporter.setPath("src/main/java/nl/nerdygadgets/infrastructure/design/testfile.xml");
-        ArrayList<Component> components = new ArrayList<>();
+        XMLImporter testimporter = XMLImporter.getXMLImporter("src/main/java/nl/nerdygadgets/infrastructure/design/testfile.xml");
+        ArrayList<Component> components;
         components = testimporter.getComponents();
 
         for (int i = 0; i < components.size(); i ++) {

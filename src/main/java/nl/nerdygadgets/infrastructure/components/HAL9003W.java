@@ -4,14 +4,11 @@ package nl.nerdygadgets.infrastructure.components;
  *
  *
  * @author Joris Vos
+ * @author Djabir Omar Mohamed
  */
 public class HAL9003W extends Component {
-    public final double availability = 95;
-    public final int price = 5100;
-    public final ComponentType componentType = ComponentType.WEBSERVER;
-
-    public HAL9003W(int x, int y) {
-        super(x, y);
+    public HAL9003W (String hostname, int x, int y) {
+        super(hostname, 95, 5100, ComponentType.WEBSERVER, x ,y);
     }
 }
 

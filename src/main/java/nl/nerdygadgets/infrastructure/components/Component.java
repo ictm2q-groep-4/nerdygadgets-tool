@@ -12,17 +12,17 @@ public abstract class Component implements Statistic {
     /**
      * This is the availability for the server, so how long the server is available
      */
-    protected final double availability;
+    public final double availability;
 
     /**
      * This is the price for the server
      */
-    protected final int price;
+    public final int price;
 
     /**
      * This is the type of server
      */
-    protected final ComponentType componentType;
+    public final ComponentType componentType;
 
     /**
      * This is the x coordinate
@@ -74,20 +74,28 @@ public abstract class Component implements Statistic {
     }
 
     // region Getters
-    public String getHostname() { return hostname; }
+    public String getHostname() {
+        return hostname;
+    }
+
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
     // endregion
 
     // region Setters
-    public void setHostname(String hostname) { this.hostname = hostname; }
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
     public void setX(int x) {
         this.x = x;
     }
+
     public void setY(int y) {
         this.y = y;
     }

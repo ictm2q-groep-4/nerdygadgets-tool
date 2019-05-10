@@ -23,7 +23,7 @@ public class pfSense extends Component {
      * This constructor calls upon the super constructor of the Component class and sets the x and y
      */
 
-    public pfSense(int x, int y)  {
-        super(x,y);
+    public pfSense (String hostname, int x, int y) {
+        super(hostname, x ,y);
     }
 }

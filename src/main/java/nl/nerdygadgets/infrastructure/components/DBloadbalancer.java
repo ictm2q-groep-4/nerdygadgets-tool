@@ -23,7 +23,7 @@ public class DBloadbalancer extends Component {
      * This constructor calls upon the super constructor of the Component class and sets the x and y
      */
 
-    public DBloadbalancer  (int x, int y) {
-        super(x,y);
+    public DBloadbalancer  (String hostname, int x, int y) {
+        super(hostname, x ,y);
     }
 }

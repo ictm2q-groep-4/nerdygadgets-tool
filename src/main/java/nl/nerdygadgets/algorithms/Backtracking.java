@@ -44,6 +44,6 @@ public class Backtracking {
     }
 
     private boolean solve() {
-
+        return true;
     }
 }

@@ -23,8 +23,7 @@ public class HAL9001DB extends Component {
      * This constructor calls upon the super constructor of the Component class and sets the x and y
      */
 
-    public HAL9001DB (int x, int y) {
-        super(x,y);
-
+    public HAL9001DB (String hostname, int x, int y) {
+        super(hostname, x ,y);
     }
 }

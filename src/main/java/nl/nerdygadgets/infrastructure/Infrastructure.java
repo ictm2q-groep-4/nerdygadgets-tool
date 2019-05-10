@@ -34,7 +34,7 @@ public class Infrastructure {
     public Infrastructure(String filePath) {
         this.filePath = filePath;
 
-        components = DesignManager.getDesignManager().load(filePath);
+//        components = DesignManager.getDesignManager().load(filePath);
         calculateAvailability();
     }
 

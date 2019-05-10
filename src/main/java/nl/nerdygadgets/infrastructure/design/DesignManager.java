@@ -1,5 +1,7 @@
 package nl.nerdygadgets.infrastructure.design;
 
+import java.util.List;
+
 /**
  * A Singleton manager for the design import/export (for infrastructure)
  *
@@ -17,7 +19,7 @@ public class DesignManager {
      * A private database constructor to block anything outside from making a new instance of this class.
      */
     private DesignManager() {
-        // ...
+
     }
 
     /**
@@ -31,5 +33,9 @@ public class DesignManager {
         }
 
         return designManagerInstance;
+    }
+
+    public void save(String filePath){
+        XMLImporter.XMLImporterr(filePath);
     }
 }

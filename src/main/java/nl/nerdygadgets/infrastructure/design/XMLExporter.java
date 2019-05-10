@@ -45,6 +45,7 @@ class XMLExporter {
      *
      * @return XMLExporterInstance
      */
+
     public static XMLExporter getXMLExporterInstance() {
         if (XMLExporterInstance == null) {
             XMLExporterInstance = new XMLExporter();
@@ -53,41 +54,28 @@ class XMLExporter {
     }
 
     /**
-     * Checks if the given filepath parameter exists. Based on that it will call one of two methods: NewXMLExport or ExistingXMLExport.
+     * Creates a new XML files to the given filepath
+     *
+     * @param filePath
+     * @param components
+     * @return boolean
      */
-    boolean exportXML(String filePath, List<Component> components) {
+    public boolean exportXML(String filePath, List<Component> components) {
         setFilePath(filePath);
         setComponents(components);
 
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
-        DocumentBuilder builder = null;
-
         try {
-            builder = documentFactory.newDocumentBuilder();
-            Document doc = builder.parse(filePath);
-            newXMLExport(documentFactory, builder);
-        } catch (FileNotFoundException e){
-            newXMLExport(documentFactory, builder);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
+            DocumentBuilder builder = documentFactory.newDocumentBuilder();
+//            newXMLExport(documentFactory, builder);
+            Document document = builder.newDocument();
 
-    /**
-     * Will create a new XML file
-     */
+            this.addElements(document);
 
-    public void newXMLExport(DocumentBuilderFactory documentFactory, DocumentBuilder builder) {
-        Document document = builder.newDocument();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
-        this.addElements(document);
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
-        try {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource domSource = new DOMSource(document);
@@ -95,16 +83,20 @@ class XMLExporter {
 
             transformer.transform(domSource, streamResult);
 
-        } catch (TransformerException e) {
+        } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
+            return false;
         }
-
+        return true;
     }
+
 
     /**
      * Adds elements and its values to the XML file
+     *
+     * @param document
      */
-    public void addElements(Document document) {
+    private void addElements(Document document) {
         // Root element
         Element root = document.createElement("root");
         document.appendChild(root);
@@ -130,7 +122,7 @@ class XMLExporter {
         this.filePath = filePath;
     }
 
-    public void setComponents(List<Component> components) {
+    private void setComponents(List<Component> components) {
         this.components = components;
     }
 }

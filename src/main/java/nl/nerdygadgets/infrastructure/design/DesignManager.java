@@ -55,10 +55,10 @@ public class DesignManager {
             infrastructure.addComponents(components);
         } else {
             // show error
-            Alert XMLalert = new Alert(Alert.AlertType.ERROR);
-            XMLalert.setTitle("Er is een fout opgetreden");
-            XMLalert.setHeaderText("Bestand is geen infrastructuur design");
-            XMLalert.showAndWait();
+            Alert XMLAlert = new Alert(Alert.AlertType.ERROR);
+            XMLAlert.setTitle("Er is een fout opgetreden");
+            XMLAlert.setHeaderText("Bestand is geen infrastructuur design");
+            XMLAlert.showAndWait();
         }
 
         return infrastructure;

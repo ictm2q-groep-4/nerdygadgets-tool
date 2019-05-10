@@ -25,6 +25,11 @@ public class Infrastructure {
     private double availability = 0;
 
     /**
+     * The currently loaded infrastructure
+     */
+    private static Infrastructure currentInfrastructure;
+
+    /**
      * The constructor for Infrastructure.
      */
     public Infrastructure() {
@@ -99,6 +104,19 @@ public class Infrastructure {
 
     public double getAvailability() {
         return availability;
+    }
+
+    /**
+     * Returns the infrastructure if it has already been loaded before, will otherwise return null.
+     *
+     * @return Infrastructure|null
+     */
+    public static Infrastructure getCurrentInfrastructure() {
+        return currentInfrastructure;
+    }
+
+    public static void setCurrentInfrastructure(Infrastructure currentInfrastructure) {
+        Infrastructure.currentInfrastructure = currentInfrastructure;
     }
 
     // endregion

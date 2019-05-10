@@ -109,7 +109,7 @@ class XMLExporter {
 
             Element name = document.createElement("name");
             component.appendChild(name);
-            name.appendChild(document.createTextNode(components.get(i).hostname));
+            name.appendChild(document.createTextNode(components.get(i).getHostname()));
 
             Element x = document.createElement("x");
             component.appendChild(x);

@@ -33,7 +33,6 @@ public class Infrastructure {
      */
     public Infrastructure(String filePath) {
         this.filePath = filePath;
-
 //        components = DesignManager.getDesignManager().load(filePath);
         calculateAvailability();
     }
@@ -76,7 +75,7 @@ public class Infrastructure {
      */
     public boolean save() {
         try {
-            DesignManager.getDesignManager().save(filePath);
+            //DesignManager.getDesignManager().save(filePath);
             return true;
         } catch (Exception e) {
             return false;

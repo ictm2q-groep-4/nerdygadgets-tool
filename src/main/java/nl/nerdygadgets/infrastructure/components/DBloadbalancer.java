@@ -7,23 +7,7 @@ package nl.nerdygadgets.infrastructure.components;
  * @author Djabir Omar Mohamed
  */
 public class DBloadbalancer extends Component {
-    /**
-     * This is the availability for the server, so how long the server is available
-     */
-    public final double availability = 99.999;
-    /**
-     * This is the price for the server
-     */
-    public final  int price = 2000;
-    /**
-     * This is the type of server
-     */
-    public final ComponentType componentType = ComponentType.DBLOADBALANCER;
-    /**
-     * This constructor calls upon the super constructor of the Component class and sets the x and y
-     */
-
     public DBloadbalancer  (String hostname, int x, int y) {
-        super(hostname, x ,y);
+        super(hostname, 99.999, 200, ComponentType.DBLOADBALANCER, x ,y);
     }
 }

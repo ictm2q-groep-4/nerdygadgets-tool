@@ -1,5 +1,11 @@
 package nl.nerdygadgets.infrastructure.design;
 
+import nl.nerdygadgets.infrastructure.Infrastructure;
+import nl.nerdygadgets.infrastructure.components.Component;
+
+import java.io.File;
+import java.util.ArrayList;
+
 /**
  * A Singleton manager for the design import/export (for infrastructure)
  *
@@ -32,4 +38,21 @@ public class DesignManager {
 
         return designManagerInstance;
     }
+
+    /**
+     * Load the infrastructure from an XML file.
+     *
+     * @param file      File an XML file to be parsed
+     * @return          Infrastructure with the components in it
+     */
+    public Infrastructure load(File file) {
+        Infrastructure infrastructure = new Infrastructure();
+
+        ArrayList<Component> components = XMLImporter.getXMLImporter(file.getPath()).getComponents();
+
+        infrastructure.addComponents(components);
+
+        return infrastructure;
+    }
+
 }

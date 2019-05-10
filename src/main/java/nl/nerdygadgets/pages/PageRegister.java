@@ -9,9 +9,6 @@ import java.util.Arrays;
  */
 public enum PageRegister {
 
-    // pages/<page>
-    // pages/templates
-
     MAIN("MainScene", "Main.fxml"),
     DESIGNER("InfrastructureDesigner", "InfrastructureDesigner.fxml"),
     MONITOR("InfrastructureMonitor", "InfrastructureMonitor.fxml"),
@@ -31,8 +28,8 @@ public enum PageRegister {
     /**
      * The constructor which defines the values each enum must have.
      *
-     * @param identifier String an 'identifier' to easily load the scene
-     * @param filePath   String the 'path' including the filename itself. Starts from the 'pages' folder. (Location of the 'view')
+     * @param identifier    String an 'identifier' to easily load the scene
+     * @param filePath      String the 'path' including the filename itself. Starts from the 'pages' folder. (Location of the 'view')
      */
     PageRegister(String identifier, String filePath) {
         this.identifier = identifier;
@@ -43,8 +40,8 @@ public enum PageRegister {
     /**
      * Easily get a PageRegister enum by its identifier, will return null if the identifier does not exist.
      *
-     * @param identifier String the identifier
-     * @return PageRegister|null
+     * @param identifier    String the identifier
+     * @return              PageRegister|null
      */
     public static PageRegister get(String identifier) {
         return Arrays.stream(PageRegister.values())

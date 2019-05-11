@@ -12,7 +12,6 @@ import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
 import nl.nerdygadgets.main.NerdyGadgets;
-import nl.nerdygadgets.pages.Controller;
 import nl.nerdygadgets.pages.PageRegister;
 
 import java.io.File;
@@ -25,7 +24,7 @@ import java.util.List;
  *
  * @author Lucas Ouwens
  */
-public class GenericController implements Controller {
+public class GenericController {
 
     @FXML
     protected Rectangle componentPane;

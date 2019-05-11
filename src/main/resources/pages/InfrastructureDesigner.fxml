@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
@@ -15,26 +21,72 @@
             <Rectangle fill="#cdcdcd" height="30.0" smooth="false" strokeType="INSIDE" width="1280.0" />
             <Label layoutX="14.0" layoutY="7.0" text="Infrastructuur builder" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eff0f2" height="690.0" layoutY="30.0" strokeType="INSIDE" width="390.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#dadada" height="134.0" layoutX="14.0" layoutY="45.0" stroke="BLACK" strokeType="INSIDE" width="358.0" />
-            <Button id="openDesignButton" fx:id="openDesignButton" layoutX="22.0" layoutY="65.0" mnemonicParsing="false" onMouseClicked="#handleOpenDesign" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open ontwerp" textFill="WHITE" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#dadada" height="150.0" layoutX="14.0" layoutY="45.0" stroke="BLACK" strokeType="INSIDE" width="350.0" />
+            <VBox layoutX="15.0" layoutY="45.0" prefHeight="150.0" prefWidth="350.0" spacing="10.0" AnchorPane.bottomAnchor="525.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="907.0" AnchorPane.topAnchor="45.0">
+               <children>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Button id="openDesignButton" fx:id="openDesignButton" mnemonicParsing="false" onMouseClicked="#handleOpenDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open ontwerp" textFill="WHITE" />
+                        <Button id="openDesignButton" fx:id="saveDesignButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Ontwerp opslaan" textFill="WHITE" />
+                     </children>
+                  </HBox>
+                  <Button id="openDesignButton" fx:id="startOptimalisationButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="310.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Start optimalisatieproces" textFill="WHITE" />
+               </children>
+               <padding>
+                  <Insets left="20.0" top="20.0" />
+               </padding>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </VBox>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbfbf" height="30.0" layoutY="691.0" strokeType="INSIDE" width="1280.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="83.0" layoutX="297.0" layoutY="608.0" strokeType="INSIDE" width="983.0" />
             <Label fx:id="totalAvailability" layoutX="409.0" layoutY="618.0" text="Totale beschikbaarheid: ...%" />
             <Label fx:id="totalCosts" layoutX="409.0" layoutY="634.0" text="Totale kosten: ..." />
-            <Rectangle id="monitor" fx:id="componentPane" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="573.0" layoutX="390.0" layoutY="30.0" strokeType="INSIDE" width="890.0" />
-            <Button id="openDesignButton" fx:id="saveDesignButton" layoutX="196.0" layoutY="65.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Ontwerp opslaan" textFill="WHITE" />
-            <Button id="openDesignButton" fx:id="startOptimalisationButton" layoutX="21.0" layoutY="123.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="343.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Start optimalisatieproces" textFill="WHITE" />
-            <ScrollPane layoutX="14.0" layoutY="243.0" prefHeight="398.0" prefWidth="358.0">
-              <content>
-                <AnchorPane fx:id="componentContainer" minHeight="0.0" minWidth="0.0" prefHeight="396.0" prefWidth="356.0">
-                     <children>
-                        <Rectangle arcHeight="5.0" fill="WHITE" height="398.0" stroke="BLACK" strokeType="INSIDE" width="358.0" />
-                     </children>
-                  </AnchorPane>
-              </content>
-            </ScrollPane>
-            <ComboBox fx:id="componentType" layoutX="14.0" layoutY="193.0" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
-            <Label layoutX="16.0" layoutY="227.0" text="Beschikbare componenten" />
+            <Pane layoutX="390.0" layoutY="30.0">
+               <children>
+                  <ImageView fx:id="componentlayout" fitHeight="573.0" fitWidth="890.0" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="component1" fitHeight="100.0" fitWidth="50.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/blue.jpg" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+                  <ImageView fx:id="component11" fitHeight="100.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/blue.jpg" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+                  <ImageView fx:id="component12" fitHeight="100.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/blue.jpg" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+               </children>
+            </Pane>
+            <VBox layoutX="14.0" layoutY="206.0" prefHeight="428.0" prefWidth="350.0">
+               <children>
+                  <ComboBox fx:id="componentType" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
+                  <Label text="Beschikbare componenten" />
+                  <ScrollPane prefHeight="398.0" prefWidth="350.0">
+                    <content>
+                      <AnchorPane fx:id="componentContainer" minHeight="0.0" minWidth="0.0" prefHeight="396.0" prefWidth="350.0">
+                           <children>
+                              <Rectangle arcHeight="5.0" fill="WHITE" height="398.0" stroke="BLACK" strokeType="INSIDE" width="350.0" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
             <Button layoutX="14.0" layoutY="650.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
          </children>
     </AnchorPane>

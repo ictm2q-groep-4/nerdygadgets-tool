@@ -3,17 +3,22 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * @author Stefan Booij
  */
 public class DesignerController extends GenericController {
     /**
-     * A variable that transfers events between methods to acquire attributes.
+     * A variable that transfers events between methods.
      */
     private Event transferEvent;
 
@@ -57,20 +62,20 @@ public class DesignerController extends GenericController {
         Dragboard db = component.startDragAndDrop(TransferMode.ANY);
 
         //This did not recognize the image. Not sure why.
-//        ClipboardContent cb = new ClipboardContent();
-//        cb.putImage(component.getImage());
-//        db.setContent(cb);
+        ClipboardContent cb = new ClipboardContent();
+        cb.putImage(component.getImage());
+        db.setContent(cb);
 
         //Transfers this event to get access to the attributes of the components in other methods
         setTransferEvent(mouseEvent);
         mouseEvent.consume();
     }
 
-    private Event getTransferEvent() {
+    private Event getTransferEvent(){
         return transferEvent;
     }
 
-    private void setTransferEvent(Event event) {
+    private void setTransferEvent (Event event){
         transferEvent = event;
     }
 }

@@ -46,23 +46,7 @@
             <Pane layoutX="390.0" layoutY="30.0">
                <children>
                   <ImageView fx:id="componentlayout" fitHeight="573.0" fitWidth="890.0" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="component1" fitHeight="100.0" fitWidth="50.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/blue.jpg" />
-                     </image>
-                     <viewport>
-                        <Rectangle2D />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="component11" fitHeight="100.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/blue.jpg" />
-                     </image>
-                     <viewport>
-                        <Rectangle2D />
-                     </viewport>
-                  </ImageView>
-                  <ImageView fx:id="component12" fitHeight="100.0" fitWidth="50.0" layoutX="10.0" layoutY="10.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="100.0" fitWidth="50.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/blue.jpg" />
                      </image>

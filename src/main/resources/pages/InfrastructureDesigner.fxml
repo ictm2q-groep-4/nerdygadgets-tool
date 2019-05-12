@@ -18,9 +18,8 @@
   <children>
     <AnchorPane fx:id="anchorPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-max-width: 1280px; -fx-min-width: 1280px; -fx-max-height: 720px; -fx-min-height: 720px;" VBox.vgrow="ALWAYS">
          <children>
-            <Rectangle fill="#cdcdcd" height="30.0" smooth="false" strokeType="INSIDE" width="1280.0" />
             <Label layoutX="14.0" layoutY="7.0" text="Infrastructuur builder" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eff0f2" height="690.0" layoutY="30.0" strokeType="INSIDE" width="390.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eff0f2" height="690.0" layoutY="30.0" strokeType="INSIDE" width="1280.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#dadada" height="150.0" layoutX="14.0" layoutY="45.0" stroke="BLACK" strokeType="INSIDE" width="350.0" />
             <VBox layoutX="15.0" layoutY="45.0" prefHeight="150.0" prefWidth="350.0" spacing="10.0" AnchorPane.bottomAnchor="525.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="907.0" AnchorPane.topAnchor="45.0">
                <children>
@@ -40,13 +39,11 @@
                </opaqueInsets>
             </VBox>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbfbf" height="30.0" layoutY="691.0" strokeType="INSIDE" width="1280.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="83.0" layoutX="297.0" layoutY="608.0" strokeType="INSIDE" width="983.0" />
-            <Label fx:id="totalAvailability" layoutX="409.0" layoutY="618.0" text="Totale beschikbaarheid: ...%" />
-            <Label fx:id="totalCosts" layoutX="409.0" layoutY="634.0" text="Totale kosten: ..." />
-            <Pane layoutX="390.0" layoutY="30.0">
+            <Pane layoutX="390.0" layoutY="30.0" prefHeight="573.0" prefWidth="889.0" AnchorPane.bottomAnchor="117.0" AnchorPane.leftAnchor="391.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
                <children>
-                  <ImageView fx:id="componentlayout" fitHeight="573.0" fitWidth="890.0" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fitHeight="100.0" fitWidth="50.0" onDragDetected="#handleDragDetection" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="573.0" stroke="#9a9a9a" strokeType="INSIDE" width="880.0" />
+                  <ImageView fx:id="componentlayout" fitHeight="573.0" fitWidth="880.0" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="100.0" fitWidth="50.0" layoutX="298.0" layoutY="237.0" onDragDetected="#handleDragDetection" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/blue.jpg" />
                      </image>
@@ -54,8 +51,18 @@
                         <Rectangle2D />
                      </viewport>
                   </ImageView>
+                  <ImageView fitHeight="100.0" fitWidth="50.0" layoutX="211.0" layoutY="89.0" onDragDetected="#handleDragDetection" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/red.jpg" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
                </children>
             </Pane>
+            <Rectangle fill="#cdcdcd" height="30.0" smooth="false" strokeType="INSIDE" width="1280.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="83.0" layoutY="608.0" strokeType="INSIDE" width="1280.0" />
             <VBox layoutX="14.0" layoutY="206.0" prefHeight="428.0" prefWidth="350.0">
                <children>
                   <ComboBox fx:id="componentType" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
@@ -72,6 +79,8 @@
                </children>
             </VBox>
             <Button layoutX="14.0" layoutY="650.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
+            <Label fx:id="totalAvailability" layoutX="409.0" layoutY="618.0" text="Totale beschikbaarheid: ...%" />
+            <Label fx:id="totalCosts" layoutX="409.0" layoutY="634.0" text="Totale kosten: ..." />
          </children>
     </AnchorPane>
   </children>

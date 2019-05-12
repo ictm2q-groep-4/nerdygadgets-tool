@@ -21,6 +21,7 @@ public class DesignerController extends GenericController {
      * A variable that transfers events between methods.
      */
     private Event transferEvent;
+    public ImageView componentlayout;
 
     /**
      * Detects dragging over the imageview
@@ -43,11 +44,31 @@ public class DesignerController extends GenericController {
         //Gets image of component
         ImageView component = (ImageView) getTransferEvent().getSource();
 
-        //Sets coordinates for component
-        component.setX(dragEvent.getX() - (component.getFitWidth() / 2));
-        component.setY(dragEvent.getY() - (component.getFitHeight() / 2));
+        Double borderRight = componentlayout.getFitWidth();
+        Double borderBottom = componentlayout.getFitHeight();
+        Double componentWidth = component.getFitWidth();
+        Double componentHeight = component.getFitHeight();
 
-        dragEvent.consume();
+
+        //Sets X coordinates for component
+        if (dragEvent.getX() <= componentWidth / 2) {
+            component.setLayoutX(0);
+        } else if (dragEvent.getX() >= borderRight - (componentWidth / 2)) {
+            component.setLayoutX(borderRight - componentWidth);
+        } else {
+            component.setLayoutX(dragEvent.getX() - (component.getFitWidth() / 2));
+        }
+
+        //Sets Y coordinates
+        if (dragEvent.getY() <= componentHeight / 2) {
+            component.setLayoutY(0);
+        } else if (dragEvent.getY() >= borderBottom - (componentHeight / 2)) {
+            component.setLayoutY(borderBottom - componentHeight);
+        } else {
+            component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
+        }
+
+
     }
 
     /**
@@ -58,9 +79,9 @@ public class DesignerController extends GenericController {
     @FXML
     public void handleDragDetection(MouseEvent mouseEvent) {
         ImageView component = (ImageView) mouseEvent.getSource();
-        // Initialize dragging operation
-        Dragboard db = component.startDragAndDrop(TransferMode.ANY);
 
+//        // Initialize dragging operation
+        Dragboard db = component.startDragAndDrop(TransferMode.ANY);
         //This did not recognize the image. Not sure why.
         ClipboardContent cb = new ClipboardContent();
         cb.putImage(component.getImage());
@@ -71,11 +92,11 @@ public class DesignerController extends GenericController {
         mouseEvent.consume();
     }
 
-    private Event getTransferEvent(){
+    private Event getTransferEvent() {
         return transferEvent;
     }
 
-    private void setTransferEvent (Event event){
+    private void setTransferEvent(Event event) {
         transferEvent = event;
     }
 }

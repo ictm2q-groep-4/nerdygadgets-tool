@@ -39,10 +39,10 @@
                </opaqueInsets>
             </VBox>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbfbf" height="30.0" layoutY="691.0" strokeType="INSIDE" width="1280.0" />
-            <Pane layoutX="390.0" layoutY="30.0" prefHeight="573.0" prefWidth="889.0" AnchorPane.bottomAnchor="117.0" AnchorPane.leftAnchor="391.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+            <Pane layoutX="390.0" layoutY="30.0" prefHeight="580.0" prefWidth="889.0" AnchorPane.bottomAnchor="97.0" AnchorPane.leftAnchor="391.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="573.0" stroke="#9a9a9a" strokeType="INSIDE" width="880.0" />
-                  <ImageView fx:id="componentlayout" fitHeight="573.0" fitWidth="880.0" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="580.0" stroke="#9a9a9a" strokeType="INSIDE" width="880.0" />
+                  <ImageView fx:id="componentlayout" fitHeight="581.0" fitWidth="880.0" onDragDropped="#handleDrop" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true" />
                   <ImageView fitHeight="100.0" fitWidth="50.0" layoutX="298.0" layoutY="237.0" onDragDetected="#handleDragDetection" onDragOver="#handleDragOver" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/blue.jpg" />
@@ -62,16 +62,16 @@
                </children>
             </Pane>
             <Rectangle fill="#cdcdcd" height="30.0" smooth="false" strokeType="INSIDE" width="1280.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="83.0" layoutY="608.0" strokeType="INSIDE" width="1280.0" />
-            <VBox layoutX="14.0" layoutY="206.0" prefHeight="428.0" prefWidth="350.0">
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="59.0" layoutY="632.0" strokeType="INSIDE" width="1280.0" />
+            <VBox layoutX="14.0" layoutY="206.0" prefHeight="428.0" prefWidth="350.0" spacing="5.0">
                <children>
                   <ComboBox fx:id="componentType" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
                   <Label text="Beschikbare componenten" />
-                  <ScrollPane prefHeight="398.0" prefWidth="350.0">
+                  <ScrollPane prefHeight="365.0" prefWidth="350.0">
                     <content>
-                      <AnchorPane fx:id="componentContainer" minHeight="0.0" minWidth="0.0" prefHeight="396.0" prefWidth="350.0">
+                      <AnchorPane fx:id="componentContainer" minHeight="0.0" minWidth="0.0" prefHeight="384.0" prefWidth="334.0">
                            <children>
-                              <Rectangle arcHeight="5.0" fill="WHITE" height="398.0" stroke="BLACK" strokeType="INSIDE" width="350.0" />
+                              <Rectangle arcHeight="5.0" fill="WHITE" height="365.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="350.0" />
                            </children>
                         </AnchorPane>
                     </content>
@@ -79,8 +79,8 @@
                </children>
             </VBox>
             <Button layoutX="14.0" layoutY="650.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
-            <Label fx:id="totalAvailability" layoutX="409.0" layoutY="618.0" text="Totale beschikbaarheid: ...%" />
-            <Label fx:id="totalCosts" layoutX="409.0" layoutY="634.0" text="Totale kosten: ..." />
+            <Label fx:id="totalAvailability" layoutX="409.0" layoutY="642.0" text="Totale beschikbaarheid: ...%" />
+            <Label fx:id="totalCosts" layoutX="409.0" layoutY="666.0" text="Totale kosten: ..." />
          </children>
     </AnchorPane>
   </children>

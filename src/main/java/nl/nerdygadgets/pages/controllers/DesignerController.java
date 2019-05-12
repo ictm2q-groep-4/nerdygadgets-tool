@@ -41,7 +41,7 @@ public class DesignerController extends GenericController {
      */
     @FXML
     private void handleDrop(DragEvent dragEvent) throws FileNotFoundException {
-        //Gets image of component
+        //Gets ImageView of dragged component
         ImageView component = (ImageView) getTransferEvent().getSource();
 
         Double borderRight = componentlayout.getFitWidth();

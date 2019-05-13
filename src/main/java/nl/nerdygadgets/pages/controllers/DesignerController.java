@@ -3,26 +3,26 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.image.ImageView;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import nl.nerdygadgets.infrastructure.components.*;
 
-import java.io.FileNotFoundException;
-
+import java.io.IOException;
 
 /**
  * @author Stefan Booij
  */
 public class DesignerController extends GenericController {
+
     /**
      * A variable that transfers events between methods.
      */
-
     private Event transferEvent;
 
-    @FXML
-    public ImageView componentLayout;
-
-//    public AnchorPane componentPane;
 
     /**
      * Detects dragging over the imageview
@@ -38,21 +38,16 @@ public class DesignerController extends GenericController {
      * Handles dropping. It alters the coordinates for the component on the layout
      *
      * @param dragEvent
-     * @throws FileNotFoundException
      */
     @FXML
-    private void handleDrop(DragEvent dragEvent) throws FileNotFoundException {
+    private void handleDrop(DragEvent dragEvent) {
         //Gets ImageView of dragged component
-        ImageView component = (ImageView) getTransferEvent().getSource();
+        AnchorPane component = (AnchorPane) getTransferEvent().getSource();
 
-//        if(!componentPane.getChildren().contains(component)){
-//            componentPane.getChildren().add(component);
-//        }
-
-        Double borderRight = componentLayout.getFitWidth();
-        Double borderBottom = componentLayout.getFitHeight();
-        Double componentWidth = component.getFitWidth();
-        Double componentHeight = component.getFitHeight();
+        Double borderRight = componentPane.getWidth();
+        Double borderBottom = componentPane.getHeight();
+        Double componentWidth = component.getWidth();
+        Double componentHeight = component.getHeight();
 
         //Sets X coordinates for component
         if (dragEvent.getX() <= componentWidth / 2) {
@@ -60,7 +55,7 @@ public class DesignerController extends GenericController {
         } else if (dragEvent.getX() >= borderRight - (componentWidth / 2)) {
             component.setLayoutX(borderRight - componentWidth);
         } else {
-            component.setLayoutX(dragEvent.getX() - (component.getFitWidth() / 2));
+            component.setLayoutX(dragEvent.getX() - (component.getWidth() / 2));
         }
 
         //Sets Y coordinates
@@ -82,13 +77,13 @@ public class DesignerController extends GenericController {
      */
     @FXML
     public void handleDragDetection(MouseEvent mouseEvent) {
-        ImageView component = (ImageView) mouseEvent.getSource();
+        AnchorPane component = (AnchorPane) mouseEvent.getSource();
 
 //        // Initialize dragging operation
         Dragboard db = component.startDragAndDrop(TransferMode.ANY);
         //This did not recognize the image. Not sure why.
         ClipboardContent cb = new ClipboardContent();
-        cb.putImage(component.getImage());
+        cb.putString("Yeet"); // Not sure
         db.setContent(cb);
 
         //Transfers this event to get access to the attributes of the components in other methods

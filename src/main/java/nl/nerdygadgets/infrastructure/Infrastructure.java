@@ -84,7 +84,9 @@ public class Infrastructure {
     }
 
     /**
-     * @return
+     * Call the method to start the operation of saving the infrastructure to an XML file
+     *
+     * @return boolean
      */
     public boolean save(String filePath) {
         try {

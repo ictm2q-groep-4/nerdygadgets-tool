@@ -107,6 +107,9 @@ public class DesignerController extends GenericController {
         mouseEvent.consume();
     }
 
+    /**
+     * Starts the operation of saving the XML file.
+     */
     @FXML
     private void handleSaveDesign(){
         //Choose directory where to save file

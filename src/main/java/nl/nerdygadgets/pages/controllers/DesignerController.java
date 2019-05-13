@@ -3,15 +3,11 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Field;
-import java.util.List;
+
 
 /**
  * @author Stefan Booij
@@ -20,8 +16,13 @@ public class DesignerController extends GenericController {
     /**
      * A variable that transfers events between methods.
      */
+
     private Event transferEvent;
-    public ImageView componentlayout;
+
+    @FXML
+    public ImageView componentLayout;
+
+//    public AnchorPane componentPane;
 
     /**
      * Detects dragging over the imageview
@@ -44,11 +45,14 @@ public class DesignerController extends GenericController {
         //Gets ImageView of dragged component
         ImageView component = (ImageView) getTransferEvent().getSource();
 
-        Double borderRight = componentlayout.getFitWidth();
-        Double borderBottom = componentlayout.getFitHeight();
+//        if(!componentPane.getChildren().contains(component)){
+//            componentPane.getChildren().add(component);
+//        }
+
+        Double borderRight = componentLayout.getFitWidth();
+        Double borderBottom = componentLayout.getFitHeight();
         Double componentWidth = component.getFitWidth();
         Double componentHeight = component.getFitHeight();
-
 
         //Sets X coordinates for component
         if (dragEvent.getX() <= componentWidth / 2) {

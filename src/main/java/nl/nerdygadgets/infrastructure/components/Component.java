@@ -59,6 +59,21 @@ public abstract class Component implements Statistic {
      * @param availability  double
      * @param price         int
      * @param componentType ComponentType
+     */
+    public Component(String hostname, double availability, int price, ComponentType componentType) {
+        this.hostname = hostname;
+        this.availability = availability;
+        this.price = price;
+        this.componentType = componentType;
+    }
+
+    /**
+     * This is a constructor for components. It sets all the variables in this class.
+     *
+     * @param hostname      String
+     * @param availability  double
+     * @param price         int
+     * @param componentType ComponentType
      * @param x             int
      * @param y             int
      */

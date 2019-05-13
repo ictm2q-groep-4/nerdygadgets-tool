@@ -75,11 +75,6 @@ public class GenericController implements Controller {
 
                         // draw the components, set the availability and costs
                         this.loadDesignIntoMonitor();
-
-                        Infrastructure.getCurrentInfrastructure().setLoaded(true);
-
-                        this.setTotalAvailability(Infrastructure.getCurrentInfrastructure().getComponents());
-                        this.setTotalCosts(Infrastructure.getCurrentInfrastructure().getComponents());
                     } else {
                         NerdyGadgets.showAlert("Er is een fout opgetreden!", "Het aangereikte bestand is van een onjuist formaat.", Alert.AlertType.ERROR);
                     }
@@ -132,6 +127,13 @@ public class GenericController implements Controller {
                     e.printStackTrace();
                 }
             });
+
+            // Set 'loaded' to true to tell the application that it should no longer try to load in the design.
+            Infrastructure.getCurrentInfrastructure().setLoaded(true);
+
+            // Set the availability and total costs of the components
+            this.setTotalAvailability(Infrastructure.getCurrentInfrastructure().getComponents());
+            this.setTotalCosts(Infrastructure.getCurrentInfrastructure().getComponents());
         } else {
             NerdyGadgets.showAlert("Er is een fout opgetreden!", "We kunnen geen componenten binnen het aangereikte bestand vinden om toe te voegen.", Alert.AlertType.ERROR);
         }

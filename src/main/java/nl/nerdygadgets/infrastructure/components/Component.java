@@ -48,16 +48,16 @@ public abstract class Component implements Statistic {
      * This is the ipv4 address of the server
      */
     private InetAddress ipv4;
+
     /**
      * This is the ipv6 address of the server
      */
     private InetAddress ipv6;
+
     /**
      * This is the port number of the server
      */
     private int portnumber;
-
-
 
     /**
      * This is a constructor for components. It sets all the final variables in this class.
@@ -116,16 +116,12 @@ public abstract class Component implements Statistic {
         this.y = y;
         try {
             this.ipv4 = Inet4Address.getByName(ipv4);
-        }
-        catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             e.printStackTrace();
-
         }
         try {
-
             this.ipv6 = Inet6Address.getByName(ipv6);
-        }
-        catch(UnknownHostException e) {
+        } catch(UnknownHostException e) {
             e.printStackTrace();
         }
         this.portnumber = portnumber;
@@ -150,12 +146,10 @@ public abstract class Component implements Statistic {
         this.componentType = componentType;
         this.x = x;
         this.y = y;
-         try {
+        try {
             this.ipv4 = Inet4Address.getByName(ipv4);
-        }
-        catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             e.printStackTrace();
-
         }
         this.portnumber = portnumber;
     }
@@ -180,10 +174,8 @@ public abstract class Component implements Statistic {
         this.x = x;
         this.y = y;
         try {
-
             this.ipv6 = Inet6Address.getByName(ipv6);
-        }
-        catch(UnknownHostException e) {
+        } catch(UnknownHostException e) {
             e.printStackTrace();
         }
         this.portnumber = portnumber;

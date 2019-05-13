@@ -6,6 +6,6 @@ package nl.nerdygadgets.infrastructure.components;
  */
 public class DBloadbalancer extends Component {
     public DBloadbalancer(String hostname, int x, int y) {
-        super(hostname, 99.999, 200, ComponentType.DBLOADBALANCER, x, y);
+        super(hostname, 99.999, 2000, ComponentType.DBLOADBALANCER, x, y);
     }
 }

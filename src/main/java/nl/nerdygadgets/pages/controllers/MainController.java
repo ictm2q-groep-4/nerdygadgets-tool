@@ -16,7 +16,7 @@ import java.io.IOException;
 public class MainController implements Controller {
 
     /**
-     * When clicking the 'monitor' button, this should move you to the monitor view.
+     * When clicking the 'components' button, this should move you to the components view.
      */
     @FXML
     private void handleMonitorButton() {

@@ -27,14 +27,10 @@
             <Label layoutX="668.0" layoutY="600.0" text="Totale kosten: ..." />
             <ScrollPane layoutX="14.0" layoutY="95.0" prefHeight="517.0" prefWidth="292.0">
                <content>
-                  <Rectangle arcHeight="5.0" fill="WHITE" height="519.0" stroke="BLACK" strokeType="INSIDE" width="291.0" />
+                  <AnchorPane fx:id="componentContainer" prefHeight="504.0" prefWidth="295.0" />
                </content>
             </ScrollPane>
-            <ScrollPane layoutX="348.0" layoutY="95.0" prefHeight="517.0" prefWidth="292.0">
-               <content>
-                  <Rectangle arcHeight="5.0" fill="WHITE" height="509.0" stroke="BLACK" strokeType="INSIDE" width="291.0" />
-               </content>
-            </ScrollPane>
+            <ScrollPane layoutX="348.0" layoutY="95.0" prefHeight="517.0" prefWidth="292.0" />
             <Label layoutX="14.0" layoutY="79.0" text="Beschikbare componenten" />
             <Label layoutX="348.0" layoutY="79.0" text="Gekozen componenten" />
             <Button layoutX="196.0" layoutY="617.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="110.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Toevoegen" textFill="WHITE" />

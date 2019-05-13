@@ -47,8 +47,8 @@ public class NerdyGadgets extends Application {
 
         // Set the title, width and height for the stage (NOTE: The stage is the whole application, including the exit/minimize/maximize buttons)
         stage.setTitle("NerdyGadgets | multipurpose network tool");
-        stage.setWidth(1280);
-        stage.setHeight(720);
+
+        //!!Removed 'setWidth' and 'setHeight' because the scene wouldn't fit in the stage!!
 
         // center on screen and make it non-resizable (To not need responsive design)
         stage.setResizable(false);

@@ -64,8 +64,8 @@ public class DesignManager {
     }
 
 
-    public void save(String filePath){
-//        XMLImporter.XMLImporter(filePath);
+    public void save(String filePath, List<Component> components){
+        XMLExporter.getXMLExporterInstance().exportXML(filePath, components);
     }
 
 }

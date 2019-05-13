@@ -88,4 +88,9 @@ public abstract class Component implements Statistic {
         this.y = y;
     }
     // endregion
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 }

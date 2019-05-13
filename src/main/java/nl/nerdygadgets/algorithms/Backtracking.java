@@ -14,12 +14,12 @@ public class Backtracking {
     /**
      * This contains all the possible web components that can be used
      */
-    private List<Component> webComponents;
+    private Component[] webComponents;
 
     /**
      * This contains all the possible database components that can be used
      */
-    private List<Component> databaseComponents;
+    private Component[] databaseComponents;
 
     /**
      * This contains the most optimal configuration for web servers with at least 99.996 availability and the cheapest
@@ -51,20 +51,61 @@ public class Backtracking {
      * It initializes the necessary variables that contains all the web servers, database servers and other components.
      */
     public Backtracking() {
-        webComponents = new ArrayList<>();
-        databaseComponents = new ArrayList<>();
-
-        webComponents.add(new HAL9001W("",1,1));
-        webComponents.add(new HAL9002W("",1,1));
-        webComponents.add(new HAL9003W("",1,1));
-
-        databaseComponents.add(new HAL9001DB("",1,1));
-        databaseComponents.add(new HAL9002DB("",1,1));
-        databaseComponents.add(new HAL9003DB("",1,1));
-
+        webComponents = new Component[3];
+        databaseComponents = new Component[3];
         otherComponents = new Component[2];
+
+        webComponents[0] = new HAL9001W("",1,1);
+        webComponents[1] = new HAL9002W("",1,1);
+        webComponents[2] = new HAL9003W("",1,1);
+
+        databaseComponents[0] = new HAL9001DB("",1,1);
+        databaseComponents[1] = new HAL9002DB("",1,1);
+        databaseComponents[2] = new HAL9003DB("",1,1);
+
         otherComponents[0] = new pfSense("",1,1);
         otherComponents[1] = new DBLoadBalancer("",1,1);
+    }
+
+    /**
+     * This is the constructor for the backtracking class.
+     * It initializes the necessary variables that contains all the web servers, database servers and other components.
+     * It overrides the webComponents and databaseComponents variables
+     *
+     * @param availableWebComponents        Component[]
+     * @param availableDatabaseComponents   Component[]
+     */
+    public Backtracking(Component[] availableWebComponents, Component[] availableDatabaseComponents) {
+        this();
+
+        if (availableWebComponents != null) {
+            setAvailableWebComponents(webComponents);
+        }
+        if (availableDatabaseComponents != null) {
+            setAvailableDatabaseComponents(databaseComponents);
+        }
+    }
+
+    /**
+     * This is the constructor for the backtracking class.
+     * It initializes the necessary variables that contains all the web servers, database servers and other components.
+     * It overrides the webComponents, databaseComponents, optimalWebConfiguration and optimalDatabaseConfiguration variables.
+     *
+     * @param availableWebComponents        Component[]
+     * @param availableDatabaseComponents   Component[]
+     * @param usedWebComponents             Component[]
+     * @param usedDatabaseComponents        Component[]
+     */
+    public Backtracking(Component[] availableWebComponents, Component[] availableDatabaseComponents,
+                        Component[] usedWebComponents, Component[] usedDatabaseComponents) {
+        this(availableWebComponents, availableDatabaseComponents);
+
+        if (usedWebComponents != null) {
+            setUsedWebComponents(usedWebComponents);
+        }
+        if (usedDatabaseComponents != null) {
+            setUsedDatabaseComponents(usedDatabaseComponents);
+        }
     }
 
     /**
@@ -83,6 +124,24 @@ public class Backtracking {
      */
     public void setUsedDatabaseComponents(Component[] usedDatabaseComponents) {
         this.optimalDatabaseConfiguration = usedDatabaseComponents;
+    }
+
+    /**
+     * Set the available web components that can be used by the backtracking algorithm.
+     *
+     * @param availableWebComponents    Component[]
+     */
+    public void setAvailableWebComponents(Component[] availableWebComponents) {
+        this.webComponents = availableWebComponents;
+    }
+
+    /**
+     * Set the available database components that can be used by the backtracking algorithm.
+     *
+     * @param availableDatabaseComponents   Component[]
+     */
+    public void setAvailableDatabaseComponents(Component[] availableDatabaseComponents) {
+        this.databaseComponents = availableDatabaseComponents;
     }
 
     /**
@@ -122,9 +181,9 @@ public class Backtracking {
      * This is a recursive method that is used as backtracking algorithm.
      *
      * @param currentComponentList  List<Component>     This is the configuration as it is at that moment
-     * @param componentList         List<Component>     This is a list that contains the components where the backtracking algorithm can choose from
+     * @param componentList         Component[]         This is a array that contains the components where the backtracking algorithm can choose from
      */
-    private void solve(List<Component> currentComponentList, List<Component> componentList) {
+    private void solve(List<Component> currentComponentList, Component[] componentList) {
         configurationsTested++;
 
         if (currentComponentList == null || componentList == null) {
@@ -320,6 +379,18 @@ public class Backtracking {
 
     public static void main(String[] args) {
         Backtracking backtracking = new Backtracking();
+
+        Component[] db = new Component[2];
+        Component[] web = new Component[2];
+
+        db[0] = new HAL9001DB("",1,1);
+        db[1] = new HAL9003DB("", 1, 1);
+        web[0] = new HAL9001W("",1,1);
+        web[1] = new HAL9003W("",1,1);
+
+        backtracking.setAvailableDatabaseComponents(db);
+        backtracking.setAvailableWebComponents(web);
+
         backtracking.start();
         backtracking.printSolution();
     }

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.design.XMLImporter;
@@ -46,8 +47,8 @@ public class NerdyGadgets extends Application {
 
         // Set the title, width and height for the stage (NOTE: The stage is the whole application, including the exit/minimize/maximize buttons)
         stage.setTitle("NerdyGadgets | multipurpose network tool");
-        stage.setWidth(1280);
-        stage.setHeight(720);
+
+        //!!Removed 'setWidth' and 'setHeight' because the scene wouldn't fit in the stage!!
 
         // center on screen and make it non-resizable (To not need responsive design)
         stage.setResizable(false);
@@ -90,6 +91,20 @@ public class NerdyGadgets extends Application {
      */
     public static NerdyGadgets getNerdyGadgets() {
         return nerdyGadgets;
+    }
+
+    /**
+     * A static method to show an 'alert', very useful in many cases.
+     *
+     * @param title      String the title which the alert will show
+     * @param headerText String the header text which the alert will show
+     * @param alertType  Alert.AlertType the type of alert it is.
+     */
+    public static void showAlert(String title, String headerText, Alert.AlertType alertType) {
+        Alert XMLalert = new Alert(alertType);
+        XMLalert.setTitle(title);
+        XMLalert.setHeaderText(headerText);
+        XMLalert.showAndWait();
     }
 
 }

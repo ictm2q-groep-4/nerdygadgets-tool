@@ -4,6 +4,7 @@ package nl.nerdygadgets.infrastructure.design;
 import javafx.scene.control.Alert;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,11 +57,7 @@ public class DesignManager {
         if ((components = XMLImporter.getXMLImporter().getComponents(file.getPath())) != null) {
             infrastructure.addComponents(components);
         } else {
-            // show error
-            Alert XMLAlert = new Alert(Alert.AlertType.ERROR);
-            XMLAlert.setTitle("Er is een fout opgetreden");
-            XMLAlert.setHeaderText("Bestand is geen infrastructuur design");
-            XMLAlert.showAndWait();
+            NerdyGadgets.showAlert("Er is een fout opgetreden!", "Bestand is geen infrastructuur design.", Alert.AlertType.ERROR);
         }
 
         return infrastructure;
@@ -68,7 +65,7 @@ public class DesignManager {
 
 
     public void save(String filePath){
-        XMLImporter.XMLImporterr(filePath);
+//        XMLImporter.XMLImporter(filePath);
     }
 
 }

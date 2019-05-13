@@ -30,6 +30,11 @@ public class Infrastructure {
     private static Infrastructure currentInfrastructure;
 
     /**
+     * Boolean which specifies if the design has been loaded already.
+     */
+    private boolean loaded;
+
+    /**
      * The constructor for Infrastructure.
      */
     public Infrastructure() {
@@ -115,8 +120,16 @@ public class Infrastructure {
         return currentInfrastructure;
     }
 
+    public boolean isLoaded() {
+        return loaded;
+    }
+
     public static void setCurrentInfrastructure(Infrastructure currentInfrastructure) {
         Infrastructure.currentInfrastructure = currentInfrastructure;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 
     // endregion

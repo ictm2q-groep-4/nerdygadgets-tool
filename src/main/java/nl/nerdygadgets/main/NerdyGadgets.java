@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.HAL9001DB;
 import nl.nerdygadgets.infrastructure.design.XMLImporter;
 import nl.nerdygadgets.pages.PageRegister;
 
@@ -33,6 +34,7 @@ public class NerdyGadgets extends Application {
 
 
     public static void main(String[] args) {
+        test();
         launch(args);
     }
 
@@ -105,6 +107,15 @@ public class NerdyGadgets extends Application {
         XMLalert.setTitle(title);
         XMLalert.setHeaderText(headerText);
         XMLalert.showAndWait();
+    }
+
+    public static void test () {
+        Component kaas = new HAL9001DB("kaas", 4, 5);
+        if (kaas.isOnline()) {
+            System.out.println("SSH connection is live");
+        }
+
+        System.out.println(kaas.getDiskUsage());
     }
 
 }

@@ -1,5 +1,11 @@
 package nl.nerdygadgets.infrastructure.components;
 
+import com.jcraft.jsch.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The abstract class that is extended by all components
  *
@@ -71,6 +77,136 @@ public abstract class Component implements Statistic {
         this.componentType = componentType;
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * This method checks via SSH if a component is up and running
+     *
+     * @return Returns true when online, false when offline
+     */
+    public boolean isOnline() {
+        boolean isUp = false;
+
+        // get ssh channel
+        Channel channel = getSSHChannel("test", "louelzer.com", "kaas");
+
+        try {
+            // open channel
+            channel.connect();
+
+            isUp = channel.isConnected();
+
+            // close channel
+            channel.disconnect();
+
+            return isUp;
+        } catch (Exception e) {
+            System.err.println("Something went wrong while connecting to the SSH server");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * This method gets a components disk usage via SSH
+     *
+     * @return Returns a string containing the disk usage
+     */
+    public String getDiskUsage() {
+        try {
+            // get ssh channel
+            Channel channel = getSSHChannel("test", "louelzer.com", "kaas");
+
+            // set streams
+            OutputStream ops = channel.getOutputStream();
+            PrintStream ps = new PrintStream(ops);
+
+            // open channel
+            channel.connect();
+
+            // run command
+            ps.println("du -h");
+            ps.println("exit");
+
+            // close printstream
+            ps.flush();
+            ps.close();
+
+            // initiate inputstream and bufferedreader
+            InputStream in = channel.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+            System.out.println("Opening...");
+
+            // read the output
+            String line;
+            List<String> output = new ArrayList<>();
+
+            while ((line = reader.readLine()) != null) {
+                output.add(line);
+            }
+
+            // close reader and channel
+            reader.close();
+            channel.disconnect();
+
+            // concatenate to one string
+            final StringBuilder builder = new StringBuilder();
+            output.forEach((val) -> {
+                builder.append(val + "\n");
+            });
+
+            return builder.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * This method gets the processor usage from a component via SSH
+     *
+     * @return Returns the current processor usage in a String
+     */
+    public String getProcessorUsage() {
+        return null;
+    }
+
+    /**
+     * This method opens a SSH channel with a remote host
+     *
+     * @param user          The username for the connection
+     * @param host          The hostname
+     * @param password      The password
+     * @return              Returns a channel which can be used to initiate a connection
+     */
+    public Channel getSSHChannel(String user, String host, String password) {
+        try {
+            // initiate Java Secure Channel object
+            JSch jsch = new JSch();
+
+            // initiate session
+            Session session = jsch.getSession(user, host, 22);
+
+            // disable host key verification
+            java.util.Properties config = new java.util.Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+
+            // set password for session
+            session.setPassword(password);
+
+            // connect session
+            session.connect();
+
+            // open channel
+            Channel channel = session.openChannel("shell");
+
+            return channel;
+        } catch (Exception e) {
+            System.err.println("Something went wrong while opening the SSH channel");
+            return null;
+        }
     }
 
     // region Getters

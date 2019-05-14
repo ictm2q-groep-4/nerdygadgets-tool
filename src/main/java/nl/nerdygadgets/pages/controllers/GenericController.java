@@ -1,33 +1,44 @@
 package nl.nerdygadgets.pages.controllers;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import nl.nerdygadgets.infrastructure.Infrastructure;
-import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
 import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.PageRegister;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * All things which need to be handled the same way on every page should be registered here.
  *
  * @author Lucas Ouwens
+ * @author Stefan Booij
  */
-public class GenericController {
+public class GenericController implements Initializable {
 
     @FXML
-    protected Rectangle componentPane;
+    public Rectangle componentPane;
 
     @FXML
     private AnchorPane anchorPane;
@@ -37,6 +48,12 @@ public class GenericController {
 
     @FXML
     private Label totalCosts;
+
+    @FXML
+    private VBox componentContainer;
+
+    @FXML
+    public static Event transferEvent;
 
     /**
      * The controller for the 'back to main menu' controller in (almost) every view.
@@ -99,9 +116,30 @@ public class GenericController {
             current.getComponents().forEach(component -> {
                 try {
                     Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
+                    componentPane.setUserData(component);
                     Label hostName = (Label) componentPane.getChildren().get(1);
                     Rectangle box = (Rectangle) componentPane.getChildren().get(0);
 
+                    Tooltip statisticTooltip = new Tooltip();
+                    statisticTooltip.setPrefSize(220, 180);
+
+                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+
+//                        if(component.isOnline()) {
+//                            box.setFill(Color.GREEN);
+//                        } else {
+//                            box.setFill(Color.DARKRED);
+//                        }
+
+                        statisticTooltip.setText(
+//                                "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
+//                                "Disk usage: " + (component.isOnline()) ? (component.getDiskUsage()) : "Unavailable" + "\n" +
+//                                "Processor usage: " + (component.isOnline()) ? (component.getProcessorUsage()) : "Unavailable"
+                                "" // remove this and uncomment the above once implemented.
+                        );
+                    }
+
+                    Tooltip.install(componentPane, statisticTooltip);
                     // set the layout axises of the box
                     box.setLayoutX(0);
                     box.setLayoutY(0);
@@ -165,6 +203,100 @@ public class GenericController {
             availability += c.availability;
         }
         totalAvailability.setText("Totale beschikbaarheid: " + (availability / components.size()) + "%");
+    }
+
+    /**
+     * Load the elements which will be used to fill the design/optimizer.
+     */
+    private void loadSelectableElements() {
+        // Create an array of all the currently existing components.
+        // We assume these will be the only ones in existence.
+        Component[] components = {
+                new DBloadbalancer("DBLoadbalancer", 0, 0),
+                new HAL9001DB("HAL9001DB", 0, 0),
+                new HAL9002DB("HAL9002DB", 0, 0),
+                new HAL9003DB("HAL9003DB", 0, 0),
+                new HAL9001W("HAL9001W", 0, 0),
+                new HAL9002W("HAL9002W", 0, 0),
+                new HAL9003W("HAL9003W", 0, 0),
+                new pfSense("pfSense", 0, 0)
+        };
+
+        try {
+            for (int i = 0; i < components.length; i++) {
+                Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
+                Label title = (Label) componentPane.getChildren().get(1);
+                Label availability = (Label) componentPane.getChildren().get(2);
+                Label cost = (Label) componentPane.getChildren().get(3);
+
+                title.setText(components[i].getHostname());
+                availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
+                cost.setText("Prijs: € " + components[i].price);
+
+                componentPane.setStyle("-fx-background-color: #fff");
+
+                //Places the componentpane in
+                AnchorPane draggableComponent = createDraggablePane();
+                draggableComponent.getChildren().add(componentPane);
+
+                componentContainer.getChildren().add(draggableComponent);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates an AnchorPane with onDragDetection set to the method handleDragDetection
+     *
+     * @return AnchorPane
+     */
+    public AnchorPane createDraggablePane() {
+        AnchorPane draggableComponent = new AnchorPane();
+
+        draggableComponent.setOnDragDetected(mouseEvent -> {
+            handleDragDetection(mouseEvent);
+        });
+
+        return draggableComponent;
+    }
+
+    /**
+     * Handles dragging and initializes drag and drop operation
+     *
+     * @param mouseEvent mouseEvent
+     */
+    @FXML
+    public void handleDragDetection(MouseEvent mouseEvent) {
+        AnchorPane component = (AnchorPane) mouseEvent.getSource();
+
+        // Initialize dragging operation
+        Dragboard db = component.startDragAndDrop(TransferMode.ANY);
+        // The dragboard requires content to initialize dragging, but the transferring of content is done through transferEvent.
+        ClipboardContent cb = new ClipboardContent();
+        // Used for check in handleDragOver that will ignore content from outside of the application
+        cb.putString("Check for draggable components");
+        db.setContent(cb);
+
+        // Transfers this event to get access to the attributes of the components in other methods
+        setTransferEvent(mouseEvent);
+        mouseEvent.consume();
+    }
+
+    public Event getTransferEvent() {
+        return transferEvent;
+    }
+
+    public void setTransferEvent(Event event) {
+        transferEvent = event;
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
+            this.loadSelectableElements();
+        }
     }
 
 }

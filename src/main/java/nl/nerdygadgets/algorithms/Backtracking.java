@@ -42,6 +42,16 @@ public class Backtracking {
     private int configurationsTested = 0;
 
     /**
+     * This is used to calculate the availabilityPerComponentType
+     */
+    private double availability = 99.99;
+
+    /**
+     * This is used as a condition for the backtracking algorithm
+     */
+    private double availabilityPerComponentType = 99.996;
+
+    /**
      * If there goes something wrong or you want to stop the backtracking this boolean is changed to true.
      */
     private boolean forceStop = false;
@@ -145,6 +155,31 @@ public class Backtracking {
     }
 
     /**
+     * Set the availability variable that is used by the backtracking algorithm
+     *
+     * @param availability  double
+     */
+    public void setMinimumAvailability(double availability) {
+        this.availability = availability;
+
+        calculateAvailabilityPerComponentType();
+    }
+
+    /**
+     * Calculate the availabilityPerComponentType from availability.
+     * This is done by dividing the overall minimum availability by the otherComponents component availability and then taking the square root of that.
+     */
+    private void calculateAvailabilityPerComponentType() {
+        double availabilityPCT = availability*0.01;
+
+        for (Component component : otherComponents) {
+            availabilityPCT = availabilityPCT / (component.availability*0.01);
+        }
+
+        availabilityPerComponentType = Math.sqrt(availabilityPCT) * 100;
+    }
+
+    /**
      * This starts the backtracking algorithm. It returns true if it succeeded and false if there went something wrong or it stopped.
      *
      * @return boolean
@@ -184,24 +219,29 @@ public class Backtracking {
      * @param componentList         Component[]         This is a array that contains the components where the backtracking algorithm can choose from
      */
     private void solve(List<Component> currentComponentList, Component[] componentList) {
-        configurationsTested++;
+        try {
+            configurationsTested++;
 
-        if (currentComponentList == null || componentList == null) {
-            return;
-        }
-        if (validConfiguration(currentComponentList.toArray(Component[]::new))) {
-            return;
-        }
-
-        for (Component component : componentList) {
-            if (forceStop) {
+            if (currentComponentList == null || componentList == null) {
+                return;
+            }
+            if (validConfiguration(currentComponentList.toArray(Component[]::new))) {
                 return;
             }
 
-            List<Component> _list = new ArrayList<>(currentComponentList);
-            _list.add(component);
+            for (Component component : componentList) {
+                if (forceStop) {
+                    return;
+                }
 
-            solve(_list, componentList);
+                List<Component> _list = new ArrayList<>(currentComponentList);
+                _list.add(component);
+
+                solve(_list, componentList);
+            }
+        } catch (StackOverflowError e) {
+            stop();
+            System.out.println("A StackOverflow Error occurred in the solve method. This happens because this method is called recursively and eats up all your resources ;p");
         }
     }
 
@@ -217,7 +257,7 @@ public class Backtracking {
         if (components.length<=0) {
             return false;
         } else {
-            if (getAvailability(components) >= 99.996) {
+            if (getAvailability(components) >= availabilityPerComponentType) {
                 if (components[0].componentType.equals(ComponentType.DATABASESERVER)) {
                     if (getPrice(components) == getPrice(optimalDatabaseConfiguration)) {
                         if (components.length < optimalDatabaseConfiguration.length) {
@@ -325,15 +365,6 @@ public class Backtracking {
     }
 
     /**
-     * This returns the amount of configurations that have been tested by the backtracking algorithm.
-     *
-     * @return  int
-     */
-    public int getConfigurationsTested() {
-        return configurationsTested;
-    }
-
-    /**
      * This returns the availability calculate over all the components in the infrastructure design
      *
      * @return  double
@@ -372,7 +403,92 @@ public class Backtracking {
                 +getPrice(optimalDatabaseConfiguration);
     }
 
-/*
+    // region Getters
+
+    /**
+     * This returns the amount of configurations that have been tested by the backtracking algorithm.
+     *
+     * @return  int
+     */
+    public int getConfigurationsTested() {
+        return configurationsTested;
+    }
+
+    /**
+     * Get the overall availability requirement
+     *
+     * @return  double
+     */
+    public double getAvailability() {
+        return availability;
+    }
+
+    /**
+     * Get the availability that the Database server and Web server component types should get indibidually.
+     *
+     * @return  double
+     */
+    public double getAvailabilityPerComponentType() {
+        return availabilityPerComponentType;
+    }
+
+    /**
+     * Get the forceStop boolean.
+     *
+     * @return  boolean
+     */
+    public boolean isForceStop() {
+        return forceStop;
+    }
+
+    /**
+     * Get the optimal database server configuration with the set availability
+     *
+     * @return  Component[]
+     */
+    public Component[] getOptimalDatabaseConfiguration() {
+        return optimalDatabaseConfiguration;
+    }
+
+    /**
+     * Get the database server components that are available to the backtracking algorithm to get to the set minimum availability
+     *
+     * @return  Component[]
+     */
+    public Component[] getAvailableDatabaseComponents() {
+        return databaseComponents;
+    }
+
+    /**
+     * Get the optimal web server configuration with the set availability
+     *
+     * @return  Component[]
+     */
+    public Component[] getOptimalWebConfiguration() {
+        return optimalWebConfiguration;
+    }
+
+    /**
+     * Get the web server components that are available to the backtracking algorithm to get to the set minimum availability
+     *
+     * @return  Component[]
+     */
+    public Component[] getAvailableWebComponents() {
+        return webComponents;
+    }
+
+    /**
+     * Get the list of components that are standard in the infrastructure configuration
+     *
+     * @return  Component[]
+     */
+    public Component[] getOtherComponents() {
+        return otherComponents;
+    }
+
+    // endregion
+
+    /*
      * This is just for testing purposes
      *
      * @param args  String[]
@@ -391,6 +507,7 @@ public class Backtracking {
         backtracking.setAvailableDatabaseComponents(db);
         backtracking.setAvailableWebComponents(web);
 
+        backtracking.setMinimumAvailability(99.998); // 99.999 gives a stackoverflow error
         backtracking.start();
         backtracking.printSolution();
     }

@@ -1,6 +1,5 @@
 package nl.nerdygadgets.infrastructure.design;
 
-import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import org.w3c.dom.*;
 
@@ -20,7 +19,7 @@ import java.util.List;
  * @author Stefan Booij
  */
 
-public class XMLExporter {
+class XMLExporter {
     /**
      * A variable which holds our *only* instance of this class.
      */
@@ -58,6 +57,7 @@ public class XMLExporter {
      * Creates a new XML files to the given filepath
      *
      * @param filePath
+     * @param components
      * @return boolean
      */
     public boolean exportXML(String filePath, List<Component> components) {

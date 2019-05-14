@@ -11,7 +11,6 @@ module nerdygadgets {
     requires javafx.fxml;
     requires java.xml;
     requires org.junit.jupiter.api;
-    requires java.sql;
 
     // Allow javafx.<package> to access nl.nerdygadgets.<...> packages.
     // See 'Reflection' for more information on why they need to be opened like this (access related)

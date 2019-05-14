@@ -246,7 +246,7 @@ public abstract class Component implements Statistic {
      * @param password      The password
      * @return              Returns a channel which can be used to initiate a connection
      */
-    public Channel getSSHChannel(String user, String host, String password) {
+    private Channel getSSHChannel(String user, String host, String password) {
         try {
             // initiate Java Secure Channel object
             JSch jsch = new JSch();
@@ -411,6 +411,19 @@ public abstract class Component implements Statistic {
             e.printStackTrace();
         }
     }
+
+    public void setUser (String user) {
+        this.user = user;
+    }
+
+    public void setHost (String host) {
+        this.host = host;
+    }
+
+    public void setPass (String pass) {
+        this.pass = pass;
+    }
+
     // endregion
 
     @Override

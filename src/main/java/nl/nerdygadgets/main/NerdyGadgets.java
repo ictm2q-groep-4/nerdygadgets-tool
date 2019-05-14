@@ -35,7 +35,7 @@ public class NerdyGadgets extends Application {
 
 
     public static void main(String[] args) {
-        test();
+        //test();
         launch(args);
         //System.out.println(Database.getDatabaseInstance());
     }
@@ -118,6 +118,7 @@ public class NerdyGadgets extends Application {
         }
 
         System.out.println(kaas.getDiskUsage());
+        System.out.println(kaas.getProcessorUsage());
     }
 
 }

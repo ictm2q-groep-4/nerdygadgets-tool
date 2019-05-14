@@ -121,6 +121,7 @@ public abstract class Component implements Statistic {
      * @param pass          String
      */
     public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y, String user, String host, String pass) {
+        this(hostname, availability, price, componentType, x, y);
         this.user = user;
         this.host = host;
         this.pass = pass;

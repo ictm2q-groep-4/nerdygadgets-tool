@@ -53,7 +53,8 @@ public class DesignerController extends GenericController {
      */
 
     public AnchorPane componentLayout;
-
+    @FXML
+    public static Event transferEvent;
 
 
     /**
@@ -76,47 +77,50 @@ public class DesignerController extends GenericController {
      * @param dragEvent
      */
 
-//    @FXML
-//    private void handleDrop(DragEvent dragEvent) {
-//
-//        //TODO Create two methods that set coordination for an element that gets dragged into the layout, and a method for one that's already in it.
-//
-//        AnchorPane component = (AnchorPane) getTransferEvent().getSource();
-//
-//        //If the component does not exist in the layout, it will create a new instance of it
-//        if (!componentLayout.getChildren().contains(component)) {
-//            component = copyComponentElements(component);
-//            component = addComponentAttributes(component);
-//            componentLayout.getChildren().add(component);
-//        }
-//
-//        double borderRight = componentLayout.getWidth();
-//        double borderBottom = componentLayout.getHeight();
-//        double componentWidth = component.getWidth();
-//        double componentHeight = component.getHeight();
-//
-//        //Sets X coordinates for component
-//        if (dragEvent.getX() <= componentWidth / 2) {
-//            component.setLayoutX(0);
-//        } else if (dragEvent.getX() >= borderRight - (componentWidth / 2)) {
-//            component.setLayoutX(borderRight - componentWidth);
-//        } else {
-//
-//            component.setLayoutX(dragEvent.getX() - (componentWidth / 2));
-//            System.out.println("YES");
-//
-//        }
-//
-//        //Sets Y coordinates
-//        if (dragEvent.getY() <= componentHeight / 2) {
-//            component.setLayoutY(0);
-//        } else if (dragEvent.getY() >= borderBottom - (componentHeight / 2)) {
-//            component.setLayoutY(borderBottom - componentHeight);
-//        } else {
-//            component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
-//        }
-//
-//    }
+    @FXML
+    private void handleDrop(DragEvent dragEvent) {
+
+        //TODO Create two methods that set coordination for an element that gets dragged into the layout, and a method for one that's already in it.
+        Pane component = (Pane) getTransferEvent().getSource();
+
+        //If the component does not exist in the layout, it will create a new instance of it
+        if (!componentLayout.getChildren().contains(component)) {
+            System.out.println("Test-1");
+            component = copyComponentElements(component);
+            System.out.println("Test");
+            component = addComponentAttributes(component);
+            System.out.println("Test2");
+            componentLayout.getChildren().add(component);
+            System.out.println("Test3");
+        }
+
+        double borderRight = componentLayout.getWidth();
+        double borderBottom = componentLayout.getHeight();
+        double componentWidth = component.getWidth();
+        double componentHeight = component.getHeight();
+
+        //Sets X coordinates for component
+        if (dragEvent.getX() <= componentWidth / 2) {
+            component.setLayoutX(0);
+        } else if (dragEvent.getX() >= borderRight - (componentWidth / 2)) {
+            component.setLayoutX(borderRight - componentWidth);
+        } else {
+
+            component.setLayoutX(dragEvent.getX() - (componentWidth / 2));
+            System.out.println("YES");
+
+        }
+
+        //Sets Y coordinates
+        if (dragEvent.getY() <= componentHeight / 2) {
+            component.setLayoutY(0);
+        } else if (dragEvent.getY() >= borderBottom - (componentHeight / 2)) {
+            component.setLayoutY(borderBottom - componentHeight);
+        } else {
+            component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
+        }
+
+    }
 //
 //    private void addComponentToInfrastructure(AnchorPane component){
 //        AnchorPane componentPane = (AnchorPane) component.getChildren().get(0);
@@ -136,21 +140,46 @@ public class DesignerController extends GenericController {
 //     * @return
 //     */
 //
-//    private AnchorPane copyComponentElements(AnchorPane listComponent) {
-//        AnchorPane newComponent = createDraggablePane();
-//
-//        //Fetches elements of the dragged component
-//        AnchorPane componentElements = (AnchorPane) listComponent.getChildren().get(0);
-//        //Places elements in the created component
-//        Label title = (Label) componentElements.getChildren().get(1);
-//        Label titleCopy = new Label(title.getText());
-//
-//        newComponent.getChildren().add(titleCopy);
-//        newComponent.setStyle("-fx-background-color: #88ffff");
-//
-//        return newComponent;
-//
-//    }
+    private Pane copyComponentElements(Pane listComponent) {
+        Pane newComponent = createDraggablePane();
+
+        //Places elements in the created component
+        Label title = (Label) listComponent.getChildren().get(1);
+        Label titleCopy = new Label(title.getText());
+
+        newComponent.getChildren().add(titleCopy);
+        newComponent.setStyle("-fx-background-color: #88ffff");
+
+        return newComponent;
+
+    }
+
+    public AnchorPane createDraggablePane() {
+        AnchorPane draggableComponent = new AnchorPane();
+
+        draggableComponent.setOnDragDetected(mouseEvent -> {
+            handleDragDetection(mouseEvent);
+        });
+
+        return draggableComponent;
+    }
+
+    @FXML
+    public static void handleDragDetection(MouseEvent mouseEvent) {
+        AnchorPane component = (AnchorPane) mouseEvent.getSource();
+
+        // Initialize dragging operation
+        Dragboard db = component.startDragAndDrop(TransferMode.ANY);
+        // The dragboard requires content to initialize dragging, but the transferring of content is done through transferEvent.
+        ClipboardContent cb = new ClipboardContent();
+        // Used for check in handleDragOver that will ignore content from outside of the application
+        cb.putString("Check for draggable components");
+        db.setContent(cb);
+
+        // Transfers this event to get access to the attributes of the components in other methods
+        setTransferEvent(mouseEvent);
+        mouseEvent.consume();
+    }
 
     /**
      * Starts the operation of saving the XML file.
@@ -180,7 +209,7 @@ public class DesignerController extends GenericController {
 
 
 
-    private AnchorPane addComponentAttributes(AnchorPane component){
+    private Pane addComponentAttributes(Pane component){
         VBox attributes = new VBox();
 
         //TODO Add all the attributes that need to be displayed
@@ -200,6 +229,14 @@ public class DesignerController extends GenericController {
         component.getChildren().add(attributes);
 
         return component;
+    }
+
+    public static Event getTransferEvent() {
+        return transferEvent;
+    }
+
+    public static void setTransferEvent(Event event) {
+        transferEvent = event;
     }
 
 }

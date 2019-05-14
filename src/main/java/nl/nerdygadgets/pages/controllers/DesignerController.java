@@ -10,10 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.HAL9001DB;
@@ -149,6 +146,7 @@ public class DesignerController extends GenericController {
 
         public boolean display() {
             Stage window = new Stage();
+            window.initStyle(StageStyle.UTILITY);
 
             VBox layout = new VBox();
             Label helpLabel = new Label("Voer hostnaam in:");
@@ -167,7 +165,7 @@ public class DesignerController extends GenericController {
 
             layout.getChildren().addAll(helpLabel, hostnameField, okButton);
 
-            layout.setPadding(new Insets(10, 10, 10, 10));
+            layout.setPadding(new Insets(15, 15, 15, 15));
             layout.setSpacing(8);
 
             window.initModality(Modality.APPLICATION_MODAL);

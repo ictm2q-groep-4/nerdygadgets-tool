@@ -193,6 +193,12 @@ public abstract class Component implements Statistic {
     public int getY() {
         return y;
     }
+    public InetAddress getIpv4() {
+        return ipv4;
+    }
+    public InetAddress getIpv6() {
+        return ipv6;
+    }
     // endregion
 
     // region Setters
@@ -208,6 +214,22 @@ public abstract class Component implements Statistic {
         this.y = y;
     }
 
+    public void setIpv4(String ipv4) {
+        try {
+            this.ipv4 = Inet4Address.getByName(ipv4);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void setIpv6(String ipv6) {
+        try {
+            this.ipv6 = Inet6Address.getByName(ipv6);
+        } catch(UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
     // endregion
 
     @Override

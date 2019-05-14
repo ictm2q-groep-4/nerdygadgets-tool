@@ -3,6 +3,8 @@ package nl.nerdygadgets.infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -11,10 +13,6 @@ import java.util.List;
  * @author Joris Vos
  */
 public class Infrastructure {
-    /**
-     * This contains the path to a xml file where to save to and load from.
-     */
-    private final String filePath;
 
     /**
      * This list contains all the components that are currently in the infrastructure design.
@@ -24,17 +22,23 @@ public class Infrastructure {
     /**
      * This equals to the total availability of the infrastructure design.
      */
-    private double availability=0;
+    private double availability = 0;
+
+    /**
+     * The currently loaded infrastructure
+     */
+    private static Infrastructure currentInfrastructure;
+
+    /**
+     * Boolean which specifies if the design has been loaded already.
+     */
+    private boolean loaded;
 
     /**
      * The constructor for Infrastructure.
-     *
-     * @param filePath String
      */
-    public Infrastructure(String filePath) {
-        this.filePath = filePath;
-
-        //components = DesignManager.getDesignManager().load(filePath);
+    public Infrastructure() {
+        components = new ArrayList<>();
         calculateAvailability();
     }
 
@@ -42,7 +46,7 @@ public class Infrastructure {
      * Returns false if the component already exists in the list. Adds the component and returns true if the component does not exists in the list.
      *
      * @param component Component
-     * @return          boolean
+     * @return boolean
      */
     public boolean addComponent(Component component) {
         if (components.contains(component)) {
@@ -55,10 +59,19 @@ public class Infrastructure {
     }
 
     /**
+     * Add each component to the infrastructure.
+     *
+     * @param components List<Component>
+     */
+    public void addComponents(List<Component> components) {
+        components.forEach(this::addComponent);
+    }
+
+    /**
      * Returns false if the component does not exists in the list. Removes the component and returns true if the component does exist in the list.
      *
      * @param component Component
-     * @return          boolean
+     * @return boolean
      */
     public boolean removeComponent(Component component) {
         if (!components.contains(component)) {
@@ -71,7 +84,6 @@ public class Infrastructure {
     }
 
     /**
-     *
      * @return
      */
     public boolean save() {
@@ -95,12 +107,30 @@ public class Infrastructure {
         return components;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
-
     public double getAvailability() {
         return availability;
     }
+
+    /**
+     * Returns the infrastructure if it has already been loaded before, will otherwise return null.
+     *
+     * @return Infrastructure|null
+     */
+    public static Infrastructure getCurrentInfrastructure() {
+        return currentInfrastructure;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public static void setCurrentInfrastructure(Infrastructure currentInfrastructure) {
+        Infrastructure.currentInfrastructure = currentInfrastructure;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
     // endregion
 }

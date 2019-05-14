@@ -52,28 +52,7 @@ public class OptimizerController extends GenericController implements Controller
      */
     @FXML
     public void addComponentsToList(ActionEvent e) {
-        if (!selectedComponents.isEmpty()) {
-            List<Component> components = new ArrayList<>();
-            for (AnchorPane pane : selectedComponents) {
-                if (pane.getUserData() != null) {
-                    components.add((Component) pane.getUserData());
-                    pane.setStyle("-fx-background-color: #fff");
-                }
-            }
-
-            try {
-                this.loadComponents(selectedComponentContainer, (components.toArray(new Component[0])), null);
-
-                // Add a new event listener for the 'picked' components
-                selectedComponentContainer.getChildren().forEach((node) -> {
-                    AnchorPane pane = (AnchorPane) node;
-                    pane.setOnMouseClicked(ev -> toggleSelected(pane, false));
-                });
-
-            } catch (IOException err) {
-                err.printStackTrace();
-            }
-        } else {
+        if (!this.reloadComponents()) {
             NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er zijn geen componenten geselecteerd om toe te voegen.", Alert.AlertType.WARNING);
         }
         selectedComponents.clear();
@@ -128,10 +107,12 @@ public class OptimizerController extends GenericController implements Controller
                     // We don't need this component anymore, we remove it.
                     Component componentToRemove = (Component) node.getUserData();
                     infrastructureToOptimize.getComponents().remove(componentToRemove);
+                } else {
+                    selectedComponents.add((AnchorPane) node);
                 }
             }
-
-            selectedComponentContainer.getChildren().removeAll(toRemove);
+            selectedComponentContainer.getChildren().clear();
+            this.reloadComponents();
         } else {
             // Show a warning if there's no components selected.
             NerdyGadgets.showAlert("Er is iets fout gegaan!", "Er zijn geen componenten geselecteerd om terug te zetten.", Alert.AlertType.WARNING);
@@ -165,6 +146,35 @@ public class OptimizerController extends GenericController implements Controller
      */
     private static void toggleSelected(AnchorPane pane) {
         toggleSelected(pane, true);
+    }
+
+
+    public boolean reloadComponents() {
+        if (!selectedComponents.isEmpty()) {
+            List<Component> components = new ArrayList<>();
+            for (AnchorPane pane : selectedComponents) {
+                if (pane.getUserData() != null) {
+                    components.add((Component) pane.getUserData());
+                    pane.setStyle("-fx-background-color: #fff");
+                }
+            }
+            selectedComponents.clear();
+
+            try {
+                this.loadComponents(selectedComponentContainer, (components.toArray(new Component[0])), null);
+
+                // Add a new event listener for the 'picked' components
+                selectedComponentContainer.getChildren().forEach((node) -> {
+                    AnchorPane pane = (AnchorPane) node;
+                    pane.setOnMouseClicked(ev -> toggleSelected(pane, false));
+                });
+                return true;
+            } catch (IOException err) {
+                err.printStackTrace();
+            }
+        }
+
+        return false;
     }
 
     @FXML

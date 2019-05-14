@@ -55,6 +55,11 @@ public class GenericController implements Initializable {
     private ComboBox selectedItemCategory;
 
     /**
+     * A boolean to check if we're in the 'optimizer' view.
+     */
+    private boolean optimizer = false;
+
+    /**
      * The controller for the 'back to main menu' controller in (almost) every view.
      * <p>
      * Used in: All pages except the main menu.
@@ -232,38 +237,8 @@ public class GenericController implements Initializable {
 
         try {
 
-            // Add a multiplier, since we're also dealing with component type filtering.
-            int multiplier = 0;
-            for (int i = 0; i < components.length; i++) {
-                if (type == null || components[i].componentType == type) {
-
-                    // Get the necessary labels to modify
-                    Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
-                    Label title = (Label) componentPane.getChildren().get(1);
-                    Label availability = (Label) componentPane.getChildren().get(2);
-                    Label cost = (Label) componentPane.getChildren().get(3);
-
-                    // Set the user data, will be useful for status checks
-                    componentPane.setUserData(components[i]);
-
-                    // set the data
-                    title.setText(components[i].getHostname());
-                    availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
-                    cost.setText("Prijs: € " + components[i].price);
-
-                    // add a white background, this is for beauty purposes
-                    componentPane.setStyle("-fx-background-color: #fff");
-
-                    // We're only adding a layoutY if it's not the first element, which is determined by the value of the multipleir
-                    if (multiplier > 0) {
-                        componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight() * multiplier);
-                    }
-                    multiplier++;
-
-                    // add the component pane to the container.
-                    componentContainer.getChildren().add(componentPane);
-                }
-            }
+            // Load the components
+            this.loadComponents(componentContainer, components, type);
 
         } catch (IOException e) {
             // In case of errors: Activate panic-mode (Not implemented, but the devs will panic.)
@@ -293,7 +268,7 @@ public class GenericController implements Initializable {
 
         // find the category, null means it is the 'general' category (so show everything)
         ComponentType category = null;
-        if(!(eventTrigger.getValue().toString().equalsIgnoreCase("algemeen"))) {
+        if (!(eventTrigger.getValue().toString().equalsIgnoreCase("algemeen"))) {
             category = ComponentType.valueOf(eventTrigger.getValue().toString().toUpperCase());
         }
 
@@ -302,6 +277,45 @@ public class GenericController implements Initializable {
 
         // add them again, but this time filtered.
         this.loadSelectableElements(category);
+    }
+
+
+    protected void loadComponents(AnchorPane container, Component[] components, ComponentType type) throws IOException {
+        int multiplier = container.getChildren().size();
+        for (int i = 0; i < components.length; i++) {
+            if (type == null || components[i].componentType == type) {
+                // Get the necessary labels to modify
+                Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
+                Label title = (Label) componentPane.getChildren().get(1);
+                Label availability = (Label) componentPane.getChildren().get(2);
+                Label cost = (Label) componentPane.getChildren().get(3);
+
+                // Set the user data, will be useful for status checks
+                componentPane.setUserData(components[i]);
+                componentPane.setId("is-addable");
+
+                if (this.optimizer) {
+                    componentPane.setOnMouseClicked(OptimizerController::selectElement);
+                }
+
+                // set the data
+                title.setText(components[i].getHostname());
+                availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
+                cost.setText("Prijs: € " + components[i].price);
+
+                // add a white background, this is for beauty purposes
+                componentPane.setStyle("-fx-background-color: #fff");
+
+                // We're only adding a layoutY if it's not the first element, which is determined by the value of the multipleir
+                if (multiplier > 0) {
+                    componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight() * multiplier);
+                }
+                multiplier++;
+
+                // add the component pane to the container.
+                container.getChildren().add(componentPane);
+            }
+        }
     }
 
     /**
@@ -316,6 +330,10 @@ public class GenericController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Load multi-page specific parts
         if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
+            if (url.getFile().endsWith("InfrastructureOptimizer.fxml")) {
+                this.optimizer = true;
+            }
+
             // load the 'general' selectable elements
             this.loadSelectableElements(null);
 

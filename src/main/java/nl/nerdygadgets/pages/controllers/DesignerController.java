@@ -67,7 +67,6 @@ public class DesignerController extends GenericController {
             component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
         }
 
-
     }
 
     /**
@@ -90,7 +89,6 @@ public class DesignerController extends GenericController {
         setTransferEvent(mouseEvent);
         mouseEvent.consume();
     }
-
 
 
     private Event getTransferEvent() {

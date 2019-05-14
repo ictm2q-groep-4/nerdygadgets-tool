@@ -1,18 +1,18 @@
 package nl.nerdygadgets.pages.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
+
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
@@ -48,8 +48,16 @@ public class GenericController implements Initializable {
     @FXML
     private AnchorPane componentContainer;
 
+    @FXML
+    private ComboBox selectableCategory;
+
+    @FXML
+    private ComboBox selectedItemCategory;
+
     /**
      * The controller for the 'back to main menu' controller in (almost) every view.
+     * <p>
+     * Used in: All pages except the main menu.
      */
     @FXML
     private void handleBackButton() {
@@ -66,6 +74,11 @@ public class GenericController implements Initializable {
         }
     }
 
+    /**
+     * A method which handles the choosing of files, making sure it is an XML file & making sure it is an infrastructure design.
+     * <p>
+     * Used in: InfrastructureDesigner, InfrastructureMonitor
+     */
     @FXML
     private void handleOpenDesign() {
         FileChooser fileChooser = new FileChooser();
@@ -98,6 +111,8 @@ public class GenericController implements Initializable {
 
     /**
      * Load the components into the components field
+     * <p>
+     * Used in: InfrastructureMonitor, InfrastructureDesigner
      */
     protected void loadDesignIntoMonitor() {
         double startX = componentPane.getLayoutX();
@@ -116,7 +131,7 @@ public class GenericController implements Initializable {
                     Tooltip statisticTooltip = new Tooltip();
                     statisticTooltip.setPrefSize(220, 180);
 
-                    if(component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
 
 //                        if(component.isOnline()) {
 //                            box.setFill(Color.GREEN);
@@ -201,11 +216,11 @@ public class GenericController implements Initializable {
     /**
      * Load the elements which will be used to fill the design/optimizer.
      */
-    private void loadSelectableElements() {
+    private void loadSelectableElements(ComponentType type) {
         // Create an array of all the currently existing components.
         // We assume these will be the only ones in existence.
         Component[] components = {
-                new DBloadbalancer("DBLoadbalancer", 0,0),
+                new DBloadbalancer("DBLoadbalancer", 0, 0),
                 new HAL9001DB("HAL9001DB", 0, 0),
                 new HAL9002DB("HAL9002DB", 0, 0),
                 new HAL9003DB("HAL9003DB", 0, 0),
@@ -216,34 +231,96 @@ public class GenericController implements Initializable {
         };
 
         try {
+
+            // Add a multiplier, since we're also dealing with component type filtering.
+            int multiplier = 0;
             for (int i = 0; i < components.length; i++) {
-                Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
-                Label title = (Label) componentPane.getChildren().get(1);
-                Label availability = (Label) componentPane.getChildren().get(2);
-                Label cost = (Label) componentPane.getChildren().get(3);
+                if (type == null || components[i].componentType == type) {
 
-                title.setText(components[i].getHostname());
-                availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
-                cost.setText("Prijs: € " + components[i].price);
+                    // Get the necessary labels to modify
+                    Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
+                    Label title = (Label) componentPane.getChildren().get(1);
+                    Label availability = (Label) componentPane.getChildren().get(2);
+                    Label cost = (Label) componentPane.getChildren().get(3);
 
-                componentPane.setStyle("-fx-background-color: #fff");
+                    // Set the user data, will be useful for status checks
+                    componentPane.setUserData(components[i]);
 
-                if(i != 0) {
-                    componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight()*i);
+                    // set the data
+                    title.setText(components[i].getHostname());
+                    availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
+                    cost.setText("Prijs: € " + components[i].price);
+
+                    // add a white background, this is for beauty purposes
+                    componentPane.setStyle("-fx-background-color: #fff");
+
+                    // We're only adding a layoutY if it's not the first element, which is determined by the value of the multipleir
+                    if (multiplier > 0) {
+                        componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight() * multiplier);
+                    }
+                    multiplier++;
+
+                    // add the component pane to the container.
+                    componentContainer.getChildren().add(componentPane);
                 }
-
-                componentContainer.getChildren().add(componentPane);
             }
 
         } catch (IOException e) {
+            // In case of errors: Activate panic-mode (Not implemented, but the devs will panic.)
             e.printStackTrace();
         }
     }
 
+    /**
+     * Add the component type categories into a specified ComboBox
+     *
+     * @param comboBox ComboBox the specified combobox to add the elements to.
+     */
+    public void loadCategoriesIntoTypeSelector(ComboBox comboBox) {
+        // add a 'general' category filter so we can see all components
+        comboBox.getItems().add("Algemeen");
+
+        // add the other components
+        for (ComponentType type : ComponentType.values()) {
+            comboBox.getItems().add(type.name().toLowerCase());
+        }
+    }
+
+    @FXML
+    public void filterComponents(ActionEvent action) {
+        // get the combobox which triggered this event
+        ComboBox eventTrigger = (ComboBox) action.getSource();
+
+        // find the category, null means it is the 'general' category (so show everything)
+        ComponentType category = null;
+        if(!(eventTrigger.getValue().toString().equalsIgnoreCase("algemeen"))) {
+            category = ComponentType.valueOf(eventTrigger.getValue().toString().toUpperCase());
+        }
+
+        // clear the current elements
+        componentContainer.getChildren().clear();
+
+        // add them again, but this time filtered.
+        this.loadSelectableElements(category);
+    }
+
+    /**
+     * This method executes *after* the FXML loads.
+     * <p>
+     * Prepares the page for usage, depending on what page it is.
+     *
+     * @param url            URL
+     * @param resourceBundle ResourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
-            this.loadSelectableElements();
+        // Load multi-page specific parts
+        if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
+            // load the 'general' selectable elements
+            this.loadSelectableElements(null);
+
+            // load the categories into the combobox
+            this.loadCategoriesIntoTypeSelector(selectableCategory);
         }
     }
 }

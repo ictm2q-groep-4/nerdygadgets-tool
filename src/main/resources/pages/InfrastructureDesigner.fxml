@@ -39,7 +39,7 @@
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="59.0" layoutY="632.0" strokeType="INSIDE" width="1280.0" />
             <VBox layoutX="14.0" layoutY="206.0" prefHeight="428.0" prefWidth="350.0" spacing="5.0">
                <children>
-                  <ComboBox fx:id="componentType" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
+                  <ComboBox fx:id="selectableCategory" onAction="#filterComponents" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
                   <Label text="Beschikbare componenten" />
                   <ScrollPane prefWidth="350.0" style="-fx-border-color: #9a9a9a;">
                     <content>

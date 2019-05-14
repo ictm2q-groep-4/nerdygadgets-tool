@@ -38,9 +38,7 @@
             <Line endX="-100.0" endY="621.0" layoutX="426.0" layoutY="55.0" startX="-100.0" startY="-8.0" />
             <Button layoutX="348.0" layoutY="621.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="141.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Alles terugzetten" textFill="WHITE" />
             <Button layoutX="499.0" layoutY="621.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="141.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Geselecteerde terugzetten" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
-            <ComboBox layoutX="14.0" layoutY="47.0" prefWidth="150.0" promptText="Type" />
-            <ComboBox layoutX="349.0" layoutY="47.0" prefWidth="150.0" promptText="Type" />
-            <Label layoutX="668.0" layoutY="44.0" text="Overzicht gekozen componenten binnen infrastructuur" />
+            <ComboBox fx:id="selectableCategory" layoutX="14.0" layoutY="47.0" onAction="#filterComponents" prefWidth="150.0" promptText="Type" />
             <Button layoutX="668.0" layoutY="643.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
          </children>
     </AnchorPane>

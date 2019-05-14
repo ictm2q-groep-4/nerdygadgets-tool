@@ -91,6 +91,8 @@ public class DesignerController extends GenericController {
         mouseEvent.consume();
     }
 
+
+
     private Event getTransferEvent() {
         return transferEvent;
     }
@@ -98,4 +100,5 @@ public class DesignerController extends GenericController {
     private void setTransferEvent(Event event) {
         transferEvent = event;
     }
+
 }

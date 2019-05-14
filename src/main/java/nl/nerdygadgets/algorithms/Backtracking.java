@@ -74,7 +74,7 @@ public class Backtracking {
         databaseComponents[2] = new HAL9003DB("",1,1);
 
         otherComponents[0] = new pfSense("",1,1);
-        otherComponents[1] = new DBloadBalancer("",1,1);
+        otherComponents[1] = new DBLoadBalancer("",1,1);
     }
 
     /**

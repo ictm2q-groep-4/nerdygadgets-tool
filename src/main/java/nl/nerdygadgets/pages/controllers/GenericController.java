@@ -51,9 +51,6 @@ public class GenericController implements Initializable {
     @FXML
     private ComboBox selectableCategory;
 
-    @FXML
-    private ComboBox selectedItemCategory;
-
     /**
      * A boolean to check if we're in the 'optimizer' view.
      */

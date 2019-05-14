@@ -46,6 +46,21 @@ public abstract class Component implements Statistic {
     private String hostname;
 
     /**
+     * This is the SSH username
+     */
+    private String user;
+
+    /**
+     * This is the SSH host url/ip
+     */
+    private String host;
+
+    /**
+     * This is the password used for the SSH connection
+     */
+    private String pass;
+
+    /**
      * This is a constructor for components. It sets all the final variables in this class.
      *
      * @param hostname      String
@@ -80,6 +95,31 @@ public abstract class Component implements Statistic {
     }
 
     /**
+     * This is a constructor for components which includes SSH credentials
+     *
+     * @param hostname      String
+     * @param availability  double
+     * @param price         int
+     * @param componentType ComponentType
+     * @param x             int
+     * @param y             int
+     * @param user          String
+     * @param host          String
+     * @param pass          String
+     */
+    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y, String user, String host, String pass) {
+        this.hostname = hostname;
+        this.availability = availability;
+        this.price = price;
+        this.componentType = componentType;
+        this.x = x;
+        this.y = y;
+        this.user = user;
+        this.host = host;
+        this.pass = pass;
+    }
+
+    /**
      * This method checks via SSH if a component is up and running
      *
      * @return Returns true when online, false when offline
@@ -88,7 +128,7 @@ public abstract class Component implements Statistic {
         boolean isUp = false;
 
         // get ssh channel
-        Channel channel = getSSHChannel("test", "louelzer.com", "kaas");
+        Channel channel = getSSHChannel(user, host, pass);
 
         try {
             // open channel
@@ -113,9 +153,44 @@ public abstract class Component implements Statistic {
      * @return Returns a string containing the disk usage
      */
     public String getDiskUsage() {
+        // Initiate output list
+        List<String> output;
+
+        // Run the command on the remote machine
+        if ((output = runCommand("fsutil volume diskfree c:")) != null) {
+            return output.get(1).split("\\s+")[6];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * This method gets the processor usage from a component via SSH
+     *
+     * @return Returns the current processor usage in a String
+     */
+    public String getProcessorUsage() {
+        // Initiate output list
+        List<String> output;
+
+        // Run the command on the remote machine
+        if ((output = runCommand("wmic cpu get loadpercentage")) != null) {
+            return output.get(1) + "%";
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * This method runs a command on the remote server and captures the output in an ArrayList
+     *
+     * @param command       The command to run
+     * @return              Returns the entire output per line in a List
+     */
+    private List<String> runCommand(String command) {
         try {
             // get ssh channel
-            Channel channel = getSSHChannel("test", "louelzer.com", "kaas");
+            Channel channel = getSSHChannel(user, host, pass);
 
             // set streams
             OutputStream ops = channel.getOutputStream();
@@ -125,8 +200,7 @@ public abstract class Component implements Statistic {
             channel.connect();
 
             // run command
-            ps.println("du -h");
-            ps.println("exit");
+            ps.println(command);
 
             // close printstream
             ps.flush();
@@ -135,8 +209,6 @@ public abstract class Component implements Statistic {
             // initiate inputstream and bufferedreader
             InputStream in = channel.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-            System.out.println("Opening...");
 
             // read the output
             String line;
@@ -150,25 +222,11 @@ public abstract class Component implements Statistic {
             reader.close();
             channel.disconnect();
 
-            // concatenate to one string
-            final StringBuilder builder = new StringBuilder();
-            output.forEach((val) -> {
-                builder.append(val + "\n");
-            });
+            return output;
 
-            return builder.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
-    }
-
-    /**
-     * This method gets the processor usage from a component via SSH
-     *
-     * @return Returns the current processor usage in a String
-     */
-    public String getProcessorUsage() {
         return null;
     }
 

@@ -20,28 +20,28 @@
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbfbf" height="43.0" layoutY="30.0" strokeType="INSIDE" width="1280.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eff0f2" height="690.0" layoutY="30.0" strokeType="INSIDE" width="649.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbfbf" height="30.0" layoutY="691.0" strokeType="INSIDE" width="1280.0" />
-            <Button layoutX="1023.0" layoutY="584.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="234.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Voer optimalisatie algoritme uit" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
-            <Button layoutX="1023.0" layoutY="640.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="125.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Toon overzicht" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
-            <Button layoutX="1156.0" layoutY="640.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="103.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Annuleren" textFill="WHITE" />
-            <Label layoutX="668.0" layoutY="584.0" text="Totale beschikbaarheid: ...%" />
-            <Label layoutX="668.0" layoutY="600.0" text="Totale kosten: ..." />
+            <Button layoutX="927.0" layoutY="595.0" mnemonicParsing="false" onMouseClicked="#handleOptimizeButton" prefHeight="70.0" prefWidth="328.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Voer optimalisatie algoritme uit" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+            <Label fx:id="totalAvailability" layoutX="668.0" layoutY="584.0" text="Totale beschikbaarheid: ...%" />
+            <Label fx:id="totalCosts" layoutX="668.0" layoutY="600.0" text="Totale kosten: ..." />
             <ScrollPane layoutX="14.0" layoutY="95.0" prefHeight="517.0" prefWidth="292.0">
                <content>
                   <AnchorPane fx:id="componentContainer" prefHeight="504.0" prefWidth="295.0" />
                </content>
             </ScrollPane>
-            <ScrollPane layoutX="348.0" layoutY="95.0" prefHeight="517.0" prefWidth="292.0" />
+            <ScrollPane layoutX="348.0" layoutY="95.0" prefHeight="517.0" prefWidth="292.0">
+               <content>
+                  <AnchorPane fx:id="selectedComponentContainer" prefHeight="504.0" prefWidth="295.0" />
+               </content></ScrollPane>
             <Label layoutX="14.0" layoutY="79.0" text="Beschikbare componenten" />
             <Label layoutX="348.0" layoutY="79.0" text="Gekozen componenten" />
-            <Button layoutX="196.0" layoutY="617.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="110.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Toevoegen" textFill="WHITE" />
-            <Button layoutX="14.0" layoutY="617.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="174.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Alles deselecteren" textFill="WHITE" />
+            <Button fx:id="addButton" layoutX="196.0" layoutY="617.0" mnemonicParsing="false" onAction="#addComponentsToList" prefHeight="60.0" prefWidth="110.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Toevoegen" textFill="WHITE" />
+            <Button fx:id="deselectAllButton" layoutX="14.0" layoutY="617.0" mnemonicParsing="false" onMouseClicked="#deselectAllComponents" prefHeight="60.0" prefWidth="174.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Alles deselecteren" textFill="WHITE" />
             <Line endX="-100.0" endY="621.0" layoutX="426.0" layoutY="55.0" startX="-100.0" startY="-8.0" />
-            <Button layoutX="348.0" layoutY="621.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="141.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Alles terugzetten" textFill="WHITE" />
-            <Button layoutX="499.0" layoutY="621.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="141.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Geselecteerde terugzetten" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
-            <ComboBox layoutX="14.0" layoutY="47.0" prefWidth="150.0" promptText="Type" />
-            <ComboBox layoutX="349.0" layoutY="47.0" prefWidth="150.0" promptText="Type" />
-            <Label layoutX="668.0" layoutY="44.0" text="Overzicht gekozen componenten binnen infrastructuur" />
+            <Button fx:id="returnAllButton" layoutX="348.0" layoutY="621.0" mnemonicParsing="false" onMouseClicked="#returnAllComponents" prefHeight="60.0" prefWidth="141.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Alles terugzetten" textFill="WHITE" />
+            <Button fx:id="returnSelectedButton" layoutX="499.0" layoutY="621.0" mnemonicParsing="false" onMouseClicked="#returnSelectedComponents" prefHeight="60.0" prefWidth="141.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Geselecteerde terugzetten" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
+            <ComboBox fx:id="selectableCategory" layoutX="14.0" layoutY="47.0" onAction="#filterComponents" prefWidth="150.0" promptText="Type" />
             <Button layoutX="668.0" layoutY="643.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
+            <AnchorPane fx:id="componentLayout" layoutX="649.0" layoutY="73.0" prefHeight="496.0" prefWidth="631.0" />
          </children>
     </AnchorPane>
   </children>

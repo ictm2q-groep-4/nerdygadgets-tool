@@ -20,6 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+
+import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import nl.nerdygadgets.infrastructure.components.*;
+
+import java.io.IOException;
+
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
@@ -34,6 +42,7 @@ import java.io.IOException;
 import java.util.IllegalFormatWidthException;
 import java.util.List;
 
+
 /**
  * @author Stefan Booij
  */
@@ -42,7 +51,9 @@ public class DesignerController extends GenericController {
     /**
      * A variable that transfers events between methods.
      */
+
     public AnchorPane componentLayout;
+
 
 
     /**
@@ -58,82 +69,88 @@ public class DesignerController extends GenericController {
 
     }
 
+
     /**
      * Handles dropping. It alters the coordinates for the component on the layout
      *
      * @param dragEvent
      */
-    @FXML
-    private void handleDrop(DragEvent dragEvent) {
-        //TODO Create two methods that set coordination for an element that gets dragged into the layout, and a method for one that's already in it.
 
-        AnchorPane component = (AnchorPane) getTransferEvent().getSource();
-
-        //If the component does not exist in the layout, it will create a new instance of it
-        if (!componentLayout.getChildren().contains(component)) {
-            component = copyComponentElements(component);
-            component = addComponentAttributes(component);
-            componentLayout.getChildren().add(component);
-        }
-
-        double borderRight = componentLayout.getWidth();
-        double borderBottom = componentLayout.getHeight();
-        double componentWidth = component.getWidth();
-        double componentHeight = component.getHeight();
-
-        //Sets X coordinates for component
-        if (dragEvent.getX() <= componentWidth / 2) {
-            component.setLayoutX(0);
-        } else if (dragEvent.getX() >= borderRight - (componentWidth / 2)) {
-            component.setLayoutX(borderRight - componentWidth);
-        } else {
-            component.setLayoutX(dragEvent.getX() - (componentWidth / 2));
-            System.out.println("YES");
-        }
-
-        //Sets Y coordinates
-        if (dragEvent.getY() <= componentHeight / 2) {
-            component.setLayoutY(0);
-        } else if (dragEvent.getY() >= borderBottom - (componentHeight / 2)) {
-            component.setLayoutY(borderBottom - componentHeight);
-        } else {
-            component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
-        }
-
-
-    }
-
-    private void addComponentToInfrastructure(AnchorPane component){
-        AnchorPane componentPane = (AnchorPane) component.getChildren().get(0);
-
-        VBox componentAttributes = (VBox) componentPane.getChildren().get(0);
-
-        Label componentNameField = (Label) componentAttributes.getChildren().get(0);
-        String componentName = componentNameField.getText();
-
-//        Infrastructure.getCurrentInfrastructure().addComponent()
-    }
-
-    /**
-     * Copies the elements of the component in the component list and creates a new AnchorPane to place in the layout.
-     *
-     * @param listComponent
-     * @return
-     */
-    private AnchorPane copyComponentElements(AnchorPane listComponent) {
-        AnchorPane newComponent = createDraggablePane();
-
-        //Fetches elements of the dragged component
-        AnchorPane componentElements = (AnchorPane) listComponent.getChildren().get(0);
-        //Places elements in the created component
-        Label title = (Label) componentElements.getChildren().get(1);
-        Label titleCopy = new Label(title.getText());
-
-        newComponent.getChildren().add(titleCopy);
-        newComponent.setStyle("-fx-background-color: #88ffff");
-
-        return newComponent;
-    }
+//    @FXML
+//    private void handleDrop(DragEvent dragEvent) {
+//
+//        //TODO Create two methods that set coordination for an element that gets dragged into the layout, and a method for one that's already in it.
+//
+//        AnchorPane component = (AnchorPane) getTransferEvent().getSource();
+//
+//        //If the component does not exist in the layout, it will create a new instance of it
+//        if (!componentLayout.getChildren().contains(component)) {
+//            component = copyComponentElements(component);
+//            component = addComponentAttributes(component);
+//            componentLayout.getChildren().add(component);
+//        }
+//
+//        double borderRight = componentLayout.getWidth();
+//        double borderBottom = componentLayout.getHeight();
+//        double componentWidth = component.getWidth();
+//        double componentHeight = component.getHeight();
+//
+//        //Sets X coordinates for component
+//        if (dragEvent.getX() <= componentWidth / 2) {
+//            component.setLayoutX(0);
+//        } else if (dragEvent.getX() >= borderRight - (componentWidth / 2)) {
+//            component.setLayoutX(borderRight - componentWidth);
+//        } else {
+//
+//            component.setLayoutX(dragEvent.getX() - (componentWidth / 2));
+//            System.out.println("YES");
+//
+//        }
+//
+//        //Sets Y coordinates
+//        if (dragEvent.getY() <= componentHeight / 2) {
+//            component.setLayoutY(0);
+//        } else if (dragEvent.getY() >= borderBottom - (componentHeight / 2)) {
+//            component.setLayoutY(borderBottom - componentHeight);
+//        } else {
+//            component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
+//        }
+//
+//    }
+//
+//    private void addComponentToInfrastructure(AnchorPane component){
+//        AnchorPane componentPane = (AnchorPane) component.getChildren().get(0);
+//
+//        VBox componentAttributes = (VBox) componentPane.getChildren().get(0);
+//
+//        Label componentNameField = (Label) componentAttributes.getChildren().get(0);
+//        String componentName = componentNameField.getText();
+//
+////        Infrastructure.getCurrentInfrastructure().addComponent()
+//    }
+//
+//    /**
+//     * Copies the elements of the component in the component list and creates a new AnchorPane to place in the layout.
+//     *
+//     * @param listComponent
+//     * @return
+//     */
+//
+//    private AnchorPane copyComponentElements(AnchorPane listComponent) {
+//        AnchorPane newComponent = createDraggablePane();
+//
+//        //Fetches elements of the dragged component
+//        AnchorPane componentElements = (AnchorPane) listComponent.getChildren().get(0);
+//        //Places elements in the created component
+//        Label title = (Label) componentElements.getChildren().get(1);
+//        Label titleCopy = new Label(title.getText());
+//
+//        newComponent.getChildren().add(titleCopy);
+//        newComponent.setStyle("-fx-background-color: #88ffff");
+//
+//        return newComponent;
+//
+//    }
 
     /**
      * Starts the operation of saving the XML file.
@@ -151,6 +168,7 @@ public class DesignerController extends GenericController {
         if(selectedDirectory != null && selectedDirectory.getName().endsWith(".xml")){
             try {
                 Infrastructure.getCurrentInfrastructure().save(selectedDirectory.getAbsolutePath());
+
             }catch (Exception E){
                 E.printStackTrace();
                 NerdyGadgets.showAlert("Er is een fout opgetregen!", "", Alert.AlertType.ERROR);

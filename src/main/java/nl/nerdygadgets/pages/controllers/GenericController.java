@@ -1,21 +1,18 @@
 package nl.nerdygadgets.pages.controllers;
 
-import javafx.event.Event;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
+
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
@@ -33,12 +30,11 @@ import java.util.ResourceBundle;
  * All things which need to be handled the same way on every page should be registered here.
  *
  * @author Lucas Ouwens
- * @author Stefan Booij
  */
 public class GenericController implements Initializable {
 
     @FXML
-    public Rectangle componentPane;
+    protected Rectangle componentPane;
 
     @FXML
     private AnchorPane anchorPane;
@@ -50,13 +46,20 @@ public class GenericController implements Initializable {
     private Label totalCosts;
 
     @FXML
-    private VBox componentContainer;
+    private AnchorPane componentContainer;
 
     @FXML
-    public static Event transferEvent;
+    private ComboBox selectableCategory;
+
+    /**
+     * A boolean to check if we're in the 'optimizer' view.
+     */
+    private boolean optimizer = false;
 
     /**
      * The controller for the 'back to main menu' controller in (almost) every view.
+     * <p>
+     * Used in: All pages except the main menu.
      */
     @FXML
     private void handleBackButton() {
@@ -73,6 +76,11 @@ public class GenericController implements Initializable {
         }
     }
 
+    /**
+     * A method which handles the choosing of files, making sure it is an XML file & making sure it is an infrastructure design.
+     * <p>
+     * Used in: InfrastructureDesigner, InfrastructureMonitor
+     */
     @FXML
     private void handleOpenDesign() {
         FileChooser fileChooser = new FileChooser();
@@ -105,6 +113,8 @@ public class GenericController implements Initializable {
 
     /**
      * Load the components into the components field
+     * <p>
+     * Used in: InfrastructureMonitor, InfrastructureDesigner
      */
     protected void loadDesignIntoMonitor() {
         double startX = componentPane.getLayoutX();
@@ -208,7 +218,7 @@ public class GenericController implements Initializable {
     /**
      * Load the elements which will be used to fill the design/optimizer.
      */
-    private void loadSelectableElements() {
+    private void loadSelectableElements(ComponentType type) {
         // Create an array of all the currently existing components.
         // We assume these will be the only ones in existence.
         Component[] components = {
@@ -223,80 +233,109 @@ public class GenericController implements Initializable {
         };
 
         try {
-            for (int i = 0; i < components.length; i++) {
-                Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
-                Label title = (Label) componentPane.getChildren().get(1);
-                Label availability = (Label) componentPane.getChildren().get(2);
-                Label cost = (Label) componentPane.getChildren().get(3);
 
-                title.setText(components[i].getHostname());
-                availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
-                cost.setText("Prijs: € " + components[i].price);
-
-                componentPane.setStyle("-fx-background-color: #fff");
-
-                //Places the componentpane in
-                AnchorPane draggableComponent = createDraggablePane();
-                draggableComponent.getChildren().add(componentPane);
-
-                componentContainer.getChildren().add(draggableComponent);
-            }
+            // Load the components
+            this.loadComponents(componentContainer, components, type);
 
         } catch (IOException e) {
+            // In case of errors: Activate panic-mode (Not implemented, but the devs will panic.)
             e.printStackTrace();
         }
     }
 
     /**
-     * Creates an AnchorPane with onDragDetection set to the method handleDragDetection
+     * Add the component type categories into a specified ComboBox
      *
-     * @return AnchorPane
+     * @param comboBox ComboBox the specified combobox to add the elements to.
      */
-    public AnchorPane createDraggablePane() {
-        AnchorPane draggableComponent = new AnchorPane();
+    public void loadCategoriesIntoTypeSelector(ComboBox comboBox) {
+        // add a 'general' category filter so we can see all components
+        comboBox.getItems().add("Algemeen");
 
-        draggableComponent.setOnDragDetected(mouseEvent -> {
-            handleDragDetection(mouseEvent);
-        });
-
-        return draggableComponent;
-    }
-
-    /**
-     * Handles dragging and initializes drag and drop operation
-     *
-     * @param mouseEvent mouseEvent
-     */
-    @FXML
-    public void handleDragDetection(MouseEvent mouseEvent) {
-        AnchorPane component = (AnchorPane) mouseEvent.getSource();
-
-        // Initialize dragging operation
-        Dragboard db = component.startDragAndDrop(TransferMode.ANY);
-        // The dragboard requires content to initialize dragging, but the transferring of content is done through transferEvent.
-        ClipboardContent cb = new ClipboardContent();
-        // Used for check in handleDragOver that will ignore content from outside of the application
-        cb.putString("Check for draggable components");
-        db.setContent(cb);
-
-        // Transfers this event to get access to the attributes of the components in other methods
-        setTransferEvent(mouseEvent);
-        mouseEvent.consume();
-    }
-
-    public Event getTransferEvent() {
-        return transferEvent;
-    }
-
-    public void setTransferEvent(Event event) {
-        transferEvent = event;
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
-            this.loadSelectableElements();
+        // add the other components
+        for (ComponentType type : ComponentType.values()) {
+            comboBox.getItems().add(type.name().toLowerCase());
         }
     }
 
+    @FXML
+    public void filterComponents(ActionEvent action) {
+        // get the combobox which triggered this event
+        ComboBox eventTrigger = (ComboBox) action.getSource();
+
+        // find the category, null means it is the 'general' category (so show everything)
+        ComponentType category = null;
+        if (!(eventTrigger.getValue().toString().equalsIgnoreCase("algemeen"))) {
+            category = ComponentType.valueOf(eventTrigger.getValue().toString().toUpperCase());
+        }
+
+        // clear the current elements
+        componentContainer.getChildren().clear();
+
+        // add them again, but this time filtered.
+        this.loadSelectableElements(category);
+    }
+
+
+    protected void loadComponents(AnchorPane container, Component[] components, ComponentType type) throws IOException {
+        int multiplier = container.getChildren().size();
+        for (int i = 0; i < components.length; i++) {
+            if (type == null || components[i].componentType == type) {
+                // Get the necessary labels to modify
+                Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
+                Label title = (Label) componentPane.getChildren().get(1);
+                Label availability = (Label) componentPane.getChildren().get(2);
+                Label cost = (Label) componentPane.getChildren().get(3);
+
+                // Set the user data, will be useful for status checks
+                componentPane.setUserData(components[i]);
+                componentPane.setId("is-addable");
+
+                if (this.optimizer) {
+                    componentPane.setOnMouseClicked(OptimizerController::selectElement);
+                }
+
+                // set the data
+                title.setText(components[i].getHostname());
+                availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
+                cost.setText("Prijs: € " + components[i].price);
+
+                // add a white background, this is for beauty purposes
+                componentPane.setStyle("-fx-background-color: #fff");
+
+                // We're only adding a layoutY if it's not the first element, which is determined by the value of the multipleir
+                if (multiplier > 0) {
+                    componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight() * multiplier);
+                }
+                multiplier++;
+
+                // add the component pane to the container.
+                container.getChildren().add(componentPane);
+            }
+        }
+    }
+
+    /**
+     * This method executes *after* the FXML loads.
+     * <p>
+     * Prepares the page for usage, depending on what page it is.
+     *
+     * @param url            URL
+     * @param resourceBundle ResourceBundle
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // Load multi-page specific parts
+        if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
+            if (url.getFile().endsWith("InfrastructureOptimizer.fxml")) {
+                this.optimizer = true;
+            }
+
+            // load the 'general' selectable elements
+            this.loadSelectableElements(null);
+
+            // load the categories into the combobox
+            this.loadCategoriesIntoTypeSelector(selectableCategory);
+        }
+    }
 }

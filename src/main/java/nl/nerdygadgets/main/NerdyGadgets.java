@@ -33,9 +33,7 @@ public class NerdyGadgets extends Application {
 
     public static void main(String[] args) {
         launch(args);
-        System.out.println(Database.getDatabaseInstance());
-
-
+        //System.out.println(Database.getDatabaseInstance());
     }
 
     @Override

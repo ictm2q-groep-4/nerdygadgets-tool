@@ -6,6 +6,7 @@ import java.util.Arrays;
  * An enumeration for the registration of scenes.
  *
  * @author Lucas Ouwens
+ * @author Joris Vos
  */
 public enum PageRegister {
 
@@ -39,6 +40,7 @@ public enum PageRegister {
 
     /**
      * Easily get a PageRegister enum by its identifier, will return null if the identifier does not exist.
+     * This is done using Arrays.stream
      *
      * @param identifier    String the identifier
      * @return              PageRegister|null
@@ -51,7 +53,7 @@ public enum PageRegister {
     }
 
     /**
-     * get the identifier of a specific enum
+     * get the identifier of a specific enum (page)
      *
      * @return String
      */
@@ -67,8 +69,6 @@ public enum PageRegister {
     public String getFilePath() {
         return "/pages/" + filePath;
     }
-
-
 }
 
 

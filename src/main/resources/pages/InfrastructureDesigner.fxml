@@ -21,7 +21,7 @@
                   <HBox spacing="10.0">
                      <children>
                         <Button id="openDesignButton" fx:id="openDesignButton" mnemonicParsing="false" onMouseClicked="#handleOpenDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open ontwerp" textFill="WHITE" />
-                        <Button id="openDesignButton" fx:id="saveDesignButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Ontwerp opslaan" textFill="WHITE" />
+                        <Button id="openDesignButton" fx:id="saveDesignButton" mnemonicParsing="false" onAction="#handleSaveDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Ontwerp opslaan" textFill="WHITE" />
                      </children>
                   </HBox>
                   <Button id="openDesignButton" fx:id="startOptimalisationButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="310.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Start optimalisatieproces" textFill="WHITE" />

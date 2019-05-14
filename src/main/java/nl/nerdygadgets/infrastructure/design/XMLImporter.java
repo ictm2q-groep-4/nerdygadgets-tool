@@ -142,7 +142,6 @@ public class XMLImporter {
     /**
      * Get access to the XMLImporter class
      *
-     * @param       path the path to the XML file
      * @return      XMLImporter returns the XMLImporter object
      */
     public static XMLImporter getXMLImporter () {

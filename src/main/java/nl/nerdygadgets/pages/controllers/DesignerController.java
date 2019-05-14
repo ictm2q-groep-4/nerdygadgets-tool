@@ -3,7 +3,21 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import nl.nerdygadgets.infrastructure.Infrastructure;
+import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.HAL9001DB;
+import nl.nerdygadgets.infrastructure.design.XMLExporter;
+import nl.nerdygadgets.main.NerdyGadgets;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
@@ -91,7 +105,35 @@ public class DesignerController extends GenericController {
         mouseEvent.consume();
     }
 
+    /**
+     * Starts the operation of saving the XML file.
+     */
+    @FXML
+    private void handleSaveDesign(){
+        //Choose directory where to save file
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("XML File", "*.xml");
+        fileChooser.getExtensionFilters().add(fileExtensions);
 
+        File selectedDirectory = fileChooser.showSaveDialog(NerdyGadgets.getNerdyGadgets().getStage());
+
+
+        if(selectedDirectory != null && selectedDirectory.getName().endsWith(".xml")){
+            try {
+                //Testcode
+                //Need to implement an infrastructure variable that holds components
+//                Infrastructure infrastructure = new Infrastructure();
+//                HAL9001DB testcomponent = new HAL9001DB("Test", 5, 8);
+//                infrastructure.addComponent(testcomponent);
+//                infrastructure.save(selectedDirectory.getAbsolutePath());
+            }catch (Exception E){
+                E.printStackTrace();
+                NerdyGadgets.showAlert("Er is een fout opgetregen!", "", Alert.AlertType.ERROR);
+            }
+        }else{
+            NerdyGadgets.showAlert("Er is een fout opgetregen!", "Geen XML bestand!", Alert.AlertType.ERROR);
+        }
+    }
 
     private Event getTransferEvent() {
         return transferEvent;

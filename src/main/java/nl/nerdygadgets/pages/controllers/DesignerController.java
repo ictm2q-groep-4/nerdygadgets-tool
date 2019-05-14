@@ -27,6 +27,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Box;
 import nl.nerdygadgets.infrastructure.components.*;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,11 +74,7 @@ public class DesignerController extends GenericController {
             component = copyComponentElements(component);
             component = addComponentAttributes(component);
             componentLayout.getChildren().add(component);
-        } else{
-
         }
-
-
 
         double borderRight = componentLayout.getWidth();
         double borderBottom = componentLayout.getHeight();
@@ -106,6 +103,17 @@ public class DesignerController extends GenericController {
 
     }
 
+    private void addComponentToInfrastructure(AnchorPane component){
+        AnchorPane componentPane = (AnchorPane) component.getChildren().get(0);
+
+        VBox componentAttributes = (VBox) componentPane.getChildren().get(0);
+
+        Label componentNameField = (Label) componentAttributes.getChildren().get(0);
+        String componentName = componentNameField.getText();
+
+//        Infrastructure.getCurrentInfrastructure().addComponent()
+    }
+
     /**
      * Copies the elements of the component in the component list and creates a new AnchorPane to place in the layout.
      *
@@ -117,6 +125,15 @@ public class DesignerController extends GenericController {
 
         //Fetches elements of the dragged component
         AnchorPane componentElements = (AnchorPane) listComponent.getChildren().get(0);
+        //Places elements in the created component
+        Label title = (Label) componentElements.getChildren().get(1);
+        Label titleCopy = new Label(title.getText());
+
+        newComponent.getChildren().add(titleCopy);
+        newComponent.setStyle("-fx-background-color: #88ffff");
+
+        return newComponent;
+    }
 
     /**
      * Starts the operation of saving the XML file.
@@ -133,12 +150,7 @@ public class DesignerController extends GenericController {
 
         if(selectedDirectory != null && selectedDirectory.getName().endsWith(".xml")){
             try {
-                //Testcode
-                //Need to implement an infrastructure variable that holds components
-//                Infrastructure infrastructure = new Infrastructure();
-//                HAL9001DB testcomponent = new HAL9001DB("Test", 5, 8);
-//                infrastructure.addComponent(testcomponent);
-//                infrastructure.save(selectedDirectory.getAbsolutePath());
+                Infrastructure.getCurrentInfrastructure().save(selectedDirectory.getAbsolutePath());
             }catch (Exception E){
                 E.printStackTrace();
                 NerdyGadgets.showAlert("Er is een fout opgetregen!", "", Alert.AlertType.ERROR);
@@ -148,17 +160,7 @@ public class DesignerController extends GenericController {
         }
     }
 
-    private Event getTransferEvent() {
-        return transferEvent;
-        //Places elements in the created component
-        Label title = (Label) componentElements.getChildren().get(1);
-        Label titleCopy = new Label(title.getText());
 
-        newComponent.getChildren().add(titleCopy);
-        newComponent.setStyle("-fx-background-color: #88ffff");
-
-        return newComponent;
-    }
 
     private AnchorPane addComponentAttributes(AnchorPane component){
         VBox attributes = new VBox();

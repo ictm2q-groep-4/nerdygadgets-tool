@@ -18,7 +18,7 @@ public class Database {
      * A private database constructor to block anything outside from making a new instance of this class.
      */
     private Database() {
-        String DB_URL = "jdbc:mysql://127.0.0.1:3306/wwi_nl";
+        String DB_URL = "jdbc:mysql://127.0.0.1:3306/cursus";
         String DB_USER = "root";
         String DB_PASS = "";
 

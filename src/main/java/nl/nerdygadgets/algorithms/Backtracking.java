@@ -3,6 +3,7 @@ package nl.nerdygadgets.algorithms;
 import nl.nerdygadgets.infrastructure.components.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -137,6 +138,15 @@ public class Backtracking {
     }
 
     /**
+     * This sets the otherComponents equal to the otherComponents that is a argument of the method
+     *
+     * @param otherComponents   Component[]
+     */
+    public void setUsedOtherComponents(Component[] otherComponents) {
+        this.otherComponents = otherComponents;
+    }
+
+    /**
      * Set the available web components that can be used by the backtracking algorithm.
      *
      * @param availableWebComponents    Component[]
@@ -176,7 +186,18 @@ public class Backtracking {
             availabilityPCT = availabilityPCT / (component.availability*0.01);
         }
 
-        availabilityPerComponentType = Math.sqrt(availabilityPCT) * 100;
+        if ((optimalDatabaseConfiguration != null) && (optimalWebConfiguration != null)) {
+            availabilityPCT = availabilityPCT / (getAvailability(optimalDatabaseConfiguration)*0.01);
+            availabilityPCT = availabilityPCT / (getAvailability(optimalWebConfiguration)*0.01);
+        } else if (optimalDatabaseConfiguration != null) {
+            availabilityPCT = availabilityPCT / (getAvailability(optimalDatabaseConfiguration)*0.01);
+        } else if (optimalWebConfiguration != null) {
+            availabilityPCT = availabilityPCT / (getAvailability(optimalWebConfiguration)*0.01);
+        } else {
+            availabilityPCT = Math.sqrt(availabilityPCT) * 100;
+        }
+
+        availabilityPerComponentType = availabilityPCT;
     }
 
     /**
@@ -332,31 +353,40 @@ public class Backtracking {
         }
 
         StringBuilder databaseServers = new StringBuilder();
-
-        System.out.print("Database servers("+optimalDatabaseConfiguration.length+"): [");
         for (Component component : optimalDatabaseConfiguration) {
             databaseServers.append(component.getClass().getSimpleName());
             databaseServers.append(", ");
         }
-        System.out.println(databaseServers.substring(0, databaseServers.length()-2)+"]");
+        if (databaseServers.length()>0) {
+            System.out.print("Database servers("+optimalDatabaseConfiguration.length+"): [");
+            System.out.println(databaseServers.substring(0, databaseServers.length() - 2) + "]");
+        } else {
+            System.out.print("Database servers(0): []");
+        }
 
         StringBuilder webServers = new StringBuilder();
-
-        System.out.print("Web servers("+optimalWebConfiguration.length+"): [");
         for (Component component : optimalWebConfiguration) {
             webServers.append(component.getClass().getSimpleName());
             webServers.append(", ");
         }
-        System.out.println(webServers.substring(0, webServers.length()-2)+"]");
+        if (webServers.length()>0) {
+            System.out.print("Web servers("+optimalWebConfiguration.length+"): [");
+            System.out.println(webServers.substring(0, webServers.length() - 2) + "]");
+        } else {
+            System.out.print("Web servers(0): []");
+        }
 
         StringBuilder otherComponents = new StringBuilder();
-
-        System.out.print("Other components("+this.otherComponents.length+"): [");
         for (Component component : this.otherComponents) {
             otherComponents.append(component.getClass().getSimpleName());
             otherComponents.append(", ");
         }
-        System.out.println(otherComponents.substring(0, otherComponents.length()-2)+"]");
+        if (otherComponents.length()>0) {
+            System.out.print("Other components("+this.otherComponents.length+"): [");
+            System.out.println(otherComponents.substring(0, otherComponents.length() - 2) + "]");
+        } else {
+            System.out.println("Other components(0): []");
+        }
 
         System.out.println();
         System.out.println("Availability: "+getTotalAvailability()+"%");
@@ -401,6 +431,16 @@ public class Backtracking {
         return price
                 +getPrice(optimalWebConfiguration)
                 +getPrice(optimalDatabaseConfiguration);
+    }
+
+    public List<Component> getAllComponents() {
+        List<Component> allComponents = new ArrayList<>();
+
+        allComponents.addAll(Arrays.asList(optimalDatabaseConfiguration));
+        allComponents.addAll(Arrays.asList(optimalWebConfiguration));
+        allComponents.addAll(Arrays.asList(otherComponents));
+
+        return allComponents;
     }
 
     // region Getters

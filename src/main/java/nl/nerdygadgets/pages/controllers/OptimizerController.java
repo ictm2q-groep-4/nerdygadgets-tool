@@ -7,8 +7,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import nl.nerdygadgets.algorithms.Backtracking;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.ComponentType;
 import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.Controller;
 
@@ -18,6 +20,7 @@ import java.util.List;
 
 /**
  * @author Lucas Ouwens
+ * @author Joris Vos
  */
 public class OptimizerController extends GenericController implements Controller {
 
@@ -27,6 +30,8 @@ public class OptimizerController extends GenericController implements Controller
     private static List<AnchorPane> selectedComponents = new ArrayList<>();
 
     private static Infrastructure infrastructureToOptimize = new Infrastructure();
+
+    private static Infrastructure newInfrastructure = new Infrastructure();
 
     /**
      * Handles the component in the select list being clicked
@@ -163,7 +168,8 @@ public class OptimizerController extends GenericController implements Controller
     }
 
     @FXML
-    private void handleOpimizeButton() {
+    private void handleOptimizeButton() {
+        infrastructureToOptimize.getComponents().clear();
         for (Node n : selectedComponentContainer.getChildren()) {
             AnchorPane pane = (AnchorPane) n;
             if (pane.getUserData() != null && Component.class.isAssignableFrom(pane.getUserData().getClass())) {
@@ -171,7 +177,34 @@ public class OptimizerController extends GenericController implements Controller
                 infrastructureToOptimize.getComponents().add(component);
             }
         }
-        // Do optimization here @jorisvos
+
+        List<Component> webComponents = new ArrayList<>();
+        List<Component> databaseComponents = new ArrayList<>();
+        List<Component> otherComponents = new ArrayList<>();
+
+        for (Component component : infrastructureToOptimize.getComponents()) {
+            if (component.componentType.equals(ComponentType.DATABASESERVER)) {
+                databaseComponents.add(component);
+            } else if (component.componentType.equals(ComponentType.WEBSERVER)) {
+                webComponents.add(component);
+            } else {
+                otherComponents.add(component);
+            }
+        }
+
+        Backtracking backtracking = new Backtracking();
+
+        backtracking.setAvailableDatabaseComponents(databaseComponents.toArray(Component[]::new));
+        backtracking.setAvailableWebComponents(webComponents.toArray(Component[]::new));
+        backtracking.setUsedOtherComponents(otherComponents.toArray(Component[]::new));
+
+        if (backtracking.start()) {
+            backtracking.printSolution();
+            newInfrastructure.getComponents().clear();
+            newInfrastructure.getComponents().addAll(backtracking.getAllComponents());
+        } else {
+            NerdyGadgets.showAlert("Backtracking ERROR", "An error occurred while optimizing the infrastructure. Probably because you didn't select at least 1 component of the types DATABASESERVER or WEBSERVER", Alert.AlertType.ERROR);
+        }
     }
 
 }

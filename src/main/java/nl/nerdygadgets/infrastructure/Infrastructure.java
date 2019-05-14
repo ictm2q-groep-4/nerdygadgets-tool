@@ -84,13 +84,11 @@ public class Infrastructure {
     }
 
     /**
-     * Call the method to start the operation of saving the infrastructure to an XML file
-     *
-     * @return boolean
+     * @return
      */
-    public boolean save(String filePath) {
+    public boolean save() {
         try {
-            DesignManager.getDesignManager().save(filePath, components);
+            //DesignManager.getDesignManager().save(filePath);
             return true;
         } catch (Exception e) {
             return false;

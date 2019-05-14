@@ -63,14 +63,9 @@ public class DesignManager {
         return infrastructure;
     }
 
-    /**
-     * Save the infrastructure to an XML file.
-     *
-     * @param filePath
-     * @param components
-     */
-    public void save(String filePath, List<Component> components){
-        XMLExporter.getXMLExporterInstance().exportXML(filePath, components);
+
+    public void save(String filePath){
+//        XMLImporter.XMLImporter(filePath);
     }
 
 }

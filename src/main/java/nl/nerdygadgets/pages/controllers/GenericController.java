@@ -1,16 +1,19 @@
 package nl.nerdygadgets.pages.controllers;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import nl.nerdygadgets.infrastructure.Infrastructure;
@@ -30,11 +33,12 @@ import java.util.ResourceBundle;
  * All things which need to be handled the same way on every page should be registered here.
  *
  * @author Lucas Ouwens
+ * @author Stefan Booij
  */
 public class GenericController implements Initializable {
 
     @FXML
-    protected Rectangle componentPane;
+    public Rectangle componentPane;
 
     @FXML
     private AnchorPane anchorPane;
@@ -46,7 +50,10 @@ public class GenericController implements Initializable {
     private Label totalCosts;
 
     @FXML
-    private AnchorPane componentContainer;
+    private VBox componentContainer;
+
+    @FXML
+    public static Event transferEvent;
 
     /**
      * The controller for the 'back to main menu' controller in (almost) every view.
@@ -116,7 +123,7 @@ public class GenericController implements Initializable {
                     Tooltip statisticTooltip = new Tooltip();
                     statisticTooltip.setPrefSize(220, 180);
 
-                    if(component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
 
 //                        if(component.isOnline()) {
 //                            box.setFill(Color.GREEN);
@@ -205,7 +212,7 @@ public class GenericController implements Initializable {
         // Create an array of all the currently existing components.
         // We assume these will be the only ones in existence.
         Component[] components = {
-                new DBloadbalancer("DBLoadbalancer", 0,0),
+                new DBloadbalancer("DBLoadbalancer", 0, 0),
                 new HAL9001DB("HAL9001DB", 0, 0),
                 new HAL9002DB("HAL9002DB", 0, 0),
                 new HAL9003DB("HAL9003DB", 0, 0),
@@ -228,11 +235,11 @@ public class GenericController implements Initializable {
 
                 componentPane.setStyle("-fx-background-color: #fff");
 
-                if(i != 0) {
-                    componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight()*i);
-                }
+                //Places the componentpane in
+                AnchorPane draggableComponent = createDraggablePane();
+                draggableComponent.getChildren().add(componentPane);
 
-                componentContainer.getChildren().add(componentPane);
+                componentContainer.getChildren().add(draggableComponent);
             }
 
         } catch (IOException e) {
@@ -240,10 +247,56 @@ public class GenericController implements Initializable {
         }
     }
 
+    /**
+     * Creates an AnchorPane with onDragDetection set to the method handleDragDetection
+     *
+     * @return AnchorPane
+     */
+    public AnchorPane createDraggablePane() {
+        AnchorPane draggableComponent = new AnchorPane();
+
+        draggableComponent.setOnDragDetected(mouseEvent -> {
+            handleDragDetection(mouseEvent);
+        });
+
+        return draggableComponent;
+    }
+
+    /**
+     * Handles dragging and initializes drag and drop operation
+     *
+     * @param mouseEvent mouseEvent
+     */
+    @FXML
+    public void handleDragDetection(MouseEvent mouseEvent) {
+        AnchorPane component = (AnchorPane) mouseEvent.getSource();
+
+        // Initialize dragging operation
+        Dragboard db = component.startDragAndDrop(TransferMode.ANY);
+        // The dragboard requires content to initialize dragging, but the transferring of content is done through transferEvent.
+        ClipboardContent cb = new ClipboardContent();
+        // Used for check in handleDragOver that will ignore content from outside of the application
+        cb.putString("Check for draggable components");
+        db.setContent(cb);
+
+        // Transfers this event to get access to the attributes of the components in other methods
+        setTransferEvent(mouseEvent);
+        mouseEvent.consume();
+    }
+
+    public Event getTransferEvent() {
+        return transferEvent;
+    }
+
+    public void setTransferEvent(Event event) {
+        transferEvent = event;
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
+        if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
             this.loadSelectableElements();
         }
     }
+
 }

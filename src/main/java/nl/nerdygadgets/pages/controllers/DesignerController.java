@@ -3,11 +3,17 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.HAL9001DB;
@@ -18,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 
@@ -35,12 +42,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Box;
 import nl.nerdygadgets.infrastructure.components.*;
+import nl.nerdygadgets.pages.PageRegister;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.IllegalFormatWidthException;
 import java.util.List;
+
+import static javafx.application.Application.launch;
 
 
 /**
@@ -64,7 +74,7 @@ public class DesignerController extends GenericController {
      */
     @FXML
     private void handleDragOver(DragEvent dragEvent) {
-        if(dragEvent.getDragboard().hasString()){
+        if (dragEvent.getDragboard().hasString()) {
             dragEvent.acceptTransferModes(TransferMode.ANY);
         }
 
@@ -79,20 +89,24 @@ public class DesignerController extends GenericController {
 
     @FXML
     private void handleDrop(DragEvent dragEvent) {
-
-        //TODO Create two methods that set coordination for an element that gets dragged into the layout, and a method for one that's already in it.
         Pane component = (Pane) getTransferEvent().getSource();
+        boolean existanceCheck = false;
+        HostnameAlert hostnameInput = new HostnameAlert();
 
         //If the component does not exist in the layout, it will create a new instance of it
         if (!componentLayout.getChildren().contains(component)) {
-            System.out.println("Test-1");
-            component = copyComponentElements(component);
-            System.out.println("Test");
-            component = addComponentAttributes(component);
-            System.out.println("Test2");
-            componentLayout.getChildren().add(component);
-            System.out.println("Test3");
-        }
+            if (hostnameInput.display()) {
+                String hostname = hostnameInput.getHostname();
+                component = copyComponentElements(component);
+                component = addComponentAttributes(component, hostname);
+                componentLayout.getChildren().add(component);
+//            addComponentToInfrastructure(component, hostname);
+            }else{
+                //TODO Catch destruction of component
+            }
+        }else{
+                existanceCheck = true;
+            }
 
         double borderRight = componentLayout.getWidth();
         double borderBottom = componentLayout.getHeight();
@@ -105,10 +119,7 @@ public class DesignerController extends GenericController {
         } else if (dragEvent.getX() >= borderRight - (componentWidth / 2)) {
             component.setLayoutX(borderRight - componentWidth);
         } else {
-
             component.setLayoutX(dragEvent.getX() - (componentWidth / 2));
-            System.out.println("YES");
-
         }
 
         //Sets Y coordinates
@@ -120,26 +131,95 @@ public class DesignerController extends GenericController {
             component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
         }
 
+        if (existanceCheck) {
+            //TODO create method that edits the coordinates of component object
+            //editComponentObject();
+        }
+
     }
+
+    //TODO When hostname is cancelled, it destroys the component
+    class HostnameAlert {
+        private boolean isOk;
+        private TextField hostnameField;
+
+        public void main(String[] args) {
+            launch(args);
+        }
+
+        public boolean display() {
+            Stage window = new Stage();
+
+            VBox layout = new VBox();
+            Label helpLabel = new Label("Voer hostnaam in:");
+
+            hostnameField = new TextField();
+            hostnameField.setPrefWidth(275);
+
+            Button okButton = new Button();
+            okButton.setPrefWidth(75);
+            okButton.setText("OK");
+            okButton.setLayoutX(200);
+            okButton.setOnAction(actionEvent -> {
+                isOk = true;
+                window.close();
+            });
+
+            layout.getChildren().addAll(helpLabel, hostnameField, okButton);
+
+            layout.setPadding(new Insets(10, 10, 10, 10));
+            layout.setSpacing(8);
+
+            window.initModality(Modality.APPLICATION_MODAL);
+            window.setTitle("Hostname");
+            window.setScene(new Scene(layout));
+
+            window.showAndWait();
+
+            return isOk;
+        }
+
+        public String getHostname(){
+            return hostnameField.getText();
+        }
+    }
+
+
+    //TODO Create this method!
+    private void addComponentToInfrastructure(Pane component, String hostname) {
+        List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
+        try {
+            Component componentObject = createComponentObject(component, hostname);
+            infraComponents.add(componentObject);
+        } catch (NoSuchMethodException | ClassNotFoundException e) {
+            System.out.println("Creating component failed");
+            e.printStackTrace();
+        }
+    }
+
+    public Component createComponentObject(Pane component, String hostname) throws NoSuchMethodException, ClassNotFoundException {
+        Label labelType = (Label) component.getChildren().get(0);
+
+        String type = labelType.getText();
+        String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
+
+        //TODO hostname from textfield
+//        String hostname;
+//        int x = (int) component.getLayoutX();
+//        int y = (int) component.getLayoutY();
 //
-//    private void addComponentToInfrastructure(AnchorPane component){
-//        AnchorPane componentPane = (AnchorPane) component.getChildren().get(0);
-//
-//        VBox componentAttributes = (VBox) componentPane.getChildren().get(0);
-//
-//        Label componentNameField = (Label) componentAttributes.getChildren().get(0);
-//        String componentName = componentNameField.getText();
-//
-////        Infrastructure.getCurrentInfrastructure().addComponent()
-//    }
-//
-//    /**
-//     * Copies the elements of the component in the component list and creates a new AnchorPane to place in the layout.
-//     *
-//     * @param listComponent
-//     * @return
-//     */
-//
+//        Class<?> cls = Class.forName(fullClassPath);
+//        return (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
+        return null;
+    }
+
+    /**
+     * Copies the elements of the component in the component list and creates a new AnchorPane to place in the layout.
+     *
+     * @param listComponent
+     * @return
+     */
+
     private Pane copyComponentElements(Pane listComponent) {
         Pane newComponent = createDraggablePane();
 
@@ -185,7 +265,7 @@ public class DesignerController extends GenericController {
      * Starts the operation of saving the XML file.
      */
     @FXML
-    private void handleSaveDesign(){
+    private void handleSaveDesign() {
         //Choose directory where to save file
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("XML File", "*.xml");
@@ -194,29 +274,28 @@ public class DesignerController extends GenericController {
         File selectedDirectory = fileChooser.showSaveDialog(NerdyGadgets.getNerdyGadgets().getStage());
 
 
-        if(selectedDirectory != null && selectedDirectory.getName().endsWith(".xml")){
+        if (selectedDirectory != null && selectedDirectory.getName().endsWith(".xml")) {
             try {
                 Infrastructure.getCurrentInfrastructure().save(selectedDirectory.getAbsolutePath());
 
-            }catch (Exception E){
+            } catch (Exception E) {
                 E.printStackTrace();
                 NerdyGadgets.showAlert("Er is een fout opgetregen!", "", Alert.AlertType.ERROR);
             }
-        }else{
+        } else {
             NerdyGadgets.showAlert("Er is een fout opgetregen!", "Geen XML bestand!", Alert.AlertType.ERROR);
         }
     }
 
 
-
-    private Pane addComponentAttributes(Pane component){
+    private Pane addComponentAttributes(Pane component, String hostname) {
         VBox attributes = new VBox();
 
         //TODO Add all the attributes that need to be displayed
         Label title = (Label) component.getChildren().get(0);
 
         //TODO Add styling to TextField
-        TextField name = new TextField();
+        Label name = new Label(hostname);
         TextField ipv4 = new TextField();
         TextField ipv6 = new TextField();
 

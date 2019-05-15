@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * This class handles the backtracking
  *
+ * @author Lucas Ouwens 
  * @author Joris Vos
  */
 public class Backtracking {
@@ -482,27 +483,27 @@ public class Backtracking {
             otherComponents.append(", ");
         }
         if (otherComponents.length()>0) {
-            solution.append("Other components(");
+            solution.append("Andere components(");
             solution.append(this.otherComponents.length);
             solution.append("): [");
 
             solution.append(otherComponents.substring(0, otherComponents.length() - 2));
             solution.append("]\n");
         } else {
-            solution.append("Other components(0): []\n");
+            solution.append("Andere components(0): []\n");
         }
 
         solution.append("\n");
 
-        solution.append("Availability: ");
+        solution.append("Beschikbaarheid: ");
         solution.append(getTotalAvailability());
         solution.append("%\n");
 
-        solution.append("Price: €");
+        solution.append("Kosten: €");
         solution.append(getTotalPrice());
         solution.append(",-\n");
 
-        solution.append("Configurations tested: ");
+        solution.append("Configuraties getest: ");
         solution.append(configurationsTested);
 
         return solution.toString();

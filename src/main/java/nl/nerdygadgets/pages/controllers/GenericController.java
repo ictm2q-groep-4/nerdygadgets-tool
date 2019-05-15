@@ -293,6 +293,9 @@ public class GenericController implements Initializable {
                 // Set the user data, will be useful for status checks
                 componentPane.setUserData(components[i]);
                 componentPane.setId("is-addable");
+                componentPane.setOnDragDetected(mouseEvent -> {
+                    DesignerController.handleDragDetection(mouseEvent);
+                });
 
                 if (this.optimizer) {
                     componentPane.setOnMouseClicked(OptimizerController::selectElement);

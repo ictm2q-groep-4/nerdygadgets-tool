@@ -47,8 +47,6 @@ public class NerdyGadgets extends Application {
      * @param args  String[]
      */
     public static void main(String[] args) {
-        test();
-
         Infrastructure currentInfrastructure = new Infrastructure();
         Infrastructure.setCurrentInfrastructure(currentInfrastructure);
 
@@ -94,16 +92,6 @@ public class NerdyGadgets extends Application {
         XMLAlert.setTitle(title);
         XMLAlert.setHeaderText(headerText);
         XMLAlert.showAndWait();
-    }
-
-    // TODO remove this method
-    public static void test () {
-        Component kaas = new HAL9001DB("kaas", 4, 5);
-        if (kaas.isOnline()) {
-            System.out.println("SSH connection is live");
-        }
-
-        System.out.println(kaas.getDiskUsage());
     }
 
     // region Getters

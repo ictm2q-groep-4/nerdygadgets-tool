@@ -15,6 +15,7 @@ import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.Controller;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class OptimizerController extends GenericController implements Controller
 
     @FXML
     private AnchorPane selectedComponentContainer;
+
+    @FXML
+    private AnchorPane componentLayout;
 
     private static List<AnchorPane> selectedComponents = new ArrayList<>();
 
@@ -209,11 +213,55 @@ public class OptimizerController extends GenericController implements Controller
         backtracking.setUsedOtherComponents(otherComponents.toArray(Component[]::new));
 
         if (backtracking.start()) {
+            totalAvailability.setText("Totale beschikbaarheid: "+new DecimalFormat("#.###").format(backtracking.getTotalAvailability()).replace(',', '.')+"%");
+            totalCosts.setText("Totale kosten: €"+backtracking.getTotalPrice()+",-");
+            totalConfigurationsTested.setText("Configuraties getest: "+backtracking.getConfigurationsTested());
+
             backtracking.printSolution();
             newInfrastructure.getComponents().clear();
-            newInfrastructure.getComponents().addAll(backtracking.getAllComponents());
+
+            /*
+            int minX = (int)Math.round(componentLayout.getLayoutX()+50);
+            int minY = (int)Math.round(componentLayout.getLayoutY()+50);
+             */
+
+            int minX = 50;
+            int minY = 50;
+
+            int maxX = (int)Math.round(componentLayout.getWidth()-50);
+            int maxY = (int)Math.round(componentLayout.getHeight()-50);
+
+            int currentX = minX;
+            int currentY = minY;
+
+            for (Component component : backtracking.getAllComponents()) {
+                String classPath = "nl.nerdygadgets.infrastructure.components." + component.getClass().getSimpleName();
+
+                try {
+                    Class<?> clazz = Class.forName(classPath);
+                    Component _component =  (Component) clazz.getConstructor(String.class, int.class, int.class)
+                            .newInstance(component.getClass().getSimpleName(), currentX, currentY);
+                    newInfrastructure.getComponents().add(_component);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                currentX += 100;
+
+                if (currentX >= maxX) {
+                    currentY += 100;
+                    currentX = minX;
+                }
+
+                if (currentY >= maxY) {
+                    NerdyGadgets.showAlert("Backtracking ERROR", "An error occurred while optimizing the infrastructure.\nThere are too much components in the infrastructure to show!", Alert.AlertType.ERROR);
+                    return;
+                }
+            }
+
+            
         } else {
-            NerdyGadgets.showAlert("Backtracking ERROR", "An error occurred while optimizing the infrastructure. Probably because you didn't select at least 1 component of the types DATABASESERVER or WEBSERVER", Alert.AlertType.ERROR);
+            NerdyGadgets.showAlert("Backtracking ERROR", "An error occurred while optimizing the infrastructure.\nProbably because you didn't select at least 1 component of the types DATABASESERVER or WEBSERVER", Alert.AlertType.ERROR);
         }
     }
 

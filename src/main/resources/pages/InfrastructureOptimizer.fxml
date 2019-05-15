@@ -23,6 +23,7 @@
             <Button layoutX="927.0" layoutY="595.0" mnemonicParsing="false" onMouseClicked="#handleOptimizeButton" prefHeight="70.0" prefWidth="328.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Voer optimalisatie algoritme uit" textAlignment="CENTER" textFill="WHITE" wrapText="true" />
             <Label fx:id="totalAvailability" layoutX="668.0" layoutY="584.0" text="Totale beschikbaarheid: ...%" />
             <Label fx:id="totalCosts" layoutX="668.0" layoutY="600.0" text="Totale kosten: ..." />
+            <Label fx:id="totalConfigurationsTested" layoutX="668.0" layoutY="616.0" text="Configuraties getest: ..." />
             <ScrollPane layoutX="14.0" layoutY="95.0" prefHeight="517.0" prefWidth="292.0">
                <content>
                   <AnchorPane fx:id="componentContainer" prefHeight="504.0" prefWidth="295.0" />

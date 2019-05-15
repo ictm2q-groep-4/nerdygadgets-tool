@@ -120,62 +120,6 @@ public class Backtracking {
     }
 
     /**
-     * This sets the optimalWebComponents equal to usedWebComponents and calculates only the database components if optimalDatabaseComponents equals null
-     *
-     * @param usedWebComponents Component[]
-     */
-    public void setUsedWebComponents(Component[] usedWebComponents) {
-        this.optimalWebConfiguration = usedWebComponents;
-    }
-
-    /**
-     * This sets the optimalDatabaseComponents equal to usedDatabaseComponents and calculates only the web components if optimalWebComponents equals null
-     *
-     * @param usedDatabaseComponents    Component[]
-     */
-    public void setUsedDatabaseComponents(Component[] usedDatabaseComponents) {
-        this.optimalDatabaseConfiguration = usedDatabaseComponents;
-    }
-
-    /**
-     * This sets the otherComponents equal to the otherComponents that is a argument of the method
-     *
-     * @param otherComponents   Component[]
-     */
-    public void setUsedOtherComponents(Component[] otherComponents) {
-        this.otherComponents = otherComponents;
-    }
-
-    /**
-     * Set the available web components that can be used by the backtracking algorithm.
-     *
-     * @param availableWebComponents    Component[]
-     */
-    public void setAvailableWebComponents(Component[] availableWebComponents) {
-        this.webComponents = availableWebComponents;
-    }
-
-    /**
-     * Set the available database components that can be used by the backtracking algorithm.
-     *
-     * @param availableDatabaseComponents   Component[]
-     */
-    public void setAvailableDatabaseComponents(Component[] availableDatabaseComponents) {
-        this.databaseComponents = availableDatabaseComponents;
-    }
-
-    /**
-     * Set the availability variable that is used by the backtracking algorithm
-     *
-     * @param availability  double
-     */
-    public void setMinimumAvailability(double availability) {
-        this.availability = availability;
-
-        calculateAvailabilityPerComponentType();
-    }
-
-    /**
      * Calculate the availabilityPerComponentType from availability.
      * This is done by dividing the overall minimum availability by the otherComponents component availability and then taking the square root of that.
      */
@@ -304,46 +248,6 @@ public class Backtracking {
     }
 
     /**
-     * This returns the availability of components, this should always be an array that contains one ComponentType
-     *
-     * @param components    Component[]
-     * @return              double
-     */
-    private double getAvailability(Component[] components) {
-        if (components==null) {
-            return 0;
-        }
-
-        double uptime=1;
-
-        for (Component component : components) {
-            uptime = uptime * (1 - component.availability*0.01);
-        }
-
-        return (1-uptime)*100;
-    }
-
-    /**
-     * This returns the price of components, this should always be an array that contains one ComponentType
-     *
-     * @param components    Component[] components
-     * @return              int
-     */
-    private int getPrice(Component[] components) {
-        if (components==null) {
-            return 999999999;
-        }
-
-        int price=0;
-
-        for (Component component : components) {
-            price += component.price;
-        }
-
-        return price;
-    }
-
-    /**
      * This prints the optimal configuration with the availability, price, components and configurations tested.
      * If forceStop equals true or the optimal...Configurations equal to null it returns without printing anything.
      */
@@ -394,6 +298,48 @@ public class Backtracking {
         System.out.println("Configurations tested: "+configurationsTested);
     }
 
+    // region Getters
+
+    /**
+     * This returns the availability of components, this should always be an array that contains one ComponentType
+     *
+     * @param components    Component[]
+     * @return              double
+     */
+    private double getAvailability(Component[] components) {
+        if (components==null) {
+            return 0;
+        }
+
+        double uptime=1;
+
+        for (Component component : components) {
+            uptime = uptime * (1 - component.availability*0.01);
+        }
+
+        return (1-uptime)*100;
+    }
+
+    /**
+     * This returns the price of components, this should always be an array that contains one ComponentType
+     *
+     * @param components    Component[] components
+     * @return              int
+     */
+    private int getPrice(Component[] components) {
+        if (components==null) {
+            return 999999999;
+        }
+
+        int price=0;
+
+        for (Component component : components) {
+            price += component.price;
+        }
+
+        return price;
+    }
+
     /**
      * This returns the availability calculate over all the components in the infrastructure design
      *
@@ -442,8 +388,6 @@ public class Backtracking {
 
         return allComponents;
     }
-
-    // region Getters
 
     /**
      * This returns the amount of configurations that have been tested by the backtracking algorithm.
@@ -528,28 +472,63 @@ public class Backtracking {
 
     // endregion
 
-    /*
-     * This is just for testing purposes
+    // region Setters
+
+    /**
+     * This sets the optimalWebComponents equal to usedWebComponents and calculates only the database components if optimalDatabaseComponents equals null
      *
-     * @param args  String[]
-
-    public static void main(String[] args) {
-        Backtracking backtracking = new Backtracking();
-
-        Component[] db = new Component[2];
-        Component[] web = new Component[2];
-
-        db[0] = new HAL9001DB("",1,1);
-        db[1] = new HAL9003DB("", 1, 1);
-        web[0] = new HAL9001W("",1,1);
-        web[1] = new HAL9003W("",1,1);
-
-        backtracking.setAvailableDatabaseComponents(db);
-        backtracking.setAvailableWebComponents(web);
-
-        backtracking.setMinimumAvailability(99.998); // 99.999 gives a stackoverflow error
-        backtracking.start();
-        backtracking.printSolution();
+     * @param usedWebComponents Component[]
+     */
+    public void setUsedWebComponents(Component[] usedWebComponents) {
+        this.optimalWebConfiguration = usedWebComponents;
     }
-*/
+
+    /**
+     * This sets the optimalDatabaseComponents equal to usedDatabaseComponents and calculates only the web components if optimalWebComponents equals null
+     *
+     * @param usedDatabaseComponents    Component[]
+     */
+    public void setUsedDatabaseComponents(Component[] usedDatabaseComponents) {
+        this.optimalDatabaseConfiguration = usedDatabaseComponents;
+    }
+
+    /**
+     * This sets the otherComponents equal to the otherComponents that is a argument of the method
+     *
+     * @param otherComponents   Component[]
+     */
+    public void setUsedOtherComponents(Component[] otherComponents) {
+        this.otherComponents = otherComponents;
+    }
+
+    /**
+     * Set the available web components that can be used by the backtracking algorithm.
+     *
+     * @param availableWebComponents    Component[]
+     */
+    public void setAvailableWebComponents(Component[] availableWebComponents) {
+        this.webComponents = availableWebComponents;
+    }
+
+    /**
+     * Set the available database components that can be used by the backtracking algorithm.
+     *
+     * @param availableDatabaseComponents   Component[]
+     */
+    public void setAvailableDatabaseComponents(Component[] availableDatabaseComponents) {
+        this.databaseComponents = availableDatabaseComponents;
+    }
+
+    /**
+     * Set the availability variable that is used by the backtracking algorithm
+     *
+     * @param availability  double
+     */
+    public void setMinimumAvailability(double availability) {
+        this.availability = availability;
+
+        calculateAvailabilityPerComponentType();
+    }
+
+    // endregion
 }

@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 
@@ -40,10 +41,13 @@ public class GenericController implements Initializable {
     private AnchorPane anchorPane;
 
     @FXML
-    private Label totalAvailability;
+    protected Label totalAvailability;
 
     @FXML
-    private Label totalCosts;
+    protected Label totalCosts;
+
+    @FXML
+    protected Label totalConfigurationsTested;
 
     @FXML
     private AnchorPane componentContainer;
@@ -55,6 +59,11 @@ public class GenericController implements Initializable {
      * A boolean to check if we're in the 'optimizer' view.
      */
     private boolean optimizer = false;
+
+    /**
+     * A boolean to check if we're on the monitor page.
+     */
+    private boolean monitor = false;
 
     /**
      * The controller for the 'back to main menu' controller in (almost) every view.
@@ -130,26 +139,45 @@ public class GenericController implements Initializable {
                     Label hostName = (Label) componentPane.getChildren().get(1);
                     Rectangle box = (Rectangle) componentPane.getChildren().get(0);
 
-                    Tooltip statisticTooltip = new Tooltip();
-                    statisticTooltip.setPrefSize(220, 180);
+                    // Only add tooltip with statistics when we're on the monitor page.
+                    if(this.monitor) {
+                        Tooltip statisticTooltip = new Tooltip();
+                        statisticTooltip.setUserData(component);
 
-                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                        statisticTooltip.setOnShowing(ev -> {
+                            try {
+                                Tooltip statistic = (Tooltip) ev.getSource();
+                                Component tooltipComponent = (Component) statistic.getUserData();
+                                if (tooltipComponent != null) {
+                                    statistic.setText(
+                                            "Currently: " + (tooltipComponent.isOnline() ? "online" : "offline") + "\n" +
+                                                    "Disk usage: " + (tooltipComponent.isOnline() ? tooltipComponent.getDiskUsage() : "Unavailable") + "\n" +
+                                                    "Processor usage: " + (tooltipComponent.isOnline() ? (tooltipComponent.getProcessorUsage()) : "Unavailable")
+                                    );
+                                }
+                            } catch (NullPointerException e) {
+                                System.out.println("Unknown data presented for statistic tooltip.");
+                            }
+                        });
 
-//                        if(component.isOnline()) {
-//                            box.setFill(Color.GREEN);
-//                        } else {
-//                            box.setFill(Color.DARKRED);
-//                        }
+                        if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
 
-                        statisticTooltip.setText(
-//                                "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
-//                                "Disk usage: " + (component.isOnline()) ? (component.getDiskUsage()) : "Unavailable" + "\n" +
-//                                "Processor usage: " + (component.isOnline()) ? (component.getProcessorUsage()) : "Unavailable"
-                                "" // remove this and uncomment the above once implemented.
-                        );
+                            if (component.isOnline()) {
+                                box.setFill(Color.GREEN);
+                            } else {
+                                box.setFill(Color.DARKRED);
+                            }
+
+                            statisticTooltip.setText(
+                                    "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
+                                            "Disk usage: " + (component.isOnline() ? component.getDiskUsage() : "Unavailable") + "\n" +
+                                            "Processor usage: " + (component.isOnline() ? (component.getProcessorUsage()) : "Unavailable")
+                            );
+                        }
+
+                        Tooltip.install(componentPane, statisticTooltip);
                     }
 
-                    Tooltip.install(componentPane, statisticTooltip);
                     // set the layout axises of the box
                     box.setLayoutX(0);
                     box.setLayoutY(0);
@@ -339,6 +367,9 @@ public class GenericController implements Initializable {
 
             // load the categories into the combobox
             this.loadCategoriesIntoTypeSelector(selectableCategory);
+        } else {
+            this.monitor = true;
         }
     }
+
 }

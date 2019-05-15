@@ -63,7 +63,7 @@ public class XMLImporter {
      *
      * @return List<Component> returns an ArrayList filled with Component objects
      */
-    public List<Component> getComponents (String path) {
+    public List<Component> importComponents (String path) {
         XMLImporterInstance.setPath(path);
         // import XML file
         Document file = importFile();
@@ -84,6 +84,10 @@ public class XMLImporter {
             String type = null;
             int x = 0;
             int y = 0;
+            String ipv4;
+            String ipv6;
+            String sshUsername;
+            String sshPassword;
 
             Node node = nodes.item(i);
 
@@ -98,9 +102,13 @@ public class XMLImporter {
                     hostname = element.getElementsByTagName("name").item(0).getTextContent();
                     x = Integer.parseInt(element.getElementsByTagName("x").item(0).getTextContent());
                     y = Integer.parseInt(element.getElementsByTagName("y").item(0).getTextContent());
+                    ipv4 = element.getElementsByTagName("ipv4").item(0).getTextContent();
+                    ipv6 = element.getElementsByTagName("ipv6").item(0).getTextContent();
+                    sshUsername = element.getElementsByTagName("sshusername").item(0).getTextContent();
+                    sshPassword = element.getElementsByTagName("sshpassword").item(0).getTextContent();
 
                     // create objects and add them to components
-                    components.add(createDeviceObject(type, hostname, x, y));
+                    components.add(createDeviceObject(type, hostname, x, y, sshUsername, sshPassword, ipv4, ipv6));
                 }
             }
         }
@@ -117,12 +125,12 @@ public class XMLImporter {
      * @param       y the y coordinate of the device in the designer
      * @return      Component returns a component object of the right type
      */
-    private Component createDeviceObject (String type, String hostname, int x, int y) {
+    private Component createDeviceObject (String type, String hostname, int x, int y, String sshUsername, String sshPassword, String ipv4, String ipv6) {
         String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
 
         try {
             Class<?> cls = Class.forName(fullClassPath);
-            return (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
+            return (Component) cls.getConstructor(String.class, int.class, int.class, String.class, String.class, String.class, String.class).newInstance(hostname, x, y, sshUsername, sshPassword, ipv4, ipv6);
         } catch (Exception e) {
             e.printStackTrace();
         }

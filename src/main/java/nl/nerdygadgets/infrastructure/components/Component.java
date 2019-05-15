@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
  * @author Lucas Ouwens
  * @author Joris Vos
  * @author Djabir Omar Mohamed
+ * @author Lou Elzer
  */
 public abstract class Component implements Statistic {
 
@@ -55,15 +56,10 @@ public abstract class Component implements Statistic {
     private String user;
 
     /**
-     * This is the SSH host url/ip
-     */
-    private String host;
-
-    /**
      * This is the password used for the SSH connection
      */
     private String pass;
-  
+
     /**
      * This is the ipv4 address of the server
      */
@@ -117,14 +113,14 @@ public abstract class Component implements Statistic {
     /**
      * This is a constructor for components which includes SSH credentials
      * @param user          String
-     * @param host          String
      * @param pass          String
      */
-    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y, String user, String host, String pass) {
+    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y, String user, String pass, String ipv4, String ipv6) {
         this(hostname, availability, price, componentType, x, y);
         this.user = user;
-        this.host = host;
         this.pass = pass;
+        setIpv4(ipv4);
+        setIpv6(ipv6);
     }
 
     /**
@@ -136,18 +132,20 @@ public abstract class Component implements Statistic {
         boolean isUp = false;
 
         // get ssh channel
-        Channel channel = getSSHChannel(user, host, pass);
+        Channel channel = getSSHChannel(user, pass);
 
         try {
-            // open channel
-            channel.connect();
+            if(channel != null) {
+                // open channel
+                channel.connect();
 
-            isUp = channel.isConnected();
+                isUp = channel.isConnected();
 
-            // close channel
-            channel.disconnect();
+                // close channel
+                channel.disconnect();
 
-            return isUp;
+                return isUp;
+            }
         } catch (Exception e) {
             System.err.println("Something went wrong while connecting to the SSH server");
             e.printStackTrace();
@@ -198,7 +196,7 @@ public abstract class Component implements Statistic {
     private List<String> runCommand(String command) {
         try {
             // get ssh channel
-            Channel channel = getSSHChannel(user, host, pass);
+            Channel channel = getSSHChannel(user, pass);
 
             // set streams
             OutputStream ops = channel.getOutputStream();
@@ -242,17 +240,16 @@ public abstract class Component implements Statistic {
      * This method opens a SSH channel with a remote host
      *
      * @param user          The username for the connection
-     * @param host          The hostname
      * @param password      The password
      * @return              Returns a channel which can be used to initiate a connection
      */
-    public Channel getSSHChannel(String user, String host, String password) {
+    private Channel getSSHChannel(String user, String password) {
         try {
             // initiate Java Secure Channel object
             JSch jsch = new JSch();
 
             // initiate session
-            Session session = jsch.getSession(user, host, 22);
+            Session session = jsch.getSession(user, ipv4.toString().substring(1), 22);
 
             // disable host key verification
             java.util.Properties config = new java.util.Properties();
@@ -274,7 +271,7 @@ public abstract class Component implements Statistic {
             return null;
         }
     }
-  
+
     /**
      * This is a constructor for components. It sets all the variables in this class.
      *
@@ -374,12 +371,23 @@ public abstract class Component implements Statistic {
     public int getY() {
         return y;
     }
+
     public InetAddress getIpv4() {
         return ipv4;
     }
+
     public InetAddress getIpv6() {
         return ipv6;
     }
+
+    public String getUser () {
+        return user;
+    }
+
+    public String getPass () {
+        return pass;
+    }
+
     // endregion
 
     // region Setters
@@ -411,10 +419,21 @@ public abstract class Component implements Statistic {
             e.printStackTrace();
         }
     }
+
+    public void setUser (String user) {
+        this.user = user;
+    }
+
+    public void setPass (String pass) {
+        this.pass = pass;
+    }
+
     // endregion
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName();
+        //return this.getClass().getSimpleName();
+
+        return hostname + ", " + ipv4.getHostAddress() + ", " + ipv6.getHostAddress() + ", " + user + ", " + pass;
     }
 }

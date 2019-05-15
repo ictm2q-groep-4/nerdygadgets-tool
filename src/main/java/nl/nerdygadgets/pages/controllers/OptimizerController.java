@@ -256,11 +256,6 @@ public class OptimizerController extends GenericController implements Controller
             backtracking.printSolution();
             newInfrastructure.getComponents().clear();
 
-            /*
-            int minX = (int)Math.round(componentLayout.getLayoutX()+50);
-            int minY = (int)Math.round(componentLayout.getLayoutY()+50);
-             */
-
             int minX = 50;
             int minY = 50;
 

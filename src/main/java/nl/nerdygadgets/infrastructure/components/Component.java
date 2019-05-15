@@ -38,12 +38,12 @@ public abstract class Component implements Statistic {
     /**
      * This is the x coordinate
      */
-    private int x;
+    private int x=0;
 
     /**
      * This is the y coordinate
      */
-    private int y;
+    private int y=0;
 
     /**
      * This is the hostname
@@ -53,22 +53,22 @@ public abstract class Component implements Statistic {
     /**
      * This is the SSH username
      */
-    private String user;
+    private String user="username";
 
     /**
      * This is the password used for the SSH connection
      */
-    private String pass;
+    private String pass="password";
 
     /**
      * This is the ipv4 address of the server
      */
-    private InetAddress ipv4;
+    private InetAddress ipv4=Inet4Address.getLoopbackAddress();
 
     /**
      * This is the ipv6 address of the server
      */
-    private InetAddress ipv6;
+    private InetAddress ipv6=Inet6Address.getLoopbackAddress();
 
     /**
      * This is the port number of the server

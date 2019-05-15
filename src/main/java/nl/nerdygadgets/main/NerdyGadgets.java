@@ -48,10 +48,9 @@ public class NerdyGadgets extends Application {
      * This is the main entry point for our GUI application
      *
      * @param stage         Stage
-     * @throws Exception    setScene method throws a Exception
      */
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         // Store objects for later usage
         NerdyGadgets.nerdyGadgets = this;
         this.stage = stage;
@@ -126,15 +125,18 @@ public class NerdyGadgets extends Application {
      * Example, to load the nerdyGadgets view(see PageRegister.MAIN):
      *
      * @param identifier    String
-     * @throws IOException  FXMLLoader.load could throw a IOException
      */
-    public void setScene(String identifier) throws IOException {
-        // load the view from the resources folder
-        Parent view = FXMLLoader.load(getClass().getResource(PageRegister.get(identifier).getFilePath()));
-        // create a new scene using the view & set the scene to the new view.
-        Scene scene = new Scene(view);
+    public void setScene(String identifier) {
+        try {
+            // load the view from the resources folder
+            Parent view = FXMLLoader.load(getClass().getResource(PageRegister.get(identifier).getFilePath()));
+            // create a new scene using the view & set the scene to the new view.
+            Scene scene = new Scene(view);
 
-        getStage().setScene(scene);
+            getStage().setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // endregion

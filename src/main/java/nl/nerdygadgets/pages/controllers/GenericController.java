@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 
+import nl.nerdygadgets.algorithms.Backtracking;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
@@ -24,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -31,6 +34,7 @@ import java.util.ResourceBundle;
  * All things which need to be handled the same way on every page should be registered here.
  *
  * @author Lucas Ouwens
+ * @author Joris Vos
  */
 public class GenericController implements Initializable {
 
@@ -72,16 +76,12 @@ public class GenericController implements Initializable {
      */
     @FXML
     private void handleBackButton() {
-        try {
-            NerdyGadgets.getNerdyGadgets().setScene(PageRegister.MAIN.getIdentifier());
+        NerdyGadgets.getNerdyGadgets().setScene(PageRegister.MAIN.getIdentifier());
 
-            // since we're leaving a view which could contain already loaded components, we set 'loaded' to false again
-            // so the design can be loaded again at a later time. We don't want duplicated elements!
-            if (Infrastructure.getCurrentInfrastructure() != null) {
-                Infrastructure.getCurrentInfrastructure().setLoaded(false);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        // since we're leaving a view which could contain already loaded components, we set 'loaded' to false again
+        // so the design can be loaded again at a later time. We don't want duplicated elements!
+        if (Infrastructure.getCurrentInfrastructure() != null) {
+            Infrastructure.getCurrentInfrastructure().setLoaded(false);
         }
     }
 
@@ -220,12 +220,12 @@ public class GenericController implements Initializable {
      * @param components List<Component>
      */
     private void setTotalCosts(List<Component> components) {
-        double price = 0.00;
-        for (Component c : components) {
-            price += c.price;
+        int price = 0;
+        for (Component component : components) {
+            price += component.price;
         }
 
-        totalCosts.setText("Totale kosten: € " + price);
+        totalCosts.setText("Totale kosten: €" + price + ",-");
     }
 
     /**
@@ -236,11 +236,30 @@ public class GenericController implements Initializable {
      * @param components List<Component>
      */
     private void setTotalAvailability(List<Component> components) {
-        double availability = 0.00;
-        for (Component c : components) {
-            availability += c.availability;
+        double availability=1;
+
+        List<Component> webComponents = new ArrayList<>();
+        List<Component> databaseComponents = new ArrayList<>();
+        List<Component> otherComponents = new ArrayList<>();
+
+        for (Component component : components) {
+            if (component.componentType.equals(ComponentType.WEBSERVER)) {
+                webComponents.add(component);
+            } else if (component.componentType.equals(ComponentType.DATABASESERVER)) {
+                databaseComponents.add(component);
+            } else {
+                otherComponents.add(component);
+            }
         }
-        totalAvailability.setText("Totale beschikbaarheid: " + (availability / components.size()) + "%");
+
+        for (Component component : otherComponents) {
+            availability *= (component.availability*0.01);
+        }
+
+        availability = (availability*(Backtracking.getAvailability(webComponents.toArray(Component[]::new))*0.01)
+                *(Backtracking.getAvailability(databaseComponents.toArray(Component[]::new))*0.01))*100;
+
+        totalAvailability.setText("Totale beschikbaarheid: " + new DecimalFormat("#.###").format(availability).replace(',', '.') + "%");
     }
 
     /**

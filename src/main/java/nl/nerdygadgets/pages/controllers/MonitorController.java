@@ -12,6 +12,7 @@ import nl.nerdygadgets.pages.Controller;
 
 /**
  * @author Lucas Ouwens
+ * @author Joris Vos
  */
 public class MonitorController extends GenericController implements Controller {
 
@@ -27,6 +28,5 @@ public class MonitorController extends GenericController implements Controller {
             NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er is geen beschikbare infrastructuur. Gebruik 'open ontwerp'.", Alert.AlertType.WARNING);
         }
     }
-
 }
 

@@ -306,18 +306,18 @@ public class Backtracking {
      * @param components    Component[]
      * @return              double
      */
-    private double getAvailability(Component[] components) {
+    public static double getAvailability(Component[] components) {
         if (components==null) {
             return 0;
         }
 
-        double uptime=1;
+        double availability=1;
 
         for (Component component : components) {
-            uptime = uptime * (1 - component.availability*0.01);
+            availability *= (1 - component.availability*0.01);
         }
 
-        return (1-uptime)*100;
+        return (1-availability)*100;
     }
 
     /**

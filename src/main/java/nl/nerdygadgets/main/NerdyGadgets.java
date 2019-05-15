@@ -35,9 +35,7 @@ public class NerdyGadgets extends Application {
 
 
     public static void main(String[] args) {
-        test();
         launch(args);
-        //System.out.println(Database.getDatabaseInstance());
     }
 
     @Override
@@ -109,15 +107,6 @@ public class NerdyGadgets extends Application {
         XMLalert.setTitle(title);
         XMLalert.setHeaderText(headerText);
         XMLalert.showAndWait();
-    }
-
-    public static void test () {
-        Component kaas = new HAL9001DB("kaas", 4, 5);
-        if (kaas.isOnline()) {
-            System.out.println("SSH connection is live");
-        }
-
-        System.out.println(kaas.getDiskUsage());
     }
 
 }

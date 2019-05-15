@@ -14,7 +14,7 @@ import java.util.List;
  * A Singleton manager for the design import/export (for infrastructure)
  *
  * @author Lucas Ouwens
- * @author <your name>
+ * @author Joris Vos
  */
 public class DesignManager {
 
@@ -26,9 +26,7 @@ public class DesignManager {
     /**
      * A private database constructor to block anything outside from making a new instance of this class.
      */
-    private DesignManager() {
-
-    }
+    private DesignManager() {}
 
     /**
      * Get access to the Singleton DesignManager class.
@@ -57,7 +55,7 @@ public class DesignManager {
         if ((components = XMLImporter.getXMLImporter().getComponents(file.getPath())) != null) {
             infrastructure.addComponents(components);
         } else {
-            NerdyGadgets.showAlert("Er is een fout opgetreden!", "Bestand is geen infrastructuur design.", Alert.AlertType.ERROR);
+            NerdyGadgets.showAlert("DesignManager", "Er is een fout opgetreden!\nBestand is geen infrastructuur design.", Alert.AlertType.ERROR);
         }
 
         return infrastructure;

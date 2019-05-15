@@ -61,7 +61,7 @@ public class XMLExporter {
      * @param filePath
      * @return boolean
      */
-    public boolean exportXML(String filePath, List<Component> components) {
+    public boolean exportComponents(String filePath, List<Component> components) {
         setFilePath(filePath);
         setComponents(components);
 

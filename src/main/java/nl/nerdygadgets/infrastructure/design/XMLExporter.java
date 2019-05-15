@@ -18,6 +18,7 @@ import java.util.List;
  * A Singleton manager for the design import/export (for infrastructure)
  *
  * @author Stefan Booij
+ * @author Lou Elzer
  */
 
 public class XMLExporter {
@@ -102,22 +103,39 @@ public class XMLExporter {
 
 
         // Component elements
-        for (int i = 0; i < components.size(); i++) {
+        for (Component component : components) {
+            // Create component node
+            Element componentNode = document.createElement(component.getClass().getSimpleName());
+            root.appendChild(componentNode);
 
-            Element component = document.createElement(components.get(i).getClass().getSimpleName());
-            root.appendChild(component);
-
+            // Create component child nodes
             Element name = document.createElement("name");
-            component.appendChild(name);
-            name.appendChild(document.createTextNode(components.get(i).getHostname()));
+            componentNode.appendChild(name);
+            name.appendChild(document.createTextNode(component.getHostname()));
 
             Element x = document.createElement("x");
-            component.appendChild(x);
-            x.appendChild(document.createTextNode(String.valueOf(components.get(i).getX())));
+            componentNode.appendChild(x);
+            x.appendChild(document.createTextNode(String.valueOf(component.getX())));
 
             Element y = document.createElement("y");
-            component.appendChild(y);
-            y.appendChild(document.createTextNode(String.valueOf(components.get(i).getY())));
+            componentNode.appendChild(y);
+            y.appendChild(document.createTextNode(String.valueOf(component.getY())));
+
+            Element ipv4 = document.createElement("ipv4");
+            componentNode.appendChild(ipv4);
+            ipv4.appendChild(document.createTextNode(component.getIpv4().getHostAddress()));
+
+            Element ipv6 = document.createElement("ipv6");
+            componentNode.appendChild(ipv6);
+            ipv6.appendChild(document.createTextNode(component.getIpv6().getHostAddress()));
+
+            Element sshUsername = document.createElement("sshusername");
+            componentNode.appendChild(sshUsername);
+            sshUsername.appendChild(document.createTextNode(component.getUser()));
+
+            Element sshPassword = document.createElement("sshpassword");
+            componentNode.appendChild(sshPassword);
+            sshPassword.appendChild(document.createTextNode(component.getPass()));
         }
     }
 

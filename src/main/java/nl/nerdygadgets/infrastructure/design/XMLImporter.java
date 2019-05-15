@@ -63,7 +63,7 @@ public class XMLImporter {
      *
      * @return List<Component> returns an ArrayList filled with Component objects
      */
-    public List<Component> getComponents (String path) {
+    public List<Component> importComponents (String path) {
         XMLImporterInstance.setPath(path);
         // import XML file
         Document file = importFile();

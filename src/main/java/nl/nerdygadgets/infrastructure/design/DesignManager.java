@@ -52,7 +52,7 @@ public class DesignManager {
         Infrastructure infrastructure = new Infrastructure();
 
         List<Component> components;
-        if ((components = XMLImporter.getXMLImporter().getComponents(file.getPath())) != null) {
+        if ((components = XMLImporter.getXMLImporter().importComponents(file.getPath())) != null) {
             infrastructure.addComponents(components);
         } else {
             NerdyGadgets.showAlert("DesignManager", "Er is een fout opgetreden!\nBestand is geen infrastructuur design.", Alert.AlertType.ERROR);
@@ -67,8 +67,7 @@ public class DesignManager {
      * @param filePath
      * @param components
      */
-    public void save(String filePath, List<Component> components){
-        XMLExporter.getXMLExporterInstance().exportXML(filePath, components);
+    public boolean save(String filePath, List<Component> components) {
+        return XMLExporter.getXMLExporterInstance().exportComponents(filePath, components);
     }
-
 }

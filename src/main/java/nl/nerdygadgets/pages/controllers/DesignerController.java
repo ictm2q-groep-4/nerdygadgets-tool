@@ -13,6 +13,8 @@ import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.fxml.FXMLLoader;
@@ -25,6 +27,7 @@ import java.io.IOException;
 
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import org.w3c.dom.NodeList;
 
 import static javafx.application.Application.launch;
 
@@ -66,29 +69,31 @@ public class DesignerController extends GenericController {
     @FXML
     private void handleDrop(DragEvent dragEvent) {
         Pane component = (Pane) getTransferEvent().getSource();
-        boolean existanceCheck = false;
         HostnameAlert hostnameInput = new HostnameAlert();
+        String hostname = null;
+
+        //Boolean to check if component is already in the layout
+        boolean existenceCheck = false;
 
         //If the component does not exist in the layout, it will create a new instance of it
         if (!componentLayout.getChildren().contains(component)) {
             if (hostnameInput.display()) {
-                String hostname = hostnameInput.getHostname();
-                component = copyComponentElements(component);
+                hostname = hostnameInput.getHostname();
                 component = addComponentAttributes(component, hostname);
                 componentLayout.getChildren().add(component);
-//            addComponentToInfrastructure(component, hostname);
-            }else{
-                //TODO Catch destruction of component
+            } else {
+                return;
             }
-        }else{
-                existanceCheck = true;
-            }
+        } else {
+            existenceCheck = true;
+        }
 
         double borderRight = componentLayout.getWidth();
         double borderBottom = componentLayout.getHeight();
         double componentWidth = component.getWidth();
         double componentHeight = component.getHeight();
 
+        //TODO A check that wil prevent components from overlapping in the overlay
         //Sets X coordinates for component
         if (dragEvent.getX() <= componentWidth / 2) {
             component.setLayoutX(0);
@@ -107,14 +112,31 @@ public class DesignerController extends GenericController {
             component.setLayoutY(dragEvent.getY() - (componentHeight / 2));
         }
 
-        if (existanceCheck) {
-            //TODO create method that edits the coordinates of component object
-            //editComponentObject();
+        if (existenceCheck) {
+            //Edits the coordinates of an existing component
+            editComponentObject(component);
+        } else{
+            addComponentToInfrastructure(component, hostname);
         }
 
     }
 
-    //TODO When hostname is cancelled, it destroys the component
+    private void editComponentObject(Pane component){
+        List<Component> components = Infrastructure.getCurrentInfrastructure().getComponents();
+
+        for(Component x:components){
+            String hostname = getHostname(component);
+            if(x.getHostname().equals(hostname)){
+                x.setX((int)component.getLayoutX());
+                x.setY((int)component.getLayoutY());
+                System.out.println("X and Y coordinates of host '" + hostname + "' are changed. X: " + x.getX() + " Y: " + x.getY());
+            }
+        }
+    }
+
+    /**
+     * A class for the hostnameAlert box
+     */
     class HostnameAlert {
         private boolean isOk;
         TextField hostnameField;
@@ -135,11 +157,18 @@ public class DesignerController extends GenericController {
             }
 
             hostnameField = (TextField) hostnameDialog.getChildren().get(1);
-            Button okButton = (Button) hostnameDialog.getChildren().get(2);
+            Label hostnameWarning = (Label) hostnameDialog.getChildren().get(2);
+            Button okButton = (Button) hostnameDialog.getChildren().get(3);
 
             okButton.setOnAction(actionEvent -> {
-                isOk = true;
-                window.close();
+                if(hostnameField.getText().isEmpty()){
+                    hostnameWarning.setText("Geen hostnaam ingevuld!");
+                    hostnameWarning.setVisible(true);
+                    //TODO A check to see if the hostname is unique in the components list
+                }else{
+                    isOk = true;
+                    window.close();
+                }
             });
 
             window.initModality(Modality.APPLICATION_MODAL);
@@ -151,61 +180,100 @@ public class DesignerController extends GenericController {
             return isOk;
         }
 
-        public String getHostname(){
+        public String getHostname() {
             return hostnameField.getText();
         }
     }
 
 
-    //TODO Create this method!
+    /**
+     * Adds a component to the infrastructure when it's placed in the layout.
+     * @param component
+     * @param hostname
+     */
     private void addComponentToInfrastructure(Pane component, String hostname) {
         List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
         try {
             Component componentObject = createComponentObject(component, hostname);
             infraComponents.add(componentObject);
+            System.out.println("Component added to infrastructure. X and Y coordinates of host '" + hostname + "' are: X: " + componentObject.getX() + " Y: " + componentObject.getY());
         } catch (NoSuchMethodException | ClassNotFoundException e) {
             System.out.println("Creating component failed");
             e.printStackTrace();
         }
     }
 
+    public String getHostname(Pane component){
+        VBox componentBox = (VBox) component.getChildren().get(0);
+        Label labelType = (Label) componentBox.getChildren().get(1);
+
+        return labelType.getText();
+    }
+
+
+    /**
+     * Creates an object of a component when it's placed in the layout
+     *
+     * @param component
+     * @param hostname
+     * @return
+     * @throws NoSuchMethodException
+     * @throws ClassNotFoundException
+     */
     public Component createComponentObject(Pane component, String hostname) throws NoSuchMethodException, ClassNotFoundException {
-        Label labelType = (Label) component.getChildren().get(0);
+        VBox componentBox = (VBox) component.getChildren().get(0);
+        Label labelType = (Label) componentBox.getChildren().get(0);
 
         String type = labelType.getText();
         String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
 
-        //TODO hostname from textfield
-//        String hostname;
-//        int x = (int) component.getLayoutX();
-//        int y = (int) component.getLayoutY();
-//
-//        Class<?> cls = Class.forName(fullClassPath);
-//        return (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
+        int x = (int) component.getLayoutX();
+        int y = (int) component.getLayoutY();
+
+        Class<?> cls = Class.forName(fullClassPath);
+        try {
+            return (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     /**
-     * Copies the elements of the component in the component list and creates a new AnchorPane to place in the layout.
      *
-     * @param listComponent
-     * @return
+     *
+     * @param component
+     * @param hostname
+     * @return Pane component
      */
+    private Pane addComponentAttributes(Pane component, String hostname) {
+        Pane draggablePane = createDraggablePane();
+        VBox attributes = new VBox();
 
-    private Pane copyComponentElements(Pane listComponent) {
-        Pane newComponent = createDraggablePane();
+        Label title = (Label) component.getChildren().get(1);
+        Label copyTitle = new Label(title.getText());
 
-        //Places elements in the created component
-        Label title = (Label) listComponent.getChildren().get(1);
-        Label titleCopy = new Label(title.getText());
+        //TODO Add styling to TextFields
+        Label name = new Label(hostname);
+        TextField ipv4 = new TextField();
+        TextField ipv6 = new TextField();
 
-        newComponent.getChildren().add(titleCopy);
-        newComponent.setStyle("-fx-background-color: #88ffff");
+        attributes.getChildren().add(copyTitle);
 
-        return newComponent;
+        attributes.getChildren().add(name);
+        attributes.getChildren().add(ipv4);
+        attributes.getChildren().add(ipv6);
 
+        draggablePane.getChildren().add(attributes);
+
+        return draggablePane;
     }
 
+    /**
+     * Returns an achorpane with dragdetection
+     *
+     * @return AnchorPane draggableComponent
+     */
     public AnchorPane createDraggablePane() {
         AnchorPane draggableComponent = new AnchorPane();
 
@@ -216,6 +284,11 @@ public class DesignerController extends GenericController {
         return draggableComponent;
     }
 
+    /**
+     * Handles the detection of dragging
+     *
+     * @param mouseEvent
+     */
     @FXML
     public static void handleDragDetection(MouseEvent mouseEvent) {
         AnchorPane component = (AnchorPane) mouseEvent.getSource();
@@ -260,27 +333,6 @@ public class DesignerController extends GenericController {
     }
 
 
-    private Pane addComponentAttributes(Pane component, String hostname) {
-        VBox attributes = new VBox();
-
-        //TODO Add all the attributes that need to be displayed
-        Label title = (Label) component.getChildren().get(0);
-
-        //TODO Add styling to TextField
-        Label name = new Label(hostname);
-        TextField ipv4 = new TextField();
-        TextField ipv6 = new TextField();
-
-        attributes.getChildren().add(title);
-
-        attributes.getChildren().add(name);
-        attributes.getChildren().add(ipv4);
-        attributes.getChildren().add(ipv6);
-
-        component.getChildren().add(attributes);
-
-        return component;
-    }
 
     public static Event getTransferEvent() {
         return transferEvent;

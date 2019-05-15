@@ -33,13 +33,22 @@ public class NerdyGadgets extends Application {
      */
     private static NerdyGadgets nerdyGadgets;
 
-
+    /**
+     * This is needed by IntelliJ to start the application
+     *
+     * @param args  String[]
+     */
     public static void main(String[] args) {
         test();
         launch(args);
-        //System.out.println(Database.getDatabaseInstance());
     }
 
+    /**
+     * This is the main entry point for our GUI application
+     *
+     * @param stage         Stage
+     * @throws Exception    setScene method throws a Exception
+     */
     @Override
     public void start(Stage stage) throws Exception {
         // Store objects for later usage
@@ -63,30 +72,30 @@ public class NerdyGadgets extends Application {
     }
 
     /**
-     * get access to the Stage
+     * A static method to show an 'alert', very useful in many cases.
      *
-     * @return Stage
+     * @param title      String the title which the alert will show
+     * @param headerText String the header text which the alert will show
+     * @param alertType  Alert.AlertType the type of alert it is.
      */
-    public Stage getStage() {
-        return stage;
+    public static void showAlert(String title, String headerText, Alert.AlertType alertType) {
+        Alert XMLAlert = new Alert(alertType);
+        XMLAlert.setTitle(title);
+        XMLAlert.setHeaderText(headerText);
+        XMLAlert.showAndWait();
     }
 
-    /**
-     * Load a view by its identifier.
-     * <p>
-     * Example, to load the nerdyGadgets view(see PageRegister.MAIN):
-     *
-     * @param identifier String
-     * @throws IOException
-     */
-    public void setScene(String identifier) throws IOException {
-        // load the view from the resources folder
-        Parent view = FXMLLoader.load(getClass().getResource(PageRegister.get(identifier).getFilePath()));
-        // create a new scene using the view & set the scene to the new view.
-        Scene scene = new Scene(view);
+    // TODO remove this method
+    public static void test () {
+        Component kaas = new HAL9001DB("kaas", 4, 5);
+        if (kaas.isOnline()) {
+            System.out.println("SSH connection is live");
+        }
 
-        getStage().setScene(scene);
+        System.out.println(kaas.getDiskUsage());
     }
+
+    // region Getters
 
     /**
      * Get access to the main class, mainly for the usage of 'setScene'
@@ -98,26 +107,34 @@ public class NerdyGadgets extends Application {
     }
 
     /**
-     * A static method to show an 'alert', very useful in many cases.
+     * get access to the Stage
      *
-     * @param title      String the title which the alert will show
-     * @param headerText String the header text which the alert will show
-     * @param alertType  Alert.AlertType the type of alert it is.
+     * @return Stage
      */
-    public static void showAlert(String title, String headerText, Alert.AlertType alertType) {
-        Alert XMLalert = new Alert(alertType);
-        XMLalert.setTitle(title);
-        XMLalert.setHeaderText(headerText);
-        XMLalert.showAndWait();
+    public Stage getStage() {
+        return stage;
     }
 
-    public static void test () {
-        Component kaas = new HAL9001DB("kaas", 4, 5);
-        if (kaas.isOnline()) {
-            System.out.println("SSH connection is live");
-        }
+    // endregion
 
-        System.out.println(kaas.getDiskUsage());
+    // region Setters
+
+    /**
+     * Load a view by its identifier.
+     * <p>
+     * Example, to load the nerdyGadgets view(see PageRegister.MAIN):
+     *
+     * @param identifier    String
+     * @throws IOException  FXMLLoader.load could throw a IOException
+     */
+    public void setScene(String identifier) throws IOException {
+        // load the view from the resources folder
+        Parent view = FXMLLoader.load(getClass().getResource(PageRegister.get(identifier).getFilePath()));
+        // create a new scene using the view & set the scene to the new view.
+        Scene scene = new Scene(view);
+
+        getStage().setScene(scene);
     }
 
+    // endregion
 }

@@ -50,7 +50,7 @@
                     <content>
                       <AnchorPane fx:id="componentContainer" minHeight="0.0" minWidth="0.0" prefWidth="333.0">
                            <children>
-                              <Rectangle arcHeight="5.0" fill="WHITE" height="365.0" layoutY="-1.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="333.0" />
+                              <!--<Rectangle arcHeight="5.0" fill="WHITE" height="365.0" layoutY="-1.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="333.0" />-->
                            </children>
                         </AnchorPane>
                     </content>

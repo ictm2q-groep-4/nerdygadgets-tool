@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -46,6 +47,9 @@ public class OptimizerController extends GenericController implements Controller
 
     @FXML
     private TextField minimumAvailability;
+
+    @FXML
+    private TextArea backtrackingOutput;
 
     private static List<AnchorPane> selectedComponents = new ArrayList<>();
 
@@ -254,6 +258,7 @@ public class OptimizerController extends GenericController implements Controller
             totalConfigurationsTested.setText("Configuraties getest: "+backtracking.getConfigurationsTested());
 
             backtracking.printSolution();
+            backtrackingOutput.setText(backtracking.getSolution());
             newInfrastructure.getComponents().clear();
 
             int minX = 50;

@@ -141,26 +141,26 @@ public class GenericController implements Initializable {
 
                     // Only add tooltip with statistics when we're on the monitor page.
                     if(this.monitor) {
-                        Tooltip statisticTooltip = new Tooltip();
-                        statisticTooltip.setUserData(component);
-
-                        statisticTooltip.setOnShowing(ev -> {
-                            try {
-                                Tooltip statistic = (Tooltip) ev.getSource();
-                                Component tooltipComponent = (Component) statistic.getUserData();
-                                if (tooltipComponent != null) {
-                                    statistic.setText(
-                                            "Currently: " + (tooltipComponent.isOnline() ? "online" : "offline") + "\n" +
-                                                    "Disk usage: " + (tooltipComponent.isOnline() ? tooltipComponent.getDiskUsage() : "Unavailable") + "\n" +
-                                                    "Processor usage: " + (tooltipComponent.isOnline() ? (tooltipComponent.getProcessorUsage()) : "Unavailable")
-                                    );
-                                }
-                            } catch (NullPointerException e) {
-                                System.out.println("Unknown data presented for statistic tooltip.");
-                            }
-                        });
-
                         if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+
+                            Tooltip statisticTooltip = new Tooltip();
+                            statisticTooltip.setUserData(component);
+
+                            statisticTooltip.setOnShowing(ev -> {
+                                try {
+                                    Tooltip statistic = (Tooltip) ev.getSource();
+                                    Component tooltipComponent = (Component) statistic.getUserData();
+                                    if (tooltipComponent != null) {
+                                        statistic.setText(
+                                                "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
+                                                        "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
+                                                        "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
+                                        );
+                                    }
+                                } catch (NullPointerException e) {
+                                    System.out.println("Onbekende data voor tooltip.");
+                                }
+                            });
 
                             if (component.isOnline()) {
                                 box.setFill(Color.GREEN);
@@ -169,13 +169,14 @@ public class GenericController implements Initializable {
                             }
 
                             statisticTooltip.setText(
-                                    "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
-                                            "Disk usage: " + (component.isOnline() ? component.getDiskUsage() : "Unavailable") + "\n" +
-                                            "Processor usage: " + (component.isOnline() ? (component.getProcessorUsage()) : "Unavailable")
+                                    "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
+                                            "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
+                                            "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
                             );
+
+                            Tooltip.install(componentPane, statisticTooltip);
                         }
 
-                        Tooltip.install(componentPane, statisticTooltip);
                     }
 
                     // set the layout axises of the box
@@ -229,8 +230,6 @@ public class GenericController implements Initializable {
     }
 
     /**
-     * TODO @Stefan use the proper calculation: 1-(1-availability A) x (1-availability B)…x (1-availability n)
-     * TODO important: Availability in the calculation is the components availability divided by 100.
      * Calculation for availability.
      *
      * @param components List<Component>
@@ -337,9 +336,9 @@ public class GenericController implements Initializable {
                 // Set the user data, will be useful for status checks
                 componentPane.setUserData(components[i]);
                 componentPane.setId("is-addable");
-                componentPane.setOnDragDetected(mouseEvent -> {
-                    DesignerController.handleDragDetection(mouseEvent);
-                });
+
+                // set event, static reference to the handleDragDetection method in the DesignerController class
+                componentPane.setOnDragDetected(DesignerController::handleDragDetection);
 
                 if (this.optimizer) {
                     componentPane.setOnMouseClicked(OptimizerController::selectElement);

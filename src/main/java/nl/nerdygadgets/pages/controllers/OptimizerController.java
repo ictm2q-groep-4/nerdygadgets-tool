@@ -122,9 +122,10 @@ public class OptimizerController extends GenericController implements Controller
     private void returnSelectedComponents() {
         List<Node> toRemove = new ArrayList<>();
         if (!selectedComponentContainer.getChildren().isEmpty()) {
+            int counter = 0;
             for (Node node : selectedComponentContainer.getChildren()) {
                 if (node.getStyle().equalsIgnoreCase("-fx-background-color: #4455ff")) {
-
+                    counter++;
                     // register the node for deletion.
                     toRemove.add(node);
 
@@ -137,9 +138,12 @@ public class OptimizerController extends GenericController implements Controller
             }
             selectedComponentContainer.getChildren().clear();
             this.reloadComponents();
+            if(counter == 0) {
+                NerdyGadgets.showAlert("Er is iets fout gegaan!", "Er zijn geen componenten geselecteerd om terug te zetten.", Alert.AlertType.WARNING);
+            }
         } else {
             // Show a warning if there's no components selected.
-            NerdyGadgets.showAlert("Er is iets fout gegaan!", "Er zijn geen componenten geselecteerd om terug te zetten.", Alert.AlertType.WARNING);
+            NerdyGadgets.showAlert("Er is iets fout gegaan!", "Er zijn geen componenten in de 'gekozen componenten' lijst.", Alert.AlertType.WARNING);
         }
     }
 

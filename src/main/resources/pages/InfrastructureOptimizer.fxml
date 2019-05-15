@@ -4,6 +4,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
@@ -43,6 +44,7 @@
             <ComboBox fx:id="selectableCategory" layoutX="14.0" layoutY="47.0" onAction="#filterComponents" prefWidth="150.0" promptText="Type" />
             <Button layoutX="668.0" layoutY="643.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
             <AnchorPane fx:id="componentLayout" layoutX="649.0" layoutY="73.0" prefHeight="496.0" prefWidth="631.0" />
+            <TextField fx:id="minimumAvailability" layoutX="172.0" layoutY="47.0" prefHeight="27.0" prefWidth="134.0" promptText="Beschikbaarheid" />
          </children>
     </AnchorPane>
   </children>

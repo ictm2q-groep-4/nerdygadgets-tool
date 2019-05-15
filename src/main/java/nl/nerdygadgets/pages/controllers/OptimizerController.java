@@ -44,6 +44,9 @@ public class OptimizerController extends GenericController implements Controller
     @FXML
     private AnchorPane componentLayout;
 
+    @FXML
+    private TextField minimumAvailability;
+
     private static List<AnchorPane> selectedComponents = new ArrayList<>();
 
     private static Infrastructure infrastructureToOptimize = new Infrastructure();
@@ -196,6 +199,25 @@ public class OptimizerController extends GenericController implements Controller
 
     @FXML
     private void handleOptimizeButton() {
+        double minimumAvailability = 0;
+
+        if (this.minimumAvailability.getText().length()<=0) {
+            NerdyGadgets.showAlert("Optimizer: warning", "Er is geen beschikbaarheid ingevuld! Deze moet ingevuld zijn!\nDit kan links bovenaan. Bijvoorbeeld: 99.99", Alert.AlertType.WARNING);
+            return;
+        } else {
+            try {
+                minimumAvailability = Double.valueOf(this.minimumAvailability.getText());
+            } catch (NumberFormatException e) {
+                NerdyGadgets.showAlert("Optimizer: error", "Er is een error opgetreden tijdens het converteren van de String beschikbaarheid naar een double.\nDit betekend dat het geen geldige input is. Geldige input is bijvoorbeeld: 99.99", Alert.AlertType.ERROR);
+                return;
+            }
+        }
+
+        if (selectedComponentContainer.getChildren().size()<=0) {
+            NerdyGadgets.showAlert("Optimizer: warning", "Er zijn geen componenten geselecteerd, kies minimaal 1 database server en 1 web server.\nAangezien deze nodig zijn voor het backtracking algoritme.", Alert.AlertType.WARNING);
+            return;
+        }
+
         infrastructureToOptimize.getComponents().clear();
         for (Node n : selectedComponentContainer.getChildren()) {
             AnchorPane pane = (AnchorPane) n;
@@ -224,6 +246,7 @@ public class OptimizerController extends GenericController implements Controller
         backtracking.setAvailableDatabaseComponents(databaseComponents.toArray(Component[]::new));
         backtracking.setAvailableWebComponents(webComponents.toArray(Component[]::new));
         backtracking.setUsedOtherComponents(otherComponents.toArray(Component[]::new));
+        backtracking.setMinimumAvailability(minimumAvailability);
 
         if (backtracking.start()) {
             totalAvailability.setText("Totale beschikbaarheid: "+new DecimalFormat("#.###").format(backtracking.getTotalAvailability()).replace(',', '.')+"%");
@@ -247,19 +270,21 @@ public class OptimizerController extends GenericController implements Controller
             int currentX = minX;
             int currentY = minY;
 
+            int i = 1;
+
             for (Component component : backtracking.getAllComponents()) {
                 String classPath = "nl.nerdygadgets.infrastructure.components." + component.getClass().getSimpleName();
 
                 try {
                     Class<?> clazz = Class.forName(classPath);
                     Component _component =  (Component) clazz.getConstructor(String.class, int.class, int.class)
-                            .newInstance(component.getClass().getSimpleName(), currentX, currentY);
+                            .newInstance(component.getClass().getSimpleName()+"-"+(i++), currentX, currentY);
                     newInfrastructure.getComponents().add(_component);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                currentX += 100;
+                currentX += 150;
 
                 if (currentX >= maxX) {
                     currentY += 100;
@@ -267,7 +292,7 @@ public class OptimizerController extends GenericController implements Controller
                 }
 
                 if (currentY >= maxY) {
-                    NerdyGadgets.showAlert("Backtracking ERROR", "An error occurred while optimizing the infrastructure.\nThere are too much components in the infrastructure to show!", Alert.AlertType.ERROR);
+                    NerdyGadgets.showAlert("Backtracking ERROR", "Er zijn teveel componenten nodig voor de infrastructuur om te laten zien!", Alert.AlertType.ERROR);
                     return;
                 }
             }
@@ -299,7 +324,7 @@ public class OptimizerController extends GenericController implements Controller
                 }
             }
         } else {
-            NerdyGadgets.showAlert("Backtracking ERROR", "An error occurred while optimizing the infrastructure.\nProbably because you didn't select at least 1 component of the types DATABASESERVER or WEBSERVER", Alert.AlertType.ERROR);
+            NerdyGadgets.showAlert("Backtracking ERROR", "Er is een error opgetreden terwijl het backtracking algoritme gestart is.\nDit is mogelijk omdat je geen database server of web server geselecteerd hebt.\nVan beiden moet er minstens 1 geselecteerd zijn!", Alert.AlertType.ERROR);
         }
     }
 

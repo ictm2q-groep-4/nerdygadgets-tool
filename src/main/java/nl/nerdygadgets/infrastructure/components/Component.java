@@ -139,15 +139,17 @@ public abstract class Component implements Statistic {
         Channel channel = getSSHChannel(user, host, pass);
 
         try {
-            // open channel
-            channel.connect();
+            if(channel != null) {
+                // open channel
+                channel.connect();
 
-            isUp = channel.isConnected();
+                isUp = channel.isConnected();
 
-            // close channel
-            channel.disconnect();
+                // close channel
+                channel.disconnect();
 
-            return isUp;
+                return isUp;
+            }
         } catch (Exception e) {
             System.err.println("Something went wrong while connecting to the SSH server");
             e.printStackTrace();

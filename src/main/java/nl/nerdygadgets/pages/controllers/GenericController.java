@@ -135,11 +135,27 @@ public class GenericController implements Initializable {
                     Rectangle box = (Rectangle) componentPane.getChildren().get(0);
 
                     Tooltip statisticTooltip = new Tooltip();
-//                    statisticTooltip.setPrefSize(220, 180);
+                    statisticTooltip.setUserData(component);
+
+                    statisticTooltip.setOnShowing(ev -> {
+                        try {
+                            Tooltip statistic = (Tooltip) ev.getSource();
+                            Component tooltipComponent = (Component) statistic.getUserData();
+                            if (tooltipComponent != null) {
+                                statistic.setText(
+                                        "Currently: " + (tooltipComponent.isOnline() ? "online" : "offline") + "\n" +
+                                                "Disk usage: " + (tooltipComponent.isOnline() ? tooltipComponent.getDiskUsage() : "Unavailable") + "\n" +
+                                                "Processor usage: " + (tooltipComponent.isOnline() ? (tooltipComponent.getProcessorUsage()) : "Unavailable")
+                                );
+                            }
+                        } catch (NullPointerException e) {
+                            System.out.println("Unknown data presented for statistic tooltip.");
+                        }
+                    });
 
                     if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
 
-                        if(component.isOnline()) {
+                        if (component.isOnline()) {
                             box.setFill(Color.GREEN);
                         } else {
                             box.setFill(Color.DARKRED);
@@ -147,8 +163,8 @@ public class GenericController implements Initializable {
 
                         statisticTooltip.setText(
                                 "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
-                                "Disk usage: " + (component.isOnline() ? component.getDiskUsage() : "Unavailable") + "\n" +
-                                "Processor usage: " + (component.isOnline() ? (component.getProcessorUsage()) : "Unavailable")
+                                        "Disk usage: " + (component.isOnline() ? component.getDiskUsage() : "Unavailable") + "\n" +
+                                        "Processor usage: " + (component.isOnline() ? (component.getProcessorUsage()) : "Unavailable")
                         );
                     }
 

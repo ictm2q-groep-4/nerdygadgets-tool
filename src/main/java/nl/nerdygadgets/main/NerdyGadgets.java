@@ -6,13 +6,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import nl.nerdygadgets.infrastructure.components.Component;
-import nl.nerdygadgets.infrastructure.components.HAL9001DB;
+import nl.nerdygadgets.infrastructure.components.*;
+import nl.nerdygadgets.infrastructure.design.XMLExporter;
 import nl.nerdygadgets.infrastructure.design.XMLImporter;
 import nl.nerdygadgets.database.Database;
 import nl.nerdygadgets.pages.PageRegister;
+import java.util.List;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * The nerdyGadgets method for the application, it just starts everything.
@@ -112,13 +114,26 @@ public class NerdyGadgets extends Application {
     }
 
     public static void test () {
-        Component kaas = new HAL9001DB("kaas", 4, 5);
-        if (kaas.isOnline()) {
-            System.out.println("SSH connection is live");
+        Component kaas = new HAL9001DB("Databaseserver01", 4, 5, "admin", "Welkom01!", "192.168.0.2", "FC00:DD:CC:1::2");
+        Component frietjes = new HAL9002DB("Databaseserver02", 5, 2, "admin", "Welkom01!", "192.168.0.3", "FC00:DD:CC:1::3");
+
+        XMLExporter exporter = XMLExporter.getXMLExporterInstance();
+        XMLImporter importer = XMLImporter.getXMLImporter();
+
+        List<Component> components = new ArrayList<>();
+        components.add(kaas);
+        components.add(frietjes);
+
+        exporter.exportXML("src/testfile.xml", components);
+
+        components.clear();
+
+        components = importer.getComponents("src/testfile.xml");
+
+        for (Component component : components) {
+            System.out.println(component.toString());
         }
 
-        System.out.println(kaas.getDiskUsage());
-        System.out.println(kaas.getProcessorUsage());
     }
 
 }

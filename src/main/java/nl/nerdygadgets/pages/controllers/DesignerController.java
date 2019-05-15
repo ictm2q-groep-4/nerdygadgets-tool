@@ -3,49 +3,28 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.stage.*;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
-import nl.nerdygadgets.infrastructure.components.HAL9001DB;
-import nl.nerdygadgets.infrastructure.design.XMLExporter;
 import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 
-import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import nl.nerdygadgets.infrastructure.components.*;
 
 import java.io.IOException;
 
 import javafx.scene.control.TextField;
-import javafx.scene.input.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Box;
-import nl.nerdygadgets.infrastructure.components.*;
-import nl.nerdygadgets.pages.PageRegister;
-import org.w3c.dom.NodeList;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.IllegalFormatWidthException;
-import java.util.List;
 
 import static javafx.application.Application.launch;
 
@@ -138,7 +117,7 @@ public class DesignerController extends GenericController {
     //TODO When hostname is cancelled, it destroys the component
     class HostnameAlert {
         private boolean isOk;
-        private TextField hostnameField;
+        TextField hostnameField;
 
         public void main(String[] args) {
             launch(args);
@@ -148,29 +127,24 @@ public class DesignerController extends GenericController {
             Stage window = new Stage();
             window.initStyle(StageStyle.UTILITY);
 
-            VBox layout = new VBox();
-            Label helpLabel = new Label("Voer hostnaam in:");
+            VBox hostnameDialog = null;
+            try {
+                hostnameDialog = FXMLLoader.load(getClass().getResource("/pages/components/HostnameAlert.fxml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            hostnameField = new TextField();
-            hostnameField.setPrefWidth(275);
+            hostnameField = (TextField) hostnameDialog.getChildren().get(1);
+            Button okButton = (Button) hostnameDialog.getChildren().get(2);
 
-            Button okButton = new Button();
-            okButton.setPrefWidth(75);
-            okButton.setText("OK");
-            okButton.setLayoutX(200);
             okButton.setOnAction(actionEvent -> {
                 isOk = true;
                 window.close();
             });
 
-            layout.getChildren().addAll(helpLabel, hostnameField, okButton);
-
-            layout.setPadding(new Insets(15, 15, 15, 15));
-            layout.setSpacing(8);
-
             window.initModality(Modality.APPLICATION_MODAL);
             window.setTitle("Hostname");
-            window.setScene(new Scene(layout));
+            window.setScene(new Scene(hostnameDialog));
 
             window.showAndWait();
 

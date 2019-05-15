@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 
@@ -134,21 +135,20 @@ public class GenericController implements Initializable {
                     Rectangle box = (Rectangle) componentPane.getChildren().get(0);
 
                     Tooltip statisticTooltip = new Tooltip();
-                    statisticTooltip.setPrefSize(220, 180);
+//                    statisticTooltip.setPrefSize(220, 180);
 
                     if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
 
-//                        if(component.isOnline()) {
-//                            box.setFill(Color.GREEN);
-//                        } else {
-//                            box.setFill(Color.DARKRED);
-//                        }
+                        if(component.isOnline()) {
+                            box.setFill(Color.GREEN);
+                        } else {
+                            box.setFill(Color.DARKRED);
+                        }
 
                         statisticTooltip.setText(
-//                                "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
-//                                "Disk usage: " + (component.isOnline()) ? (component.getDiskUsage()) : "Unavailable" + "\n" +
-//                                "Processor usage: " + (component.isOnline()) ? (component.getProcessorUsage()) : "Unavailable"
-                                "" // remove this and uncomment the above once implemented.
+                                "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
+                                "Disk usage: " + (component.isOnline() ? component.getDiskUsage() : "Unavailable") + "\n" +
+                                "Processor usage: " + (component.isOnline() ? (component.getProcessorUsage()) : "Unavailable")
                         );
                     }
 

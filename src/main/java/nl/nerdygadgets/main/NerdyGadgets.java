@@ -39,7 +39,6 @@ public class NerdyGadgets extends Application {
      * @param args  String[]
      */
     public static void main(String[] args) {
-        test();
         launch(args);
     }
 

@@ -63,7 +63,7 @@ public abstract class Component implements Statistic {
      * This is the password used for the SSH connection
      */
     private String pass;
-  
+
     /**
      * This is the ipv4 address of the server
      */
@@ -274,7 +274,7 @@ public abstract class Component implements Statistic {
             return null;
         }
     }
-  
+
     /**
      * This is a constructor for components. It sets all the variables in this class.
      *

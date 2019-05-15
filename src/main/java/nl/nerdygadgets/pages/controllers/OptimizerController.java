@@ -2,22 +2,35 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import nl.nerdygadgets.algorithms.Backtracking;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.ComponentType;
 import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.Controller;
+import nl.nerdygadgets.pages.PageRegister;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javafx.application.Application.launch;
 
 /**
  * @author Lucas Ouwens
@@ -259,10 +272,86 @@ public class OptimizerController extends GenericController implements Controller
                 }
             }
 
-            
+            OptimizerAlert optimizerAlert = new OptimizerAlert();
+            ACTION action = optimizerAlert.display();
+
+            if (action.equals(ACTION.CLOSE)) {
+                return;
+            } else if (action.equals(ACTION.SET)) {
+                Infrastructure.setCurrentInfrastructure(newInfrastructure);
+                NerdyGadgets.showAlert("Optimizer", "Het nieuwe ontwerp is geladen als het huidige ontwerp.\nAls je nu naar Monitor of Builder gaat en op open huidig ontwerp klikt word deze geladen.", Alert.AlertType.INFORMATION);
+            } else if (action.equals(ACTION.SAVE)) {
+                FileChooser fileChooser = new FileChooser();
+                FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("XML File", "*.xml");
+                fileChooser.getExtensionFilters().add(extensionFilter);
+
+                File filePath = fileChooser.showSaveDialog(NerdyGadgets.getNerdyGadgets().getStage());
+
+                if (filePath != null && filePath.getName().endsWith(".xml")) {
+                    try {
+                        newInfrastructure.save(filePath.getAbsolutePath());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        NerdyGadgets.showAlert("Optimizer", "Er is een fout opgetreden tijdens het opslaan van de nieuwe infrastructuur.", Alert.AlertType.ERROR);
+                    }
+                } else {
+                    NerdyGadgets.showAlert("Optimizer", "Het bestand moet een XML bestand zijn en dus eindigen op .xml", Alert.AlertType.ERROR);
+                }
+            }
         } else {
             NerdyGadgets.showAlert("Backtracking ERROR", "An error occurred while optimizing the infrastructure.\nProbably because you didn't select at least 1 component of the types DATABASESERVER or WEBSERVER", Alert.AlertType.ERROR);
         }
     }
 
+    public enum ACTION {
+        SAVE,
+        SET,
+        CLOSE,
+    }
+
+    class OptimizerAlert {
+        private ACTION action = ACTION.CLOSE;
+
+        public void main(String[] args) {
+            launch(args);
+        }
+
+        public ACTION display() {
+            Stage window = new Stage();
+            window.initStyle(StageStyle.UTILITY);
+
+            VBox optimizerDialog = null;
+            try {
+                optimizerDialog = FXMLLoader.load(getClass().getResource(PageRegister.get("OptimizerAlert").getFilePath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            HBox buttonContainer = (HBox) optimizerDialog.getChildren().get(1);
+            Button setCurrentInfrastructure = (Button) buttonContainer.getChildren().get(1);
+            Button saveInfrastructure = (Button) buttonContainer.getChildren().get(0);
+            Button cancelDialog = (Button) buttonContainer.getChildren().get(2);
+
+            setCurrentInfrastructure.setOnAction(actionEvent -> {
+                action = ACTION.SET;
+                window.close();
+            });
+            saveInfrastructure.setOnAction(actionEvent -> {
+                action = ACTION.SAVE;
+                window.close();
+            });
+            cancelDialog.setOnAction(actionEvent -> {
+                action = ACTION.CLOSE;
+                window.close();
+            });
+
+            window.initModality(Modality.APPLICATION_MODAL);
+            window.setTitle("Optimizer");
+            window.setScene(new Scene(optimizerDialog));
+
+            window.showAndWait();
+
+            return action;
+        }
+    }
 }

@@ -222,7 +222,7 @@ public class GenericController implements Initializable {
         // Create an array of all the currently existing components.
         // We assume these will be the only ones in existence.
         Component[] components = {
-                new DBLoadBalancer("DBLoadbalancer", 0, 0),
+                new DBLoadBalancer("DBLoadBalancer", 0, 0),
                 new HAL9001DB("HAL9001DB", 0, 0),
                 new HAL9002DB("HAL9002DB", 0, 0),
                 new HAL9003DB("HAL9003DB", 0, 0),

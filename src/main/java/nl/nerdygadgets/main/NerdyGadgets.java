@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.HAL9001DB;
 import nl.nerdygadgets.infrastructure.design.XMLImporter;
@@ -36,6 +37,10 @@ public class NerdyGadgets extends Application {
 
     public static void main(String[] args) {
         test();
+
+        Infrastructure currentInfrastructure = new Infrastructure();
+        Infrastructure.setCurrentInfrastructure(currentInfrastructure);
+
         launch(args);
         //System.out.println(Database.getDatabaseInstance());
     }

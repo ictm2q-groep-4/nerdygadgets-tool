@@ -10,7 +10,7 @@
 
 <VBox fillWidth="false" spacing="8.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label contentDisplay="TOP" text="Voer hostname in:">
+      <Label contentDisplay="TOP" text="Voer hostnaam in:">
          <font>
             <Font size="14.0" />
          </font>
@@ -19,6 +19,7 @@
          </effect>
       </Label>
       <TextField fx:id="hostnameField" prefHeight="25.0" prefWidth="275.0" />
+      <Label text="" textFill="#ff0000bf" visible="false" />
       <Button fx:id="okButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="OK">
          <VBox.margin>
             <Insets left="200.0" />

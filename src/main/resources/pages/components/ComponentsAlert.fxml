@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fillWidth="false" spacing="8.0" xmlns="http://javafx.com/javafx/11.0.1">
+    <children>
+        <Label contentDisplay="TOP" />
+    </children>
+</VBox>

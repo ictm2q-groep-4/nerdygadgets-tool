@@ -1,6 +1,7 @@
 package nl.nerdygadgets.algorithms;
 
 import nl.nerdygadgets.infrastructure.components.*;
+import nl.nerdygadgets.main.Components;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -17,12 +18,12 @@ public class Backtracking {
     /**
      * This contains all the possible web components that can be used
      */
-    private Component[] webComponents;
+    private List<Component> webComponents;
 
     /**
      * This contains all the possible database components that can be used
      */
-    private Component[] databaseComponents;
+    private List<Component> databaseComponents;
 
     /**
      * This contains the most optimal configuration for web servers with at least 99.996 availability and the cheapest
@@ -37,7 +38,7 @@ public class Backtracking {
     /**
      * This contains all the components that are in the infrastructure configuration at all time.
      */
-    private Component[] otherComponents;
+    private List<Component> otherComponents;
 
     /**
      * This variable keeps track of the amount of configurations that are tested.
@@ -64,20 +65,19 @@ public class Backtracking {
      * It initializes the necessary variables that contains all the web servers, database servers and other components.
      */
     public Backtracking() {
-        webComponents = new Component[3];
-        databaseComponents = new Component[3];
-        otherComponents = new Component[2];
+        webComponents = new ArrayList<>();
+        databaseComponents = new ArrayList<>();
+        otherComponents = new ArrayList<>();
 
-        webComponents[0] = new HAL9001W("",1,1);
-        webComponents[1] = new HAL9002W("",1,1);
-        webComponents[2] = new HAL9003W("",1,1);
-
-        databaseComponents[0] = new HAL9001DB("",1,1);
-        databaseComponents[1] = new HAL9002DB("",1,1);
-        databaseComponents[2] = new HAL9003DB("",1,1);
-
-        otherComponents[0] = new pfSense("",1,1);
-        otherComponents[1] = new DBLoadBalancer("",1,1);
+        for (Component component : Components.getAllComponents()) {
+            if (component.componentType.equals(ComponentType.DATABASESERVER)) {
+                databaseComponents.add(component);
+            } else if (component.componentType.equals(ComponentType.WEBSERVER)) {
+                webComponents.add(component);
+            } else {
+                otherComponents.add(component);
+            }
+        }
     }
 
     /**
@@ -92,10 +92,10 @@ public class Backtracking {
         this();
 
         if (availableWebComponents != null) {
-            setAvailableWebComponents(webComponents);
+            setAvailableWebComponents(availableWebComponents);
         }
         if (availableDatabaseComponents != null) {
-            setAvailableDatabaseComponents(databaseComponents);
+            setAvailableDatabaseComponents(availableDatabaseComponents);
         }
     }
 
@@ -153,10 +153,10 @@ public class Backtracking {
      */
     public boolean start() {
         if (optimalDatabaseConfiguration==null) {
-            solve(new ArrayList<>(), databaseComponents);
+            solve(new ArrayList<>(), databaseComponents.toArray(Component[]::new));
         }
         if (optimalWebConfiguration==null) {
-            solve(new ArrayList<>(), webComponents);
+            solve(new ArrayList<>(), webComponents.toArray(Component[]::new));
         }
 
         if (forceStop) {
@@ -347,7 +347,7 @@ public class Backtracking {
 
         allComponents.addAll(Arrays.asList(optimalDatabaseConfiguration));
         allComponents.addAll(Arrays.asList(optimalWebConfiguration));
-        allComponents.addAll(Arrays.asList(otherComponents));
+        allComponents.addAll(otherComponents);
 
         return allComponents;
     }
@@ -403,7 +403,7 @@ public class Backtracking {
      * @return  Component[]
      */
     public Component[] getAvailableDatabaseComponents() {
-        return databaseComponents;
+        return databaseComponents.toArray(Component[]::new);
     }
 
     /**
@@ -421,7 +421,7 @@ public class Backtracking {
      * @return  Component[]
      */
     public Component[] getAvailableWebComponents() {
-        return webComponents;
+        return webComponents.toArray(Component[]::new);
     }
 
     /**
@@ -430,7 +430,7 @@ public class Backtracking {
      * @return  Component[]
      */
     public Component[] getOtherComponents() {
-        return otherComponents;
+        return otherComponents.toArray(Component[]::new);
     }
 
     /**
@@ -447,7 +447,7 @@ public class Backtracking {
 
         StringBuilder databaseServers = new StringBuilder();
         for (Component component : optimalDatabaseConfiguration) {
-            databaseServers.append(component.getClass().getSimpleName());
+            databaseServers.append(component.name);
             databaseServers.append(", ");
         }
         if (databaseServers.length()>0) {
@@ -463,7 +463,7 @@ public class Backtracking {
 
         StringBuilder webServers = new StringBuilder();
         for (Component component : optimalWebConfiguration) {
-            webServers.append(component.getClass().getSimpleName());
+            webServers.append(component.name);
             webServers.append(", ");
         }
         if (webServers.length()>0) {
@@ -479,12 +479,12 @@ public class Backtracking {
 
         StringBuilder otherComponents = new StringBuilder();
         for (Component component : this.otherComponents) {
-            otherComponents.append(component.getClass().getSimpleName());
+            otherComponents.append(component.name);
             otherComponents.append(", ");
         }
         if (otherComponents.length()>0) {
             solution.append("Andere components(");
-            solution.append(this.otherComponents.length);
+            solution.append(this.otherComponents.size());
             solution.append("): [");
 
             solution.append(otherComponents.substring(0, otherComponents.length() - 2));
@@ -537,7 +537,7 @@ public class Backtracking {
      * @param otherComponents   Component[]
      */
     public void setUsedOtherComponents(Component[] otherComponents) {
-        this.otherComponents = otherComponents;
+        this.otherComponents = Arrays.asList(otherComponents);
     }
 
     /**
@@ -546,7 +546,7 @@ public class Backtracking {
      * @param availableWebComponents    Component[]
      */
     public void setAvailableWebComponents(Component[] availableWebComponents) {
-        this.webComponents = availableWebComponents;
+        this.webComponents = Arrays.asList(availableWebComponents);
     }
 
     /**
@@ -555,7 +555,7 @@ public class Backtracking {
      * @param availableDatabaseComponents   Component[]
      */
     public void setAvailableDatabaseComponents(Component[] availableDatabaseComponents) {
-        this.databaseComponents = availableDatabaseComponents;
+        this.databaseComponents = Arrays.asList(availableDatabaseComponents);
     }
 
     /**

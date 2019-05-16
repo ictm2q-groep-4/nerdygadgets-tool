@@ -1,8 +1,12 @@
 package nl.nerdygadgets.infrastructure.design;
 
 import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.ComponentType;
+import nl.nerdygadgets.main.Components;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,13 +65,12 @@ public class XMLImporter {
 
         for (int i = 0; i < nodes.getLength(); i ++) {
             String hostname;
-            String type;
             int x;
             int y;
-            String ipv4;
-            String ipv6;
             String sshUsername;
             String sshPassword;
+            String ipv4;
+            String ipv6;
 
             Node node = nodes.item(i);
 
@@ -78,21 +81,21 @@ public class XMLImporter {
 
                 // parse the element values
                 if (element.getTagName() != null) {
-                    type = element.getTagName();
-                    hostname = element.getElementsByTagName("name").item(0).getTextContent();
+                    Component component = Components.getComponent(element.getTagName());
+                    hostname = element.getElementsByTagName("hostname").item(0).getTextContent();
                     x = Integer.parseInt(element.getElementsByTagName("x").item(0).getTextContent());
                     y = Integer.parseInt(element.getElementsByTagName("y").item(0).getTextContent());
 
-                    if (type.equals("DBLoadBalancer") || type.equals("pfSense")) {
-                        components.add(createDeviceObject(type, hostname, x, y));
+                    if (component.componentType.equals(ComponentType.DBLOADBALANCER) || component.componentType.equals(ComponentType.FIREWALL)) {
+                        components.add(createDeviceObject(component, hostname, x, y));
                     } else {
-                        ipv4 = element.getElementsByTagName("ipv4").item(0).getTextContent();
-                        ipv6 = element.getElementsByTagName("ipv6").item(0).getTextContent();
                         sshUsername = element.getElementsByTagName("sshusername").item(0).getTextContent();
                         sshPassword = element.getElementsByTagName("sshpassword").item(0).getTextContent();
+                        ipv4 = element.getElementsByTagName("ipv4").item(0).getTextContent();
+                        ipv6 = element.getElementsByTagName("ipv6").item(0).getTextContent();
 
                         // create objects and add them to components
-                        components.add(createDeviceObject(type, hostname, x, y, sshUsername, sshPassword, ipv4, ipv6));
+                        components.add(createDeviceObject(component, hostname, x, y, sshUsername, sshPassword, ipv4, ipv6));
                     }
                 }
             }
@@ -125,51 +128,31 @@ public class XMLImporter {
         return null;
     }
 
-    /**
-     *  Method that creates the component objects
-     *
-     * @param       type the device type and class name
-     * @param       hostname the device name
-     * @param       x the x coordinate of the device in the designer
-     * @param       y the y coordinate of the device in the designer
-     * @param       sshUsername the ssh username of the server
-     * @param       sshPassword the ssh password of the server
-     * @param       ipv4 the ipv4 of the server
-     * @param       ipv6 the ipv6 of the server
-     * @return      Component returns a component object of the right type
-     */
-    private Component createDeviceObject(String type, String hostname, int x, int y, String sshUsername, String sshPassword, String ipv4, String ipv6) {
-        String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
+    private Component createDeviceObject(Component component, String hostname, int x, int y) {
+        Component _component = new Component(component);
+        _component.hostname = hostname;
+        _component.x = x;
+        _component.y = y;
 
-        try {
-            Class<?> cls = Class.forName(fullClassPath);
-            return (Component) cls.getConstructor(String.class, int.class, int.class, String.class, String.class, String.class, String.class).newInstance(hostname, x, y, sshUsername, sshPassword, ipv4, ipv6);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        return _component;
     }
 
-    /**
-     * Method that creates the component objects
-     *
-     * @param       type the device type and class name
-     * @param       hostname the device name
-     * @param       x the x coordinate of the device in the designer
-     * @param       y the y coordinate of the device in the designer
-     * @return      Component returns a component object of the right type
-     */
-    private Component createDeviceObject(String type, String hostname, int x, int y) {
-        String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
-
+    private Component createDeviceObject(Component component, String hostname, int x, int y, String sshUsername, String sshPassword, String ipv4, String ipv6) {
         try {
-            Class<?> cls = Class.forName(fullClassPath);
-            return (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            Component _component = new Component(component);
+            _component.hostname = hostname;
+            _component.x = x;
+            _component.y = y;
 
-        return null;
+            _component.username = sshUsername;
+            _component.password = sshPassword;
+            _component.ipv4 = InetAddress.getByName(ipv4);
+            _component.ipv6 = InetAddress.getByName(ipv6);
+
+            return _component;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

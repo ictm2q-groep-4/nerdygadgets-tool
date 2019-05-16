@@ -1,7 +1,6 @@
 package nl.nerdygadgets.infrastructure;
 
-import nl.nerdygadgets.infrastructure.components.Component;
-import nl.nerdygadgets.infrastructure.components.HAL9003DB;
+import nl.nerdygadgets.main.Components;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,7 @@ class InfrastructureTest {
     @Test
     public void testAddComponent() {
         assertAll(
-                () -> assertTrue(infrastructure.addComponent(new HAL9003DB("HOST", 0, 0)), "Adding a valid component should return TRUE")
+                () -> assertTrue(infrastructure.addComponent(Components.getComponent("HAL9003DB")), "Adding a valid component should return TRUE")
         );
     }
 

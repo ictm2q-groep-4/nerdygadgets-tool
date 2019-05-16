@@ -277,16 +277,7 @@ public class OptimizerController extends GenericController implements Controller
             int i = 1;
 
             for (Component component : backtracking.getAllComponents()) {
-                String classPath = "nl.nerdygadgets.infrastructure.components." + component.getClass().getSimpleName();
-
-                try {
-                    Class<?> clazz = Class.forName(classPath);
-                    Component _component =  (Component) clazz.getConstructor(String.class, int.class, int.class)
-                            .newInstance(component.getClass().getSimpleName()+"-"+(i++), currentX, currentY);
-                    newInfrastructure.getComponents().add(_component);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                newInfrastructure.getComponents().add(new Component(component, component.name+"-"+(i++), currentX, currentY));
 
                 currentX += 150;
 

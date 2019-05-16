@@ -5,23 +5,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
-import nl.nerdygadgets.infrastructure.components.HAL9001DB;
-
-import nl.nerdygadgets.infrastructure.components.*;
-import nl.nerdygadgets.infrastructure.design.XMLExporter;
-
-import nl.nerdygadgets.infrastructure.design.XMLImporter;
-import nl.nerdygadgets.database.Database;
 import nl.nerdygadgets.pages.PageRegister;
-import java.util.List;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * The nerdyGadgets method for the application, it just starts everything.
@@ -64,6 +54,8 @@ public class NerdyGadgets extends Application {
         // Store objects for later usage
         NerdyGadgets.nerdyGadgets = this;
         this.stage = stage;
+
+        Components.instance();
 
         // Set the default scene for the application.
         this.setScene(PageRegister.MAIN.getIdentifier());

@@ -19,6 +19,7 @@ import nl.nerdygadgets.algorithms.Backtracking;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
+import nl.nerdygadgets.main.Components;
 import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.PageRegister;
 
@@ -315,22 +316,9 @@ public class GenericController implements Initializable {
      * Load the elements which will be used to fill the design/optimizer.
      */
     private void loadSelectableElements(ComponentType type) {
-        // Create an array of all the currently existing components.
-        // We assume these will be the only ones in existence.
-        Component[] components = {
-                new DBLoadBalancer("DBLoadBalancer", 0, 0),
-                new HAL9001DB("HAL9001DB", 0, 0),
-                new HAL9002DB("HAL9002DB", 0, 0),
-                new HAL9003DB("HAL9003DB", 0, 0),
-                new HAL9001W("HAL9001W", 0, 0),
-                new HAL9002W("HAL9002W", 0, 0),
-                new HAL9003W("HAL9003W", 0, 0),
-                new pfSense("pfSense", 0, 0)
-        };
-
         try {
             // Load the components
-            this.loadComponents(componentContainer, components, type);
+            this.loadComponents(componentContainer, Components.getAllComponents(), type);
 
         } catch (IOException e) {
             // In case of errors: Activate panic-mode (Not implemented, but the devs will panic.)
@@ -400,7 +388,7 @@ public class GenericController implements Initializable {
                 }
 
                 // set the data
-                title.setText(components[i].getHostname());
+                title.setText(components[i].name);
                 availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
                 cost.setText("Prijs: €" + components[i].price + ",-");
 

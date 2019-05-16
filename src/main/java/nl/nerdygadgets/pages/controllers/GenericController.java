@@ -251,12 +251,21 @@ public class GenericController implements Initializable {
             }
         }
 
-        for (Component component : otherComponents) {
-            availability *= (component.availability*0.01);
+        if (otherComponents.size() > 0) {
+            for (Component component : otherComponents) {
+                availability *= (component.availability * 0.01);
+            }
         }
 
-        availability = (availability*(Backtracking.getAvailability(webComponents.toArray(Component[]::new))*0.01)
-                *(Backtracking.getAvailability(databaseComponents.toArray(Component[]::new))*0.01))*100;
+        if (webComponents.size() > 0) {
+            availability *= (Backtracking.getAvailability(webComponents.toArray(Component[]::new))*0.01);
+        }
+
+        if (databaseComponents.size() > 0) {
+            availability *= (Backtracking.getAvailability(databaseComponents.toArray(Component[]::new))*0.01);
+        }
+
+        availability *= 100;
 
         totalAvailability.setText("Totale beschikbaarheid: " + new DecimalFormat("#.###").format(availability).replace(',', '.') + "%");
     }

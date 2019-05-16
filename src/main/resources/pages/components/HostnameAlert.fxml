@@ -20,7 +20,7 @@
       </Label>
       <TextField fx:id="hostnameField" prefHeight="25.0" prefWidth="275.0" />
       <Label text="" textFill="#ff0000bf" visible="false" />
-      <Button fx:id="okButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="OK">
+      <Button fx:id="okButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Voeg toe">
          <VBox.margin>
             <Insets left="200.0" />
          </VBox.margin>

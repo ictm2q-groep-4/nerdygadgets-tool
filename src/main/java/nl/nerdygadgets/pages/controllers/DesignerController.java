@@ -3,9 +3,7 @@ package nl.nerdygadgets.pages.controllers;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.input.*;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.*;
@@ -14,22 +12,14 @@ import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
-import java.io.IOException;
-
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-
-import static javafx.application.Application.launch;
 
 
 /**
@@ -41,7 +31,7 @@ public class DesignerController extends GenericController {
      * A variable that transfers events between methods.
      */
     @FXML
-    public static Event transferEvent;
+    private static Event transferEvent;
 
     public boolean attributeOK;
 
@@ -69,27 +59,15 @@ public class DesignerController extends GenericController {
     @FXML
     private void handleDrop(DragEvent dragEvent) {
         Pane component = (Pane) getTransferEvent().getSource();
-        PopupMenu inputMenu = new PopupMenu();
-        String hostname = null;
 
         //Boolean to check if component is already in the layout
         boolean existenceCheck = false;
 
         //If the component does not exist in the layout, it will create a new instance of it
         if (!componentPane.getChildren().contains(component)) {
-            if (inputMenu.displayHostname()) {
-                component = copyAttributes(component, inputMenu);
-                componentPane.getChildren().add(component);
-            } else {
-                return;
-            }
+            component = copyAttributes(component);
+            componentPane.getChildren().add(component);
         } else {
-            if (attributeOK) {
-                //TODO Add component attribute labels method
-//                addComponentAttributesLabels(component);
-                attributeOK = false;
-            }
-
             existenceCheck = true;
         }
 
@@ -120,15 +98,10 @@ public class DesignerController extends GenericController {
         if (existenceCheck) {
             //Edits the coordinates of an existing component
             editComponentObject(component);
-        } else {
-            addComponentToInfrastructure(component, inputMenu);
         }
 
     }
 
-//    public void editLabels() {
-//
-//    }
 
     /**
      * @param component
@@ -136,85 +109,22 @@ public class DesignerController extends GenericController {
     private void editComponentObject(Pane component) {
         List<Component> components = Infrastructure.getCurrentInfrastructure().getComponents();
 
-        for (Component x : components) {
-            String hostname = getHostname(component);
-            if (x.getHostname().equals(hostname)) {
-                x.setX((int) component.getLayoutX());
-                x.setY((int) component.getLayoutY());
-                System.out.println("X and Y coordinates of host '" + hostname + "' are changed. X: " + x.getX() + " Y: " + x.getY());
-            }
-        }
-    }
-
-
-    /**
-     * Adds a component to the infrastructure when it's placed in the layout.
-     *
-     * @param component
-     */
-    private void addComponentToInfrastructure(Pane component, PopupMenu inputMenu) {
-        List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
-
-        String hostname = inputMenu.getHostname();
-        try {
-            Component componentObject = createComponentObject(component, inputMenu);
-            infraComponents.add(componentObject);
-            System.out.println("Component added to infrastructure. X and Y coordinates of host '" + hostname + "' are: X: " + componentObject.getX() + " Y: " + componentObject.getY());
-
-        } catch (NoSuchMethodException | ClassNotFoundException e) {
-            System.out.println("Creating component failed");
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Creates an object of a component when it's placed in the layout
-     *
-     * @param component
-     * @return
-     * @throws NoSuchMethodException
-     * @throws ClassNotFoundException
-     */
-    public Component createComponentObject(Pane component, PopupMenu inputMenu) throws NoSuchMethodException, ClassNotFoundException {
-        Label labelType = (Label) component.getChildren().get(0);
-
-        String type = labelType.getText();
-        String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
-
-        String hostname = inputMenu.getHostname();
-        int x = (int) component.getLayoutX();
-        int y = (int) component.getLayoutY();
-
-        String ipv4 = inputMenu.getIPv4();
-        String ipv6 = inputMenu.getIPv6();
-        String sshUser = inputMenu.getSSHUser();
-        String sshPass = inputMenu.getSSHPass();
-
-        Class<?> cls = Class.forName(fullClassPath);
-        try {
-            Component newComponent = (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
-            newComponent.setIpv4(ipv4);
-            newComponent.setIpv6(ipv6);
-            newComponent.setUser(sshUser);
-            newComponent.setPass(sshPass);
-            System.out.println("New " + type + " created. \tIPv4: " + ipv4 + " \tIPv6: " + ipv6 + " \tUsername: " + sshUser + " \tPassword: " + sshPass);
-
-            return newComponent;
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+//        for (Component x : components) {
+//            String hostname = getHostname(component);
+//            if (x.getHostname().equals(hostname)) {
+//                x.setX((int) component.getLayoutX());
+//                x.setY((int) component.getLayoutY());
+//                System.out.println("X and Y coordinates of host '" + hostname + "' are changed. X: " + x.getX() + " Y: " + x.getY());
+//            }
     }
 
     /**
      * Copies the attributes from the component out of componentlist, and places it into a draggable pane with the createDraggablePane method.
      *
      * @param component
-     * @param inputMenu
      * @return Pane component
      */
-    private Pane copyAttributes(Pane component, PopupMenu inputMenu) {
+    private Pane copyAttributes(Pane component) {
         Pane draggablePane = createDraggablePane(component);
         VBox attributes = new VBox();
 
@@ -226,16 +136,7 @@ public class DesignerController extends GenericController {
         Rectangle iconCopy = (Rectangle) component.getChildren().get(0);
         Rectangle componentIcon = new Rectangle(iconCopy.getHeight(), iconCopy.getWidth());
 
-        Label name = new Label(inputMenu.getHostname());
-        Label ipv4 = new Label(inputMenu.getIPv4());
-        Label ipv6 = new Label(inputMenu.getIPv6());
-        Label sshUser = new Label(inputMenu.getSSHUser());
-
         attributes.getChildren().add(componentIcon);
-        attributes.getChildren().add(name);
-        attributes.getChildren().add(ipv4);
-        attributes.getChildren().add(ipv6);
-        attributes.getChildren().add(sshUser);
 
         draggablePane.getChildren().add(componentType);
         draggablePane.getChildren().add(attributes);
@@ -253,11 +154,6 @@ public class DesignerController extends GenericController {
 
         draggableComponent.setOnDragDetected(mouseEvent -> {
             handleDragDetection(mouseEvent);
-        });
-
-        PopupMenu attributeDialog = new PopupMenu();
-        draggableComponent.setOnMouseClicked(mouseEvent -> {
-            attributeOK = attributeDialog.displayAttributes(component);
         });
 
         return draggableComponent;
@@ -318,131 +214,5 @@ public class DesignerController extends GenericController {
 
     public static void setTransferEvent(Event event) {
         transferEvent = event;
-    }
-
-    public String getHostname(Pane component) {
-        VBox componentBox = (VBox) component.getChildren().get(1);
-        Label labelType = (Label) componentBox.getChildren().get(1);
-
-        return labelType.getText();
-    }
-
-    /**
-     * A class for the hostnameAlert box
-     */
-    class PopupMenu {
-        private boolean isOk;
-        private ArrayList componentAttributes = new ArrayList();
-
-        TextField hostnameField;
-        TextField ipv4Field;
-        TextField ipv6Field;
-        TextField sshUserField;
-        TextField sshPassField;
-
-        public void main(String[] args) {
-            launch(args);
-        }
-
-        public boolean displayHostname() {
-            Stage window = new Stage();
-            window.initStyle(StageStyle.UTILITY);
-
-            VBox hostnameDialog = null;
-            try {
-                hostnameDialog = FXMLLoader.load(getClass().getResource("/pages/components/AttributePopup.fxml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            hostnameField = (TextField) hostnameDialog.getChildren().get(1);
-            ipv4Field = (TextField) hostnameDialog.getChildren().get(3);
-            ipv6Field = (TextField) hostnameDialog.getChildren().get(5);
-            sshUserField = (TextField) hostnameDialog.getChildren().get(7);
-            sshPassField = (TextField) hostnameDialog.getChildren().get(9);
-
-            Label hostnameWarning = (Label) hostnameDialog.getChildren().get(10);
-            Button okButton = (Button) hostnameDialog.getChildren().get(11);
-            okButton.setDefaultButton(true);
-
-            okButton.setOnAction(actionEvent -> {
-                if (hostnameField.getText().isEmpty()) {
-                    System.out.println("No hostname!");
-                    hostnameWarning.setText("Geen hostnaam ingevuld!");
-                    hostnameWarning.setVisible(true);
-                    //TODO A check to see if the hostname is unique in the components list
-                } else {
-                    isOk = true;
-                    window.close();
-                }
-            });
-
-            window.initModality(Modality.APPLICATION_MODAL);
-            window.setTitle("Hostname");
-            window.setScene(new Scene(hostnameDialog));
-
-            window.showAndWait();
-
-            return isOk;
-        }
-
-
-        private ArrayList transferComponentAttributes() {
-            return componentAttributes;
-        }
-
-        public boolean displayAttributes(Pane component) {
-            Stage window = new Stage();
-
-            VBox attributeDialog = null;
-
-            try {
-                attributeDialog = FXMLLoader.load(getClass().getResource("/pages/components/AttributePopup.fxml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            hostnameField = (TextField) attributeDialog.getChildren().get(1);
-
-            //TODO Retrieve component attributes
-
-            Button okButton = (Button) attributeDialog.getChildren().get(11);
-
-            okButton.setOnAction(actionEvent -> {
-                if (hostnameField.getText().isEmpty()) {
-                    //TODO A check to see if the hostname is unique in the components list
-                    System.out.println("No hostname");
-                } else {
-                    isOk = true;
-                    window.close();
-                }
-            });
-
-            window.setScene(new Scene(attributeDialog));
-
-            window.showAndWait();
-
-            return isOk;
-        }
-
-        public String getHostname() {
-            return hostnameField.getText();
-        }
-
-        public String getIPv4() {
-            return ipv4Field.getText();
-        }
-
-        public String getIPv6() {
-            return ipv6Field.getText();
-        }
-
-        public String getSSHUser() {
-            return sshUserField.getText();
-        }
-
-        public String getSSHPass() {
-            return sshPassField.getText();
-        }
     }
 }

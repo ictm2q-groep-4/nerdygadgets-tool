@@ -385,6 +385,10 @@ public class GenericController implements Initializable {
                 Label availability = (Label) pane.getChildren().get(2);
                 Label cost = (Label) pane.getChildren().get(3);
 
+                pane.setOnDragDetected(mouseEvent -> {
+                    DesignerController.handleDragDetection(mouseEvent);
+                });
+
                 // Set the user data, will be useful for status checks
                 pane.setUserData(components[i]);
                 pane.setId("is-addable");

@@ -385,9 +385,6 @@ public class GenericController implements Initializable {
                 Label availability = (Label) pane.getChildren().get(2);
                 Label cost = (Label) pane.getChildren().get(3);
 
-                pane.setOnDragDetected(mouseEvent -> {
-                    DesignerController.handleDragDetection(mouseEvent);
-                });
 
                 // Set the user data, will be useful for status checks
                 pane.setUserData(components[i]);
@@ -395,7 +392,7 @@ public class GenericController implements Initializable {
 
                 // set event, static reference to the handleDragDetection method in the DesignerController class
                 if (this.getClass().isAssignableFrom(DesignerController.class)) {
-                    componentPane.setOnDragDetected(DesignerController::handleDragDetection);
+                    pane.setOnDragDetected(DesignerController::handleDragDetection);
                 }
 
                 if (this.optimizer) {

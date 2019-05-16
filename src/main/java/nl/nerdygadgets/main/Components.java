@@ -3,13 +3,17 @@ package nl.nerdygadgets.main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.ComponentType;
+import nl.nerdygadgets.infrastructure.design.DesignManager;
 import nl.nerdygadgets.infrastructure.design.XMLImporter;
 import nl.nerdygadgets.pages.PageRegister;
 import nl.nerdygadgets.pages.controllers.OptimizerController;
@@ -21,7 +25,9 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,13 +45,18 @@ public class Components {
 
     private static Map<String, Component> allComponents;
 
-    private Components(String filePath) {
+    private Components() {
+        ComponentsAlert componentsAlert = new ComponentsAlert();
+        componentsAlert.display();
 
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Selecteer een xml bestand dat alle componenten bevat.");
+        File componentsFile = fileChooser.showOpenDialog(NerdyGadgets.getNerdyGadgets().getStage());
 
         allComponents = new HashMap<>();
 
         try {
-            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filePath);
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(componentsFile.getAbsolutePath());
             document.getDocumentElement().normalize();
             NodeList nodes = document.getElementsByTagName("components").item(0).getChildNodes();
 
@@ -89,36 +100,24 @@ public class Components {
 
             VBox componentsDialog = null;
             try {
-                componentsDialog = FXMLLoader.load(getClass().getResource(PageRegister.get("OptimizerAlert").getFilePath()));
+                componentsDialog = FXMLLoader.load(getClass().getResource(PageRegister.get("ComponentsAlert").getFilePath()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            HBox buttonContainer = (HBox) optimizerDialog.getChildren().get(1);
-            Button setCurrentInfrastructure = (Button) buttonContainer.getChildren().get(1);
-            Button saveInfrastructure = (Button) buttonContainer.getChildren().get(0);
-            Button cancelDialog = (Button) buttonContainer.getChildren().get(2);
+            Label label = (Label) componentsDialog.getChildren().get(0);
+            Button button = (Button) componentsDialog.getChildren().get(1);
 
-            setCurrentInfrastructure.setOnAction(actionEvent -> {
-                action = OptimizerController.ACTION.SET;
-                window.close();
-            });
-            saveInfrastructure.setOnAction(actionEvent -> {
-                action = OptimizerController.ACTION.SAVE;
-                window.close();
-            });
-            cancelDialog.setOnAction(actionEvent -> {
-                action = OptimizerController.ACTION.CLOSE;
+            label.setText("Je moet in het volgende scherm een .xml bestand selecteren wat alle componenten bevat.");
+            button.setOnAction(actionEvent -> {
                 window.close();
             });
 
             window.initModality(Modality.APPLICATION_MODAL);
             window.setTitle("Optimizer");
-            window.setScene(new Scene(optimizerDialog));
+            window.setScene(new Scene(componentsDialog));
 
             window.showAndWait();
-
-            return action;
         }
     }
 }

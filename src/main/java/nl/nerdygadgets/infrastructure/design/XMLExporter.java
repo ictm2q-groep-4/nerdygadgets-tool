@@ -88,38 +88,38 @@ public class XMLExporter {
         // Component elements
         for (Component component : components) {
             // Create component node
-            Element componentNode = document.createElement(component.getClass().getSimpleName());
+            Element componentNode = document.createElement(component.name);
             root.appendChild(componentNode);
 
             // Create component child nodes
-            Element name = document.createElement("name");
-            componentNode.appendChild(name);
-            name.appendChild(document.createTextNode(component.getHostname()));
+            Element hostname = document.createElement("hostname");
+            componentNode.appendChild(hostname);
+            hostname.appendChild(document.createTextNode(component.hostname));
 
             Element x = document.createElement("x");
             componentNode.appendChild(x);
-            x.appendChild(document.createTextNode(String.valueOf(component.getX())));
+            x.appendChild(document.createTextNode(String.valueOf(component.x)));
 
             Element y = document.createElement("y");
             componentNode.appendChild(y);
-            y.appendChild(document.createTextNode(String.valueOf(component.getY())));
+            y.appendChild(document.createTextNode(String.valueOf(component.y)));
 
             if (component.componentType.equals(ComponentType.DATABASESERVER) || component.componentType.equals(ComponentType.WEBSERVER)) {
                 Element ipv4 = document.createElement("ipv4");
                 componentNode.appendChild(ipv4);
-                ipv4.appendChild(document.createTextNode(component.getIpv4().getHostAddress()));
+                ipv4.appendChild(document.createTextNode(component.ipv4.getHostAddress()));
 
                 Element ipv6 = document.createElement("ipv6");
                 componentNode.appendChild(ipv6);
-                ipv6.appendChild(document.createTextNode(component.getIpv6().getHostAddress()));
+                ipv6.appendChild(document.createTextNode(component.ipv6.getHostAddress()));
 
                 Element sshUsername = document.createElement("sshusername");
                 componentNode.appendChild(sshUsername);
-                sshUsername.appendChild(document.createTextNode(component.getUser()));
+                sshUsername.appendChild(document.createTextNode(component.username));
 
                 Element sshPassword = document.createElement("sshpassword");
                 componentNode.appendChild(sshPassword);
-                sshPassword.appendChild(document.createTextNode(component.getPass()));
+                sshPassword.appendChild(document.createTextNode(component.password));
             }
         }
     }

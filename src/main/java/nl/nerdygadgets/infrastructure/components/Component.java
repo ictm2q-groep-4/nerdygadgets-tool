@@ -82,6 +82,20 @@ public class Component implements Statistic {
         this.componentType = componentType;
     }
 
+    public Component(Component copyFromComponent) {
+        this.name = copyFromComponent.name;
+        this.availability = copyFromComponent.availability;
+        this.price = copyFromComponent.price;
+        this.componentType = copyFromComponent.componentType;
+    }
+
+    public Component(Component copyFromComponent, String hostname, int x, int y) {
+        this(copyFromComponent);
+        this.hostname = hostname;
+        this.x = x;
+        this.y = y;
+    }
+
     public Component(String name, double availability, int price, ComponentType componentType,
                      String hostname, int x, int y, String username, String password,
                      InetAddress ipv4, InetAddress ipv6) {
@@ -241,6 +255,29 @@ public class Component implements Statistic {
         } catch (Exception e) {
             System.err.println("Something went wrong while opening the SSH channel");
             return null;
+        }
+    }
+
+    public String getHostname() { return hostname; }
+    public int getX() { return x; }
+    public int getY() { return y; }
+
+    public void setX(int x) { this.x = x; }
+    public void setY(int y) { this.y = y; }
+    public void setUser(String username) { this.username = username; }
+    public void setPass(String password) { this.password = password; }
+    public void setIpv4(String ipv4) {
+        try {
+            this.ipv4 = InetAddress.getByName(ipv4);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setIpv6(String ipv6) {
+        try {
+            this.ipv6 = InetAddress.getByName(ipv6);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
         }
     }
 

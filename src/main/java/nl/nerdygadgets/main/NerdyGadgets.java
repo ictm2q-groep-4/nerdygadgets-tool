@@ -38,8 +38,6 @@ public class NerdyGadgets extends Application {
      * @param args  String[]
      */
     public static void main(String[] args) {
-        Components.instance();
-
         Infrastructure currentInfrastructure = new Infrastructure();
         Infrastructure.setCurrentInfrastructure(currentInfrastructure);
 
@@ -56,6 +54,8 @@ public class NerdyGadgets extends Application {
         // Store objects for later usage
         NerdyGadgets.nerdyGadgets = this;
         this.stage = stage;
+
+        Components.instance();
 
         // Set the default scene for the application.
         this.setScene(PageRegister.MAIN.getIdentifier());

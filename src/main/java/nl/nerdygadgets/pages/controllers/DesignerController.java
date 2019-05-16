@@ -314,71 +314,6 @@ public class DesignerController extends GenericController {
             NerdyGadgets.showAlert("Er is een fout opgetreden!", "Geen XML bestand!", Alert.AlertType.ERROR);
         }
     }
-//
-//    //TODO addComponentAttributeLabels
-//    private void addComponentAttributesLabels(Pane component) {
-//        VBox componentPane = (VBox) component.getChildren().get(1);
-//    }
-
-//    private String getComponentAttribute(String method, String hostname) {
-//        List<Component> components = Infrastructure.getCurrentInfrastructure().getComponents();
-//
-//
-//        for (Component x : components) {
-//            //TODO Find a way to identify component in loop
-////            if (x.getHostname().equals(hostname)) {
-//            if (method.equals("getHostname")) {
-//                return x.getHostname();
-//            }
-//            if (method.equals("getipv4")) {
-//                //TODO Fix null
-//                return String.valueOf(x.getIpv4());
-//            }
-//            if (method.equals("getipv6")) {
-//                //TODO Fix null
-//                return String.valueOf(x.getIpv6());
-//            }
-//            if (method.equals("getUser")) {
-//                return x.getUser();
-//            }
-//            if (method.equals("getPass")) {
-//                return x.getPass();
-//            }
-//        }
-//
-////        }
-//        return "";
-//    }
-//
-////    private void setComponentAttribute(String method, String attribute) {
-////        List<Component> components = Infrastructure.getCurrentInfrastructure().getComponents();
-////
-//////            if (x.getHostname().equals(hostname)) {
-////        if (method.equals("setHostname")) {
-////            System.out.print(x.getHostname() + "\t Hostname changed to: ");
-////            x.setHostname(attribute);
-////            System.out.println(x.getHostname());
-////        }
-////        if (method.equals("setipv4")) {
-////            x.setIpv4(attribute);
-////            System.out.println(x.getHostname() + "\t IPv4: " + x.getIpv4());
-////        }
-////        if (method.equals("setipv6")) {
-////
-////            x.setIpv6(attribute);
-////            System.out.println(x.getHostname() + "\t IPv6: " + x.getIpv6());
-////        }
-////        if (method.equals("setUser")) {
-////            x.setUser(attribute);
-////            System.out.println(x.getHostname() + "\t SSH Username: " + x.getUser());
-////        }
-////        if (method.equals("setPass")) {
-////            x.setPass(attribute);
-////            System.out.println(x.getHostname() + "\t SSH Password: " + x.getPass() + " (Don't tell anyone!)");
-////        }
-////    }
-//    // }
-//    //}
 
     public static Event getTransferEvent() {
         return transferEvent;
@@ -454,16 +389,6 @@ public class DesignerController extends GenericController {
             return isOk;
         }
 
-//        private void componentAttributes(String hostname, String ipv4, String ipv6, String sshuser, String sshpass) {
-//            componentAttributes = new ArrayList();
-//
-//            componentAttributes.add(hostname);
-//            componentAttributes.add(ipv4);
-//            componentAttributes.add(ipv6);
-//            componentAttributes.add(sshuser);
-//            componentAttributes.add(sshpass);
-//
-//        }
 
         private ArrayList transferComponentAttributes() {
             return componentAttributes;

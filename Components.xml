@@ -48,4 +48,10 @@
         <availability>99.999</availability>
         <price>2000</price>
     </Component>
+    <Component>
+        <name>KAAS</name>
+        <type>FIREWALL</type>
+        <availability>99.999</availability>
+        <price>2837123</price>
+    </Component>
 </components>

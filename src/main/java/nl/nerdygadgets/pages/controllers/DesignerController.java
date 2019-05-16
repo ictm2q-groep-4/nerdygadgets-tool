@@ -71,7 +71,7 @@ public class DesignerController extends GenericController {
     @FXML
     private void handleDrop(DragEvent dragEvent) {
         Pane component = (Pane) getTransferEvent().getSource();
-        PopupMenu hostnameInput = new PopupMenu();
+        PopupMenu inputMenu = new PopupMenu();
         String hostname = null;
 
         //Boolean to check if component is already in the layout
@@ -79,9 +79,8 @@ public class DesignerController extends GenericController {
 
         //If the component does not exist in the layout, it will create a new instance of it
         if (!componentLayout.getChildren().contains(component)) {
-            if (hostnameInput.displayHostname()) {
-                hostname = hostnameInput.getHostname();
-                component = copyAttributes(component, hostname);
+            if (inputMenu.displayHostname()) {
+                component = copyAttributes(component, inputMenu);
                 componentLayout.getChildren().add(component);
             } else {
                 return;
@@ -124,10 +123,14 @@ public class DesignerController extends GenericController {
             //Edits the coordinates of an existing component
             editComponentObject(component);
         } else {
-            addComponentToInfrastructure(component, hostname);
+            addComponentToInfrastructure(component, inputMenu);
         }
 
     }
+
+//    public void editLabels() {
+//
+//    }
 
     /**
      * @param component
@@ -150,12 +153,13 @@ public class DesignerController extends GenericController {
      * Adds a component to the infrastructure when it's placed in the layout.
      *
      * @param component
-     * @param hostname
      */
-    private void addComponentToInfrastructure(Pane component, String hostname) {
+    private void addComponentToInfrastructure(Pane component, PopupMenu inputMenu) {
         List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
+
+        String hostname = inputMenu.getHostname();
         try {
-            Component componentObject = createComponentObject(component, hostname);
+            Component componentObject = createComponentObject(component, inputMenu);
             infraComponents.add(componentObject);
             System.out.println("Component added to infrastructure. X and Y coordinates of host '" + hostname + "' are: X: " + componentObject.getX() + " Y: " + componentObject.getY());
 
@@ -175,18 +179,31 @@ public class DesignerController extends GenericController {
      * @throws NoSuchMethodException
      * @throws ClassNotFoundException
      */
-    public Component createComponentObject(Pane component, String hostname) throws NoSuchMethodException, ClassNotFoundException {
+    public Component createComponentObject(Pane component, PopupMenu inputMenu) throws NoSuchMethodException, ClassNotFoundException {
         Label labelType = (Label) component.getChildren().get(0);
 
         String type = labelType.getText();
         String fullClassPath = "nl.nerdygadgets.infrastructure.components." + type;
 
+        String hostname = inputMenu.getHostname();
         int x = (int) component.getLayoutX();
         int y = (int) component.getLayoutY();
 
+        String ipv4 = inputMenu.getIPv4();
+        String ipv6 = inputMenu.getIPv6();
+        String sshUser = inputMenu.getSSHUser();
+        String sshPass = inputMenu.getSSHPass();
+
         Class<?> cls = Class.forName(fullClassPath);
         try {
-            return (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
+            Component newComponent = (Component) cls.getConstructor(String.class, int.class, int.class).newInstance(hostname, x, y);
+            newComponent.setIpv4(ipv4);
+            newComponent.setIpv6(ipv6);
+            newComponent.setUser(sshUser);
+            newComponent.setPass(sshPass);
+            System.out.println("New " + type + " created. \tIPv4: " + ipv4 + " \tIPv6: " + ipv6 + " \tUsername: " + sshUser + " \tPassword: " + sshPass);
+
+            return newComponent;
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -197,10 +214,10 @@ public class DesignerController extends GenericController {
      * Copies the attributes from the component out of componentlist, and places it into a draggable pane with the createDraggablePane method.
      *
      * @param component
-     * @param hostname
+     * @param inputMenu
      * @return Pane component
      */
-    private Pane copyAttributes(Pane component, String hostname) {
+    private Pane copyAttributes(Pane component, PopupMenu inputMenu) {
         Pane draggablePane = createDraggablePane(component);
         VBox attributes = new VBox();
 
@@ -212,10 +229,16 @@ public class DesignerController extends GenericController {
         Rectangle iconCopy = (Rectangle) component.getChildren().get(0);
         Rectangle componentIcon = new Rectangle(iconCopy.getHeight(), iconCopy.getWidth());
 
-        Label name = new Label(hostname);
+        Label name = new Label(inputMenu.getHostname());
+        Label ipv4 = new Label(inputMenu.getIPv4());
+        Label ipv6 = new Label(inputMenu.getIPv6());
+        Label sshUser = new Label(inputMenu.getSSHUser());
 
         attributes.getChildren().add(componentIcon);
         attributes.getChildren().add(name);
+        attributes.getChildren().add(ipv4);
+        attributes.getChildren().add(ipv6);
+        attributes.getChildren().add(sshUser);
 
         draggablePane.getChildren().add(componentType);
         draggablePane.getChildren().add(attributes);
@@ -380,6 +403,10 @@ public class DesignerController extends GenericController {
         private ArrayList componentAttributes = new ArrayList();
 
         TextField hostnameField;
+        TextField ipv4Field;
+        TextField ipv6Field;
+        TextField sshUserField;
+        TextField sshPassField;
 
         public void main(String[] args) {
             launch(args);
@@ -397,6 +424,10 @@ public class DesignerController extends GenericController {
             }
 
             hostnameField = (TextField) hostnameDialog.getChildren().get(1);
+            ipv4Field = (TextField) hostnameDialog.getChildren().get(3);
+            ipv6Field = (TextField) hostnameDialog.getChildren().get(5);
+            sshUserField = (TextField) hostnameDialog.getChildren().get(7);
+            sshPassField = (TextField) hostnameDialog.getChildren().get(9);
 
             Label hostnameWarning = (Label) hostnameDialog.getChildren().get(10);
             Button okButton = (Button) hostnameDialog.getChildren().get(11);
@@ -434,10 +465,6 @@ public class DesignerController extends GenericController {
 //
 //        }
 
-        public String getHostname() {
-            return hostnameField.getText();
-        }
-
         private ArrayList transferComponentAttributes() {
             return componentAttributes;
         }
@@ -457,7 +484,7 @@ public class DesignerController extends GenericController {
 
             //TODO Retrieve component attributes
 
-            Button okButton = (Button) attributeDialog.getChildren().get(10);
+            Button okButton = (Button) attributeDialog.getChildren().get(11);
 
             okButton.setOnAction(actionEvent -> {
                 if (hostnameField.getText().isEmpty()) {
@@ -474,6 +501,26 @@ public class DesignerController extends GenericController {
             window.showAndWait();
 
             return isOk;
+        }
+
+        public String getHostname() {
+            return hostnameField.getText();
+        }
+
+        public String getIPv4() {
+            return ipv4Field.getText();
+        }
+
+        public String getIPv6() {
+            return ipv6Field.getText();
+        }
+
+        public String getSSHUser() {
+            return sshUserField.getText();
+        }
+
+        public String getSSHPass() {
+            return sshPassField.getText();
         }
     }
 }

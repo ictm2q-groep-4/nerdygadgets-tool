@@ -75,7 +75,7 @@ public class NerdyGadgets extends Application {
         stage.setResizable(false);
         stage.centerOnScreen();
 
-        stage.getIcons().add(new Image("/images/logo.png"));
+//        stage.getIcons().add(new Image("/images/logo.png"));  //TODO Afbeelding geeft error
 
         // Show the application
         stage.show();

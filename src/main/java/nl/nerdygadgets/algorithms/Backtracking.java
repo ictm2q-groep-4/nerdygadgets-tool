@@ -2,6 +2,7 @@ package nl.nerdygadgets.algorithms;
 
 import nl.nerdygadgets.infrastructure.components.*;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * This class handles the backtracking
  *
+ * @author Lucas Ouwens 
  * @author Joris Vos
  */
 public class Backtracking {
@@ -256,46 +258,7 @@ public class Backtracking {
             return;
         }
 
-        StringBuilder databaseServers = new StringBuilder();
-        for (Component component : optimalDatabaseConfiguration) {
-            databaseServers.append(component.getClass().getSimpleName());
-            databaseServers.append(", ");
-        }
-        if (databaseServers.length()>0) {
-            System.out.print("Database servers("+optimalDatabaseConfiguration.length+"): [");
-            System.out.println(databaseServers.substring(0, databaseServers.length() - 2) + "]");
-        } else {
-            System.out.print("Database servers(0): []");
-        }
-
-        StringBuilder webServers = new StringBuilder();
-        for (Component component : optimalWebConfiguration) {
-            webServers.append(component.getClass().getSimpleName());
-            webServers.append(", ");
-        }
-        if (webServers.length()>0) {
-            System.out.print("Web servers("+optimalWebConfiguration.length+"): [");
-            System.out.println(webServers.substring(0, webServers.length() - 2) + "]");
-        } else {
-            System.out.print("Web servers(0): []");
-        }
-
-        StringBuilder otherComponents = new StringBuilder();
-        for (Component component : this.otherComponents) {
-            otherComponents.append(component.getClass().getSimpleName());
-            otherComponents.append(", ");
-        }
-        if (otherComponents.length()>0) {
-            System.out.print("Other components("+this.otherComponents.length+"): [");
-            System.out.println(otherComponents.substring(0, otherComponents.length() - 2) + "]");
-        } else {
-            System.out.println("Other components(0): []");
-        }
-
-        System.out.println();
-        System.out.println("Availability: "+getTotalAvailability()+"%");
-        System.out.println("Price: €"+getTotalPrice()+",-");
-        System.out.println("Configurations tested: "+configurationsTested);
+        System.out.println(getSolution());
     }
 
     // region Getters
@@ -306,18 +269,18 @@ public class Backtracking {
      * @param components    Component[]
      * @return              double
      */
-    private double getAvailability(Component[] components) {
+    public static double getAvailability(Component[] components) {
         if (components==null) {
             return 0;
         }
 
-        double uptime=1;
+        double availability=1;
 
         for (Component component : components) {
-            uptime = uptime * (1 - component.availability*0.01);
+            availability *= (1 - component.availability*0.01);
         }
 
-        return (1-uptime)*100;
+        return (1-availability)*100;
     }
 
     /**
@@ -468,6 +431,82 @@ public class Backtracking {
      */
     public Component[] getOtherComponents() {
         return otherComponents;
+    }
+
+    /**
+     * returns the optimal solution with everything that is relevant to this
+     *
+     * @return  String
+     */
+    public String getSolution() {
+        if (forceStop || optimalWebConfiguration==null || optimalDatabaseConfiguration==null) {
+            return null;
+        }
+
+        StringBuilder solution = new StringBuilder();
+
+        StringBuilder databaseServers = new StringBuilder();
+        for (Component component : optimalDatabaseConfiguration) {
+            databaseServers.append(component.getClass().getSimpleName());
+            databaseServers.append(", ");
+        }
+        if (databaseServers.length()>0) {
+            solution.append("Database servers(");
+            solution.append(optimalDatabaseConfiguration.length);
+            solution.append("): [");
+
+            solution.append(databaseServers.substring(0, databaseServers.length() - 2));
+            solution.append("]\n");
+        } else {
+            solution.append("Database servers(0): []\n");
+        }
+
+        StringBuilder webServers = new StringBuilder();
+        for (Component component : optimalWebConfiguration) {
+            webServers.append(component.getClass().getSimpleName());
+            webServers.append(", ");
+        }
+        if (webServers.length()>0) {
+            solution.append("Web servers(");
+            solution.append(optimalWebConfiguration.length);
+            solution.append("): [");
+
+            solution.append(webServers.substring(0, webServers.length() - 2));
+            solution.append("]\n");
+        } else {
+            solution.append("Web servers(0): []\n");
+        }
+
+        StringBuilder otherComponents = new StringBuilder();
+        for (Component component : this.otherComponents) {
+            otherComponents.append(component.getClass().getSimpleName());
+            otherComponents.append(", ");
+        }
+        if (otherComponents.length()>0) {
+            solution.append("Andere components(");
+            solution.append(this.otherComponents.length);
+            solution.append("): [");
+
+            solution.append(otherComponents.substring(0, otherComponents.length() - 2));
+            solution.append("]\n");
+        } else {
+            solution.append("Andere components(0): []\n");
+        }
+
+        solution.append("\n");
+
+        solution.append("Beschikbaarheid: ");
+        solution.append(getTotalAvailability());
+        solution.append("%\n");
+
+        solution.append("Kosten: €");
+        solution.append(getTotalPrice());
+        solution.append(",-\n");
+
+        solution.append("Configuraties getest: ");
+        solution.append(configurationsTested);
+
+        return solution.toString();
     }
 
     // endregion

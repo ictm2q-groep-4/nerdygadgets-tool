@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import nl.nerdygadgets.infrastructure.Infrastructure;
@@ -47,8 +48,6 @@ public class NerdyGadgets extends Application {
      * @param args  String[]
      */
     public static void main(String[] args) {
-        test();
-
         Infrastructure currentInfrastructure = new Infrastructure();
         Infrastructure.setCurrentInfrastructure(currentInfrastructure);
 
@@ -59,10 +58,9 @@ public class NerdyGadgets extends Application {
      * This is the main entry point for our GUI application
      *
      * @param stage         Stage
-     * @throws Exception    setScene method throws a Exception
      */
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         // Store objects for later usage
         NerdyGadgets.nerdyGadgets = this;
         this.stage = stage;
@@ -73,11 +71,11 @@ public class NerdyGadgets extends Application {
         // Set the title, width and height for the stage (NOTE: The stage is the whole application, including the exit/minimize/maximize buttons)
         stage.setTitle("NerdyGadgets | multipurpose network tool");
 
-        //!!Removed 'setWidth' and 'setHeight' because the scene wouldn't fit in the stage!!
-
         // center on screen and make it non-resizable (To not need responsive design)
         stage.setResizable(false);
         stage.centerOnScreen();
+
+        stage.getIcons().add(new Image("/images/logo.png"));
 
         // Show the application
         stage.show();
@@ -95,16 +93,6 @@ public class NerdyGadgets extends Application {
         XMLAlert.setTitle(title);
         XMLAlert.setHeaderText(headerText);
         XMLAlert.showAndWait();
-    }
-
-    // TODO remove this method
-    public static void test () {
-        Component kaas = new HAL9001DB("kaas", 4, 5);
-        if (kaas.isOnline()) {
-            System.out.println("SSH connection is live");
-        }
-
-        System.out.println(kaas.getDiskUsage());
     }
 
     // region Getters
@@ -137,15 +125,18 @@ public class NerdyGadgets extends Application {
      * Example, to load the nerdyGadgets view(see PageRegister.MAIN):
      *
      * @param identifier    String
-     * @throws IOException  FXMLLoader.load could throw a IOException
      */
-    public void setScene(String identifier) throws IOException {
-        // load the view from the resources folder
-        Parent view = FXMLLoader.load(getClass().getResource(PageRegister.get(identifier).getFilePath()));
-        // create a new scene using the view & set the scene to the new view.
-        Scene scene = new Scene(view);
+    public void setScene(String identifier) {
+        try {
+            // load the view from the resources folder
+            Parent view = FXMLLoader.load(getClass().getResource(PageRegister.get(identifier).getFilePath()));
+            // create a new scene using the view & set the scene to the new view.
+            Scene scene = new Scene(view);
 
-        getStage().setScene(scene);
+            getStage().setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // endregion

@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -46,6 +47,9 @@ public class OptimizerController extends GenericController implements Controller
 
     @FXML
     private TextField minimumAvailability;
+
+    @FXML
+    private TextArea backtrackingOutput;
 
     private static List<AnchorPane> selectedComponents = new ArrayList<>();
 
@@ -118,9 +122,10 @@ public class OptimizerController extends GenericController implements Controller
     private void returnSelectedComponents() {
         List<Node> toRemove = new ArrayList<>();
         if (!selectedComponentContainer.getChildren().isEmpty()) {
+            int counter = 0;
             for (Node node : selectedComponentContainer.getChildren()) {
                 if (node.getStyle().equalsIgnoreCase("-fx-background-color: #4455ff")) {
-
+                    counter++;
                     // register the node for deletion.
                     toRemove.add(node);
 
@@ -133,9 +138,12 @@ public class OptimizerController extends GenericController implements Controller
             }
             selectedComponentContainer.getChildren().clear();
             this.reloadComponents();
+            if(counter == 0) {
+                NerdyGadgets.showAlert("Er is iets fout gegaan!", "Er zijn geen componenten geselecteerd om terug te zetten.", Alert.AlertType.WARNING);
+            }
         } else {
             // Show a warning if there's no components selected.
-            NerdyGadgets.showAlert("Er is iets fout gegaan!", "Er zijn geen componenten geselecteerd om terug te zetten.", Alert.AlertType.WARNING);
+            NerdyGadgets.showAlert("Er is iets fout gegaan!", "Er zijn geen componenten in de 'gekozen componenten' lijst.", Alert.AlertType.WARNING);
         }
     }
 
@@ -254,12 +262,8 @@ public class OptimizerController extends GenericController implements Controller
             totalConfigurationsTested.setText("Configuraties getest: "+backtracking.getConfigurationsTested());
 
             backtracking.printSolution();
+            backtrackingOutput.setText(backtracking.getSolution());
             newInfrastructure.getComponents().clear();
-
-            /*
-            int minX = (int)Math.round(componentLayout.getLayoutX()+50);
-            int minY = (int)Math.round(componentLayout.getLayoutY()+50);
-             */
 
             int minX = 50;
             int minY = 50;

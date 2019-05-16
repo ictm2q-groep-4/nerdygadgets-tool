@@ -1,6 +1,5 @@
 package nl.nerdygadgets.infrastructure.design;
 
-import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import org.w3c.dom.*;
 
@@ -19,6 +18,7 @@ import java.util.List;
  *
  * @author Stefan Booij
  * @author Lou Elzer
+ * @author Joris Vos
  */
 
 public class XMLExporter {
@@ -26,16 +26,6 @@ public class XMLExporter {
      * A variable which holds our *only* instance of this class.
      */
     private static XMLExporter XMLExporterInstance;
-
-    /**
-     * Contains the path to the location where file will be saved
-     */
-    private String filePath;
-
-    /**
-     * Contains the components that were added to the design
-     */
-    private List<Component> components;
 
     /**
      * A private constructor to block anything outside from making a new instance of this class.
@@ -47,7 +37,6 @@ public class XMLExporter {
      *
      * @return XMLExporterInstance
      */
-
     public static XMLExporter getXMLExporterInstance() {
         if (XMLExporterInstance == null) {
             XMLExporterInstance = new XMLExporter();
@@ -58,49 +47,43 @@ public class XMLExporter {
     /**
      * Creates a new XML files to the given filepath
      *
-     * @param filePath
+     * @param filePath      String
+     * @param components    List<Components>
      * @return boolean
      */
     public boolean exportComponents(String filePath, List<Component> components) {
-        setFilePath(filePath);
-        setComponents(components);
-
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-
         try {
+            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = documentFactory.newDocumentBuilder();
             Document document = builder.newDocument();
 
-            this.addElements(document);
+            addElements(document, components);
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
-
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
             DOMSource domSource = new DOMSource(document);
             StreamResult streamResult = new StreamResult(new File(filePath));
 
             transformer.transform(domSource, streamResult);
-
-        } catch (ParserConfigurationException | TransformerException e) {
+        } catch (ParserConfigurationException | TransformerException | NullPointerException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
 
-
     /**
      * Adds elements and its values to the XML file
      *
-     * @param document
+     * @param document      Document
+     * @param components    List<Component>
      */
-    private void addElements(Document document) {
+    private void addElements(Document document, List<Component> components) {
         // Root element
         Element root = document.createElement("design");
         document.appendChild(root);
-
 
         // Component elements
         for (Component component : components) {
@@ -121,29 +104,23 @@ public class XMLExporter {
             componentNode.appendChild(y);
             y.appendChild(document.createTextNode(String.valueOf(component.getY())));
 
-            Element ipv4 = document.createElement("ipv4");
-            componentNode.appendChild(ipv4);
-            ipv4.appendChild(document.createTextNode(component.getIpv4().getHostAddress()));
+            if (component.componentType.equals(ComponentType.DATABASESERVER) || component.componentType.equals(ComponentType.WEBSERVER)) {
+                Element ipv4 = document.createElement("ipv4");
+                componentNode.appendChild(ipv4);
+                ipv4.appendChild(document.createTextNode(component.getIpv4().getHostAddress()));
 
-            Element ipv6 = document.createElement("ipv6");
-            componentNode.appendChild(ipv6);
-            ipv6.appendChild(document.createTextNode(component.getIpv6().getHostAddress()));
+                Element ipv6 = document.createElement("ipv6");
+                componentNode.appendChild(ipv6);
+                ipv6.appendChild(document.createTextNode(component.getIpv6().getHostAddress()));
 
-            Element sshUsername = document.createElement("sshusername");
-            componentNode.appendChild(sshUsername);
-            sshUsername.appendChild(document.createTextNode(component.getUser()));
+                Element sshUsername = document.createElement("sshusername");
+                componentNode.appendChild(sshUsername);
+                sshUsername.appendChild(document.createTextNode(component.getUser()));
 
-            Element sshPassword = document.createElement("sshpassword");
-            componentNode.appendChild(sshPassword);
-            sshPassword.appendChild(document.createTextNode(component.getPass()));
+                Element sshPassword = document.createElement("sshpassword");
+                componentNode.appendChild(sshPassword);
+                sshPassword.appendChild(document.createTextNode(component.getPass()));
+            }
         }
-    }
-
-    private void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    private void setComponents(List<Component> components) {
-        this.components = components;
     }
 }

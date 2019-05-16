@@ -90,8 +90,7 @@ public class Infrastructure {
      */
     public boolean save(String filePath) {
         try {
-            DesignManager.getDesignManager().save(filePath, components);
-            return true;
+            return DesignManager.getDesignManager().save(filePath, components);
         } catch (Exception e) {
             return false;
         }

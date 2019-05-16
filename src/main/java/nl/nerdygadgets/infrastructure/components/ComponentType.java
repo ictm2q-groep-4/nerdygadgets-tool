@@ -10,5 +10,5 @@ public enum ComponentType {
     DATABASESERVER,
     WEBSERVER,
     FIREWALL,
-    DBLOADBALANCER
+    DBLOADBALANCER;
 }

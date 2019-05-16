@@ -39,7 +39,7 @@ import java.util.ResourceBundle;
 public class GenericController implements Initializable {
 
     @FXML
-    protected Rectangle componentPane;
+    protected AnchorPane componentPane;
 
     @FXML
     private AnchorPane anchorPane;

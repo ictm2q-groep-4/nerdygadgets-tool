@@ -40,8 +40,6 @@ public class DesignerController extends GenericController {
     /**
      * A variable that transfers events between methods.
      */
-
-    public AnchorPane componentLayout;
     @FXML
     public static Event transferEvent;
 
@@ -78,10 +76,10 @@ public class DesignerController extends GenericController {
         boolean existenceCheck = false;
 
         //If the component does not exist in the layout, it will create a new instance of it
-        if (!componentLayout.getChildren().contains(component)) {
+        if (!componentPane.getChildren().contains(component)) {
             if (inputMenu.displayHostname()) {
                 component = copyAttributes(component, inputMenu);
-                componentLayout.getChildren().add(component);
+                componentPane.getChildren().add(component);
             } else {
                 return;
             }
@@ -95,8 +93,8 @@ public class DesignerController extends GenericController {
             existenceCheck = true;
         }
 
-        double borderRight = componentLayout.getWidth();
-        double borderBottom = componentLayout.getHeight();
+        double borderRight = componentPane.getWidth();
+        double borderBottom = componentPane.getHeight();
         double componentWidth = component.getWidth();
         double componentHeight = component.getHeight();
 
@@ -174,7 +172,6 @@ public class DesignerController extends GenericController {
      * Creates an object of a component when it's placed in the layout
      *
      * @param component
-     * @param hostname
      * @return
      * @throws NoSuchMethodException
      * @throws ClassNotFoundException

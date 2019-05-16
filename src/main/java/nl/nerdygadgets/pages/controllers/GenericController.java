@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -85,6 +86,21 @@ public class GenericController implements Initializable {
         }
     }
 
+
+    @FXML
+    private void handleOpenCurrentDesign() {
+        if (Infrastructure.getCurrentInfrastructure() != null && Infrastructure.getCurrentInfrastructure().getComponents() != null) {
+            if (Infrastructure.getCurrentInfrastructure().isLoaded()) {
+                NerdyGadgets.showAlert("Er is een fout opgetreden!", "Deze infrastructuur is al ingeladen.", Alert.AlertType.WARNING);
+            } else {
+                this.loadDesignIntoMonitor();
+            }
+        } else {
+            NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er is geen beschikbare infrastructuur. Gebruik 'open ontwerp'.", Alert.AlertType.WARNING);
+        }
+    }
+
+
     /**
      * A method which handles the choosing of files, making sure it is an XML file & making sure it is an infrastructure design.
      * <p>
@@ -126,6 +142,18 @@ public class GenericController implements Initializable {
      * Used in: InfrastructureMonitor, InfrastructureDesigner
      */
     protected void loadDesignIntoMonitor() {
+        if(!(componentPane.getChildren().isEmpty())) {
+            Rectangle rectangle = (Rectangle) componentPane.getChildren().get(0); // first child is a rectangle (the background)
+            ArrayList<Node> toRemove = new ArrayList<>();
+            for(Node n : componentPane.getChildren()) {
+                if(n.equals(rectangle)) {
+                    continue;
+                }
+                toRemove.add(n);
+            }
+
+            componentPane.getChildren().removeAll(toRemove);
+        }
         double startX = componentPane.getLayoutX();
         double startY = componentPane.getLayoutY();
 
@@ -134,13 +162,13 @@ public class GenericController implements Initializable {
         if (current != null && current.getComponents() != null) {
             current.getComponents().forEach(component -> {
                 try {
-                    Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
-                    componentPane.setUserData(component);
-                    Label hostName = (Label) componentPane.getChildren().get(1);
-                    Rectangle box = (Rectangle) componentPane.getChildren().get(0);
+                    Pane pane = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
+                    pane.setUserData(component);
+                    Label hostName = (Label) pane.getChildren().get(1);
+                    Rectangle box = (Rectangle) pane.getChildren().get(0);
 
                     // Only add tooltip with statistics when we're on the monitor page.
-                    if(this.monitor) {
+                    if (this.monitor) {
                         if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
 
                             Tooltip statisticTooltip = new Tooltip();
@@ -174,7 +202,7 @@ public class GenericController implements Initializable {
                                             "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
                             );
 
-                            Tooltip.install(componentPane, statisticTooltip);
+                            Tooltip.install(pane, statisticTooltip);
                         }
 
                     }
@@ -189,13 +217,13 @@ public class GenericController implements Initializable {
                     hostName.setLayoutY(box.getHeight() + 5);
 
                     // set the layout axises of the component pane
-                    componentPane.setLayoutX(startX + component.getX());
-                    componentPane.setLayoutY(startY + component.getY());
+                    pane.setLayoutX(startX + component.getX());
+                    pane.setLayoutY(startY + component.getY());
 
-                    componentPane.getChildren().set(1, hostName);
-                    if (componentPane.getLayoutX() <= 1280) {
-                        if (componentPane.getLayoutY() <= (componentPane.getLayoutY() + componentPane.getHeight())) {
-                            anchorPane.getChildren().add(componentPane);
+                    pane.getChildren().set(1, hostName);
+                    if (pane.getLayoutX() <= 1280) {
+                        if (pane.getLayoutY() <= (pane.getLayoutY() + pane.getHeight())) {
+                            anchorPane.getChildren().add(pane);
                         }
                     }
 
@@ -235,7 +263,7 @@ public class GenericController implements Initializable {
      * @param components List<Component>
      */
     private void setTotalAvailability(List<Component> components) {
-        double availability=1;
+        double availability = 1;
 
         List<Component> webComponents = new ArrayList<>();
         List<Component> databaseComponents = new ArrayList<>();
@@ -258,11 +286,11 @@ public class GenericController implements Initializable {
         }
 
         if (webComponents.size() > 0) {
-            availability *= (Backtracking.getAvailability(webComponents.toArray(Component[]::new))*0.01);
+            availability *= (Backtracking.getAvailability(webComponents.toArray(Component[]::new)) * 0.01);
         }
 
         if (databaseComponents.size() > 0) {
-            availability *= (Backtracking.getAvailability(databaseComponents.toArray(Component[]::new))*0.01);
+            availability *= (Backtracking.getAvailability(databaseComponents.toArray(Component[]::new)) * 0.01);
         }
 
         availability *= 100;
@@ -337,20 +365,20 @@ public class GenericController implements Initializable {
         for (int i = 0; i < components.length; i++) {
             if (type == null || components[i].componentType == type) {
                 // Get the necessary labels to modify
-                Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
-                Label title = (Label) componentPane.getChildren().get(1);
-                Label availability = (Label) componentPane.getChildren().get(2);
-                Label cost = (Label) componentPane.getChildren().get(3);
+                Pane pane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
+                Label title = (Label) pane.getChildren().get(1);
+                Label availability = (Label) pane.getChildren().get(2);
+                Label cost = (Label) pane.getChildren().get(3);
 
                 // Set the user data, will be useful for status checks
-                componentPane.setUserData(components[i]);
-                componentPane.setId("is-addable");
+                pane.setUserData(components[i]);
+                pane.setId("is-addable");
 
                 // set event, static reference to the handleDragDetection method in the DesignerController class
-                componentPane.setOnDragDetected(DesignerController::handleDragDetection);
+                pane.setOnDragDetected(DesignerController::handleDragDetection);
 
                 if (this.optimizer) {
-                    componentPane.setOnMouseClicked(OptimizerController::selectElement);
+                    pane.setOnMouseClicked(OptimizerController::selectElement);
                 }
 
                 // set the data
@@ -359,16 +387,16 @@ public class GenericController implements Initializable {
                 cost.setText("Prijs: € " + components[i].price);
 
                 // add a white background, this is for beauty purposes
-                componentPane.setStyle("-fx-background-color: #fff");
+                pane.setStyle("-fx-background-color: #fff");
 
                 // We're only adding a layoutY if it's not the first element, which is determined by the value of the multipleir
                 if (multiplier > 0) {
-                    componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight() * multiplier);
+                    pane.setLayoutY(pane.getLayoutX() + pane.getPrefHeight() * multiplier);
                 }
                 multiplier++;
 
                 // add the component pane to the container.
-                container.getChildren().add(componentPane);
+                container.getChildren().add(pane);
             }
         }
     }

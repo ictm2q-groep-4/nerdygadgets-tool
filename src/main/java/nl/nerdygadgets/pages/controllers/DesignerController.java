@@ -69,7 +69,7 @@ public class DesignerController extends GenericController {
         PopupMenu menu = new PopupMenu(component, false);
 
         //If the component does not exist in the layout, it will create a new instance of it
-        if (!componentPane.getChildren().contains(component)) {
+        if (!componentPane.getChildren().contains(component) && !anchorPane.getChildren().contains(component)) {
             menu.getWindow().showAndWait();
 
             if (menu.isOk()) {

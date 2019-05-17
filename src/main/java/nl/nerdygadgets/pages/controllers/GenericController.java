@@ -119,7 +119,7 @@ public class GenericController implements Initializable {
             if ((infrastructureFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     // verify mime type
-                    if (Files.probeContentType(infrastructureFile.toPath()).equals("application/xml")) {
+                    if (Files.probeContentType(infrastructureFile.toPath()).equals("application/xml") || Files.probeContentType(infrastructureFile.toPath()).equals("text/xml")) {
                         // Load the infrastructure which was picked using the filechooser
                         Infrastructure.setCurrentInfrastructure(DesignManager.getDesignManager().load(infrastructureFile));
 

@@ -87,6 +87,8 @@ public class DesignerController extends GenericController {
                 });
 
                 componentPane.getChildren().add(component);
+            }else{
+                return;
             }
         } else {
             existenceCheck = true;

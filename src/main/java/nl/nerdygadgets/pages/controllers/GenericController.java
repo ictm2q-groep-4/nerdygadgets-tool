@@ -44,7 +44,7 @@ public class GenericController implements Initializable {
     protected AnchorPane componentPane;
 
     @FXML
-    private AnchorPane anchorPane;
+    protected AnchorPane anchorPane;
 
     @FXML
     protected Label totalAvailability;

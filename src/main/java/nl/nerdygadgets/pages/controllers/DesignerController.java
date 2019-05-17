@@ -17,6 +17,7 @@ import nl.nerdygadgets.infrastructure.components.ComponentType;
 import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javafx.scene.control.Label;
@@ -146,20 +147,12 @@ public class DesignerController extends GenericController {
      */
     private Pane copyAttributes(Pane component) {
         Pane draggablePane = createDraggablePane(component);
-        VBox attributes = new VBox();
+
+        Component dataContainer = (Component) component.getUserData();
 
         //Copy icon to componentpane
-        Label typeCopy = (Label) component.getChildren().get(1);
-        Label componentType = new Label(typeCopy.getText());
-        componentType.setVisible(false);
-
-        Rectangle iconCopy = (Rectangle) component.getChildren().get(0);
-        Rectangle componentIcon = new Rectangle(iconCopy.getHeight(), iconCopy.getWidth());
-
-        attributes.getChildren().add(componentIcon);
-
-        draggablePane.getChildren().add(componentType);
-        draggablePane.getChildren().add(attributes);
+        Label hostnameLabel = (Label) draggablePane.getChildren().get(1);
+        hostnameLabel.setText(dataContainer.getHostname());
 
         return draggablePane;
     }
@@ -170,15 +163,19 @@ public class DesignerController extends GenericController {
      * @return AnchorPane draggableComponent
      */
     public AnchorPane createDraggablePane(Pane component) {
-        AnchorPane draggableComponent = new AnchorPane();
+        try {
+            AnchorPane draggableComponent = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
 
-        draggableComponent.setOnDragDetected(mouseEvent -> {
-            handleDragDetection(mouseEvent);
-        });
+            draggableComponent.setOnDragDetected(DesignerController::handleDragDetection);
 
-        draggableComponent.setUserData(component.getUserData());
+            draggableComponent.setUserData(component.getUserData());
 
-        return draggableComponent;
+            return draggableComponent;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return  null;
     }
 
 

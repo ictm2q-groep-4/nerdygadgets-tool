@@ -3,12 +3,9 @@ package nl.nerdygadgets.infrastructure.components;
 import com.jcraft.jsch.*;
 
 import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * The abstract class that is extended by all components
@@ -117,6 +114,16 @@ public class Component implements Statistic {
     public boolean isOnline() {
         boolean isUp = false;
 
+        try {
+            new Socket(ipv4.toString().split("/")[1], 22).close();
+            return true;
+        } catch (IOException e) {
+            System.err.println("Something went wrong while connecting to the SSH server");
+            //e.printStackTrace();
+            return false;
+        }
+
+        /*
         // get ssh channel
         Channel channel = getSSHChannel(username, password);
 
@@ -137,6 +144,7 @@ public class Component implements Statistic {
             e.printStackTrace();
         }
         return false;
+         */
     }
 
     /**

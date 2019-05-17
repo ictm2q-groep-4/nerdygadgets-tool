@@ -1,22 +1,16 @@
-package nl.nerdygadgets.main;
+package nl.nerdygadgets.infrastructure.components;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import nl.nerdygadgets.infrastructure.Infrastructure;
-import nl.nerdygadgets.infrastructure.components.Component;
-import nl.nerdygadgets.infrastructure.components.ComponentType;
-import nl.nerdygadgets.infrastructure.design.DesignManager;
-import nl.nerdygadgets.infrastructure.design.XMLImporter;
+import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.PageRegister;
-import nl.nerdygadgets.pages.controllers.OptimizerController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,25 +21,24 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
 import static javafx.application.Application.launch;
 
-public class Components {
-    private static Components instance;
+public class ComponentManager {
+    private static ComponentManager instance;
 
-    public static Components instance() {
+    public static ComponentManager instance() {
         if (instance == null) {
-            instance = new Components();
+            instance = new ComponentManager();
         }
         return instance;
     }
 
     private static Map<String, Component> allComponents;
 
-    private Components() {
+    private ComponentManager() {
         ComponentsAlert componentsAlert = new ComponentsAlert();
         componentsAlert.display();
 
@@ -105,10 +98,7 @@ public class Components {
                 e.printStackTrace();
             }
 
-            Label label = (Label) componentsDialog.getChildren().get(0);
             Button button = (Button) componentsDialog.getChildren().get(1);
-
-            label.setText("Je moet in het volgende scherm een .xml bestand selecteren wat alle componenten bevat.");
             button.setOnAction(actionEvent -> {
                 window.close();
             });

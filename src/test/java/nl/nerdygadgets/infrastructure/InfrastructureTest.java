@@ -2,12 +2,8 @@ package nl.nerdygadgets.infrastructure;
 
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.ComponentType;
-import nl.nerdygadgets.main.Components;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.transform.TransformerException;
-import java.io.FileNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

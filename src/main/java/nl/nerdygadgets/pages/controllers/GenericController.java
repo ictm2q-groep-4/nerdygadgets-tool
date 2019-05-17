@@ -19,7 +19,7 @@ import nl.nerdygadgets.algorithms.Backtracking;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
-import nl.nerdygadgets.main.Components;
+import nl.nerdygadgets.infrastructure.components.ComponentManager;
 import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.PageRegister;
 
@@ -318,7 +318,7 @@ public class GenericController implements Initializable {
     private void loadSelectableElements(ComponentType type) {
         try {
             // Load the components
-            this.loadComponents(componentContainer, Components.getAllComponents(), type);
+            this.loadComponents(componentContainer, ComponentManager.getAllComponents(), type);
 
         } catch (IOException e) {
             // In case of errors: Activate panic-mode (Not implemented, but the devs will panic.)

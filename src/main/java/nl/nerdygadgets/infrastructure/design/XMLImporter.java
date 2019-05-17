@@ -1,8 +1,8 @@
 package nl.nerdygadgets.infrastructure.design;
 
 import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.ComponentManager;
 import nl.nerdygadgets.infrastructure.components.ComponentType;
-import nl.nerdygadgets.main.Components;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import java.net.InetAddress;
@@ -81,7 +81,7 @@ public class XMLImporter {
 
                 // parse the element values
                 if (element.getTagName() != null) {
-                    Component component = Components.getComponent(element.getTagName());
+                    Component component = ComponentManager.getComponent(element.getTagName());
                     hostname = element.getElementsByTagName("hostname").item(0).getTextContent();
                     x = Integer.parseInt(element.getElementsByTagName("x").item(0).getTextContent());
                     y = Integer.parseInt(element.getElementsByTagName("y").item(0).getTextContent());

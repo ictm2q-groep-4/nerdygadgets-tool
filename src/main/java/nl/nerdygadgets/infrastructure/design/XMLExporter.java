@@ -48,7 +48,7 @@ public class XMLExporter {
      * Creates a new XML files to the given filepath
      *
      * @param filePath      String
-     * @param components    List<Components>
+     * @param components    List<ComponentManager>
      * @return boolean
      */
     public boolean exportComponents(String filePath, List<Component> components) {

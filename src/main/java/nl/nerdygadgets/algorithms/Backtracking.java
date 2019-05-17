@@ -1,9 +1,8 @@
 package nl.nerdygadgets.algorithms;
 
 import nl.nerdygadgets.infrastructure.components.*;
-import nl.nerdygadgets.main.Components;
+import nl.nerdygadgets.infrastructure.components.ComponentManager;
 
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +68,7 @@ public class Backtracking {
         databaseComponents = new ArrayList<>();
         otherComponents = new ArrayList<>();
 
-        for (Component component : Components.getAllComponents()) {
+        for (Component component : ComponentManager.getAllComponents()) {
             if (component.componentType.equals(ComponentType.DATABASESERVER)) {
                 databaseComponents.add(component);
             } else if (component.componentType.equals(ComponentType.WEBSERVER)) {

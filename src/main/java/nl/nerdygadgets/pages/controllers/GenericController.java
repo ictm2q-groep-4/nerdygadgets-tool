@@ -149,12 +149,12 @@ public class GenericController implements Initializable {
      * <p>
      * Used in: InfrastructureMonitor, InfrastructureDesigner
      */
-     void loadDesignIntoMonitor() {
-        if(!(componentPane.getChildren().isEmpty())) {
+    void loadDesignIntoMonitor() {
+        if (!(componentPane.getChildren().isEmpty())) {
             Rectangle rectangle = (Rectangle) componentPane.getChildren().get(0); // first child is a rectangle (the background)
             ArrayList<Node> toRemove = new ArrayList<>();
-            for(Node n : componentPane.getChildren()) {
-                if(n.equals(rectangle)) {
+            for (Node n : componentPane.getChildren()) {
+                if (n.equals(rectangle)) {
                     continue;
                 }
                 toRemove.add(n);
@@ -215,6 +215,10 @@ public class GenericController implements Initializable {
 
                             Tooltip.install(pane, statisticTooltip);
                         }
+                    }
+
+                    if (this.getClass().isAssignableFrom(DesignerController.class)) {
+                        pane.setOnDragDetected(DesignerController::handleDragDetection);
                     }
 
                     // set the layout axises of the box

@@ -24,7 +24,7 @@
                         <Button id="openDesignButton" fx:id="saveDesignButton" mnemonicParsing="false" onAction="#handleSaveDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Ontwerp opslaan" textFill="WHITE" />
                      </children>
                   </HBox>
-                  <Button id="openDesignButton" fx:id="openCurrentDesign" mnemonicParsing="false" prefHeight="50.0" prefWidth="310.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open huidig ontwerp" textFill="WHITE" />
+                  <Button id="openDesignButton" fx:id="openCurrentDesign" mnemonicParsing="false" onAction="#handleOpenCurrentDesign" prefHeight="50.0" prefWidth="310.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open huidig ontwerp" textFill="WHITE" />
                </children>
                <padding>
                   <Insets left="20.0" top="20.0" />

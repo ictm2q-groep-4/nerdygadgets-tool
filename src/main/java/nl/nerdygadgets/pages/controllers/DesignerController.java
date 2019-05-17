@@ -315,6 +315,8 @@ public class DesignerController extends GenericController {
                     submit = (Button) dialog.getChildren().get(3);
                 }
 
+                submit.setDefaultButton(true);
+
                 submit.setOnAction(event -> {
 
                     if (hostNameField.getText().trim().isEmpty()) {

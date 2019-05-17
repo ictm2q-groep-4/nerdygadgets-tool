@@ -39,12 +39,15 @@ public class ComponentManager {
     private static Map<String, Component> allComponents;
 
     private ComponentManager() {
-        ComponentsAlert componentsAlert = new ComponentsAlert();
-        componentsAlert.display();
+//        ComponentsAlert componentsAlert = new ComponentsAlert();
+//        componentsAlert.display();
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Selecteer een xml bestand dat alle componenten bevat.");
-        File componentsFile = fileChooser.showOpenDialog(NerdyGadgets.getNerdyGadgets().getStage());
+//        FileChooser fileChooser = new FileChooser();
+//        fileChooser.setTitle("Selecteer een xml bestand dat alle componenten bevat.");
+//        File componentsFile = fileChooser.showOpenDialog(NerdyGadgets.getNerdyGadgets().getStage());
+        //TODO Remove comments from code to load in components again
+        //Loads the components file instantaneous. For testing purposes
+        File componentsFile = new File("Components.xml");
 
         allComponents = new HashMap<>();
 

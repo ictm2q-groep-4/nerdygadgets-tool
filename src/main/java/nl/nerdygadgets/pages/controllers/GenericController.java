@@ -239,6 +239,8 @@ public class GenericController implements Initializable {
                         if (pane.getLayoutY() <= (pane.getLayoutY() + pane.getHeight())) {
                             anchorPane.getChildren().add(pane);
                         }
+                        //TODO Use componentPane.getChildren().add(Pane) if this method is called in the designer
+                        //TODO The coordinates should also change
                     }
 
                 } catch (IOException e) {

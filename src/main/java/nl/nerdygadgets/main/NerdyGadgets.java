@@ -8,7 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import nl.nerdygadgets.infrastructure.Infrastructure;
-import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.ComponentManager;
 import nl.nerdygadgets.pages.PageRegister;
 
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class NerdyGadgets extends Application {
         NerdyGadgets.nerdyGadgets = this;
         this.stage = stage;
 
-        Components.instance();
+        ComponentManager.instance();
 
         // Set the default scene for the application.
         this.setScene(PageRegister.MAIN.getIdentifier());

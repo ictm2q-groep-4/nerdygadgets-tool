@@ -107,8 +107,28 @@ public class DesignerController extends GenericController {
 
         if (existenceCheck) {
             //Edits the coordinates of an existing component
-            editComponentObject(component);
+            editComponentCoordinates(component);
+        }else{
+            addComponentToInfrastructure(component);
         }
+
+    }
+
+    /**
+     * Adds a component to the infrastructure when it's placed in the layout.
+     *
+     * @param component
+     */
+    private void addComponentToInfrastructure(Pane component) {
+        List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
+
+        Component newComponent = (Component) component.getUserData();
+
+        newComponent.setX((int) component.getLayoutX());
+        newComponent.setY((int) component.getLayoutY());
+
+        infraComponents.add(newComponent);
+        System.out.println("Component added to infrastructure. X and Y coordinates of host '" + newComponent.hostname + "' are: X: " + newComponent.getX() + " Y: " + newComponent.getY());
 
     }
 
@@ -116,16 +136,28 @@ public class DesignerController extends GenericController {
     /**
      * @param component
      */
-    private void editComponentObject(Pane component) {
+    private void editComponentCoordinates(Pane component) {
         List<Component> components = Infrastructure.getCurrentInfrastructure().getComponents();
 
-//        for (Component x : components) {
-//            String hostname = getHostname(component);
-//            if (x.getHostname().equals(hostname)) {
-//                x.setX((int) component.getLayoutX());
-//                x.setY((int) component.getLayoutY());
-//                System.out.println("X and Y coordinates of host '" + hostname + "' are changed. X: " + x.getX() + " Y: " + x.getY());
-//            }
+        Component draggedComponent = (Component) component.getUserData();
+
+        draggedComponent.setX((int) component.getLayoutX());
+        draggedComponent.setX((int) component.getLayoutY());
+
+        System.out.println("X and Y coordinates of host '" + draggedComponent.hostname + "' are changed. X: " + draggedComponent.getX() + " Y: " + draggedComponent.getY());
+    }
+
+    private static void editComponentAttributeLabels(Pane component){
+        Component clickedComponent = (Component) component.getUserData();
+
+
+        Label hostname = (Label) component.getChildren().get(1);
+        Label ipv4Label = (Label) component.getChildren().get(2);
+        Label ipv6Label = (Label) component.getChildren().get(3);
+
+        hostname.setText(clickedComponent.hostname);
+        ipv4Label.setText(String.valueOf(clickedComponent.ipv4));
+        ipv6Label.setText(String.valueOf(clickedComponent.ipv6));
     }
 
     /**
@@ -196,6 +228,7 @@ public class DesignerController extends GenericController {
         eventMenu.getWindow().showAndWait();
 
         if (eventMenu.isOk()) {
+            editComponentAttributeLabels((Pane) event.getSource());
             System.out.println("New data.");
         }
     }
@@ -212,7 +245,6 @@ public class DesignerController extends GenericController {
 
         File selectedDirectory = fileChooser.showSaveDialog(NerdyGadgets.getNerdyGadgets().getStage());
 
-        //TODO Check that the component has IPv4 for saving
         if (selectedDirectory != null && selectedDirectory.getName().endsWith(".xml")) {
             try {
                 Infrastructure.getCurrentInfrastructure().save(selectedDirectory.getAbsolutePath());

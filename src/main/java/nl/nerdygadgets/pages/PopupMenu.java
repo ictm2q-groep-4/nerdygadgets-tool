@@ -59,7 +59,6 @@ public class PopupMenu {
 
 
             if (editing) {
-
                 hostNameField.setText(dataContainer.getHostname());
 
                 if (isHardware) {

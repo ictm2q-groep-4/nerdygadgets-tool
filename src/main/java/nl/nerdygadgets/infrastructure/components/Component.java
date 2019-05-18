@@ -70,7 +70,7 @@ public class Component implements Statistic {
     /**
      * This is the ipv6 address of the server
      */
-    public InetAddress ipv6=Inet6Address.getLoopbackAddress();
+    public InetAddress ipv6 = Inet6Address.getLoopbackAddress();
 
     public Component(String name, double availability, int price, ComponentType componentType) {
         this.name = name;
@@ -283,7 +283,7 @@ public class Component implements Statistic {
     }
     public void setIpv6(String ipv6) {
         try {
-            this.ipv6 = InetAddress.getByName(ipv6);
+            this.ipv6 = Inet6Address.getByName(ipv6);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

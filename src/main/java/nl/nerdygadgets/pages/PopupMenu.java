@@ -63,11 +63,11 @@ public class PopupMenu {
 
                 if (isHardware) {
                     if (dataContainer.ipv4 != null && dataContainer.ipv4.toString() != null) {
-                        IPV4Field.setText(dataContainer.ipv4.toString());
+                        IPV4Field.setText(dataContainer.ipv4.toString().replaceAll("/", "").replaceAll("localhost", ""));
                     }
 
                     if (dataContainer.ipv6 != null && dataContainer.ipv6.toString() != null) {
-                        IPV6Field.setText(dataContainer.ipv6.toString());
+                        IPV6Field.setText(dataContainer.ipv6.toString().replaceAll("/", "").replaceAll("localhost", ""));
                     }
 
                     if (dataContainer.username != null) {
@@ -102,8 +102,8 @@ public class PopupMenu {
                 dataContainer.hostname = hostNameField.getText();
 
                 if(isHardware) {
-                    dataContainer.setIpv4(IPV4Field.getText());
-                    dataContainer.setIpv6(IPV6Field.getText());
+                    dataContainer.setIpv4(IPV4Field.getText().trim().isEmpty() ? "127.0.0.1" : IPV4Field.getText());
+                    dataContainer.setIpv6(IPV6Field.getText().trim().isEmpty() ? "::1" : IPV6Field.getText());
 
                     dataContainer.setUser(SSHUsernameField.getText());
                     dataContainer.setPass(SSHPasswordField.getText());

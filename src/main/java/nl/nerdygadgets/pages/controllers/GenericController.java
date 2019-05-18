@@ -167,8 +167,6 @@ public class GenericController implements Initializable {
 
             componentPane.getChildren().removeAll(toRemove);
         }
-        double startX = componentPane.getLayoutX();
-        double startY = componentPane.getLayoutY();
 
         Infrastructure currentInfrastructure = Infrastructure.getCurrentInfrastructure();
 
@@ -225,33 +223,22 @@ public class GenericController implements Initializable {
                     if (this.getClass().isAssignableFrom(DesignerController.class)) {
                         pane.setOnDragDetected(DesignerController::handleDragDetection);
                         pane.setOnMouseClicked(DesignerController::handleMouseClickDetection);
-                        }
+                    }
 
-                    // set the layout axises of the box
-                    box.setLayoutX(0);
-                    box.setLayoutY(0);
+                    Label ipv4Label = (Label) pane.getChildren().get(2);
+                    Label ipv6Label = (Label) pane.getChildren().get(3);
 
-                    // Set the text and layout of the hostname
+                    ipv4Label.setText(String.valueOf(component.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+                    ipv6Label.setText(String.valueOf(component.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+
                     hostName.setText(component.getHostname());
-                    hostName.setLayoutX(0);
-                    hostName.setLayoutY(box.getHeight() + 5);
 
-                    // set the layout axises of the component pane
-                    pane.setLayoutX(startX + component.getX());
-                    pane.setLayoutY(startY + component.getY());
+                    pane.setLayoutX(component.getX());
+                    pane.setLayoutY(component.getY());
 
                     pane.getChildren().set(1, hostName);
                     if (pane.getLayoutX() <= 1280) {
-                        if(this.builder){
-                            componentPane.getChildren().add(pane);
-
-                            //TODO The coordinates in the componentPane are incorrect
-                        }
-                        else if (pane.getLayoutY() <= (pane.getLayoutY() + pane.getHeight())) {
-                            anchorPane.getChildren().add(pane);
-                        }
-
-
+                        componentPane.getChildren().add(pane);
                     }
 
                 } catch (IOException e) {
@@ -439,7 +426,7 @@ public class GenericController implements Initializable {
         if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
             if (url.getFile().endsWith("InfrastructureOptimizer.fxml")) {
                 this.optimizer = true;
-            } else if ((url.getFile().endsWith("InfrastructureDesigner.fxml"))){
+            } else if ((url.getFile().endsWith("InfrastructureDesigner.fxml"))) {
                 this.builder = true;
             }
 

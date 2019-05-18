@@ -156,8 +156,8 @@ public class DesignerController extends GenericController {
         Label ipv6Label = (Label) component.getChildren().get(3);
 
         hostname.setText(clickedComponent.hostname);
-        ipv4Label.setText(String.valueOf(clickedComponent.ipv4));
-        ipv6Label.setText(String.valueOf(clickedComponent.ipv6));
+        ipv4Label.setText(String.valueOf(clickedComponent.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+        ipv6Label.setText(String.valueOf(clickedComponent.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
     }
 
     /**
@@ -174,6 +174,12 @@ public class DesignerController extends GenericController {
         //Copy icon to componentpane
         Label hostnameLabel = (Label) draggablePane.getChildren().get(1);
         hostnameLabel.setText(dataContainer.getHostname());
+
+        Label ipv4Label = (Label) draggablePane.getChildren().get(2);
+        Label ipv6Label = (Label) draggablePane.getChildren().get(3);
+
+        ipv4Label.setText(String.valueOf(dataContainer.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+        ipv6Label.setText(String.valueOf(dataContainer.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
 
         return draggablePane;
     }

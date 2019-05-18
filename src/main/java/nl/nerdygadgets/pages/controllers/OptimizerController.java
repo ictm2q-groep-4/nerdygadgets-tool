@@ -170,7 +170,7 @@ public class OptimizerController extends GenericController implements Controller
     /**
      * Overloaded method for selection of pane event
      *
-     * @param pane AnchorPAne
+     * @param pane AnchorPane
      */
     private static void toggleSelected(AnchorPane pane) {
         toggleSelected(pane, true);
@@ -277,7 +277,10 @@ public class OptimizerController extends GenericController implements Controller
             int i = 1;
 
             for (Component component : backtracking.getAllComponents()) {
-                newInfrastructure.getComponents().add(new Component(component, component.name+"-"+(i++), currentX, currentY));
+                Component newComponent = new Component(component, component.name+"-"+(i++), currentX, currentY);
+                newComponent.setIpv6("::1");
+
+                newInfrastructure.getComponents().add(newComponent);
 
                 currentX += 150;
 

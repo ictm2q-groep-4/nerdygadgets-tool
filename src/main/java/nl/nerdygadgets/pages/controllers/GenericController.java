@@ -72,6 +72,11 @@ public class GenericController implements Initializable {
     private boolean monitor = false;
 
     /**
+     * A boolean to check if we're on the monitor page.
+     */
+    private boolean builder = false;
+
+    /**
      * The controller for the 'back to main menu' controller in (almost) every view.
      * <p>
      * Used in: All pages except the main menu.
@@ -219,7 +224,8 @@ public class GenericController implements Initializable {
 
                     if (this.getClass().isAssignableFrom(DesignerController.class)) {
                         pane.setOnDragDetected(DesignerController::handleDragDetection);
-                    }
+                        pane.setOnMouseClicked(DesignerController::handleMouseClickDetection);
+                        }
 
                     // set the layout axises of the box
                     box.setLayoutX(0);
@@ -236,11 +242,16 @@ public class GenericController implements Initializable {
 
                     pane.getChildren().set(1, hostName);
                     if (pane.getLayoutX() <= 1280) {
-                        if (pane.getLayoutY() <= (pane.getLayoutY() + pane.getHeight())) {
+                        if(this.builder){
+                            componentPane.getChildren().add(pane);
+
+                            //TODO The coordinates in the componentPane are incorrect
+                        }
+                        else if (pane.getLayoutY() <= (pane.getLayoutY() + pane.getHeight())) {
                             anchorPane.getChildren().add(pane);
                         }
-                        //TODO Use componentPane.getChildren().add(Pane) if this method is called in the designer
-                        //TODO The coordinates should also change
+
+
                     }
 
                 } catch (IOException e) {
@@ -387,6 +398,7 @@ public class GenericController implements Initializable {
                 // set event, static reference to the handleDragDetection method in the DesignerController class
                 if (this.getClass().isAssignableFrom(DesignerController.class)) {
                     pane.setOnDragDetected(DesignerController::handleDragDetection);
+
                 }
 
                 if (this.optimizer) {
@@ -427,6 +439,8 @@ public class GenericController implements Initializable {
         if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
             if (url.getFile().endsWith("InfrastructureOptimizer.fxml")) {
                 this.optimizer = true;
+            } else if ((url.getFile().endsWith("InfrastructureDesigner.fxml"))){
+                this.builder = true;
             }
 
             // load the 'general' selectable elements

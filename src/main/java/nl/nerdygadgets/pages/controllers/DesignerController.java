@@ -9,6 +9,7 @@ import javafx.scene.input.*;
 import javafx.stage.*;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
+import nl.nerdygadgets.infrastructure.components.ComponentType;
 import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.io.File;
@@ -108,7 +109,7 @@ public class DesignerController extends GenericController {
         if (existenceCheck) {
             //Edits the coordinates of an existing component
             editComponentCoordinates(component);
-        }else{
+        } else {
             addComponentToInfrastructure(component);
         }
 
@@ -147,7 +148,7 @@ public class DesignerController extends GenericController {
         System.out.println("X and Y coordinates of host '" + draggedComponent.hostname + "' are changed. X: " + draggedComponent.getX() + " Y: " + draggedComponent.getY());
     }
 
-    private static void editComponentAttributeLabels(Pane component){
+    private static void editComponentAttributeLabels(Pane component) {
         Component clickedComponent = (Component) component.getUserData();
 
 
@@ -175,11 +176,14 @@ public class DesignerController extends GenericController {
         Label hostnameLabel = (Label) draggablePane.getChildren().get(1);
         hostnameLabel.setText(dataContainer.getHostname());
 
-        Label ipv4Label = (Label) draggablePane.getChildren().get(2);
-        Label ipv6Label = (Label) draggablePane.getChildren().get(3);
+        // Only hardware components should display the IP addresses
+        if (dataContainer.componentType == ComponentType.DATABASESERVER || dataContainer.componentType == ComponentType.WEBSERVER) {
+            Label ipv4Label = (Label) draggablePane.getChildren().get(2);
+            Label ipv6Label = (Label) draggablePane.getChildren().get(3);
 
-        ipv4Label.setText(String.valueOf(dataContainer.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
-        ipv6Label.setText(String.valueOf(dataContainer.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+            ipv4Label.setText(String.valueOf(dataContainer.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+            ipv6Label.setText(String.valueOf(dataContainer.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+        }
 
         return draggablePane;
     }
@@ -235,7 +239,6 @@ public class DesignerController extends GenericController {
 
         if (eventMenu.isOk()) {
             editComponentAttributeLabels((Pane) event.getSource());
-            System.out.println("New data.");
         }
     }
 

@@ -72,7 +72,7 @@ public class GenericController implements Initializable {
     private boolean monitor = false;
 
     /**
-     * A boolean to check if we're on the monitor page.
+     * A boolean to check if we're on the builder page.
      */
     private boolean builder = false;
 
@@ -180,6 +180,8 @@ public class GenericController implements Initializable {
 
                     // Only add tooltip with statistics when we're on the monitor page.
                     if (this.monitor) {
+
+                        // Only the hardware components should gain a tooltip with statistics
                         if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
                             Tooltip statisticTooltip = new Tooltip();
                             statisticTooltip.setUserData(component);
@@ -225,11 +227,14 @@ public class GenericController implements Initializable {
                         pane.setOnMouseClicked(DesignerController::handleMouseClickDetection);
                     }
 
-                    Label ipv4Label = (Label) pane.getChildren().get(2);
-                    Label ipv6Label = (Label) pane.getChildren().get(3);
+                    // Only hardware components should have IP addresses shown.
+                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                        Label ipv4Label = (Label) pane.getChildren().get(2);
+                        Label ipv6Label = (Label) pane.getChildren().get(3);
 
-                    ipv4Label.setText(String.valueOf(component.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
-                    ipv6Label.setText(String.valueOf(component.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+                        ipv4Label.setText(String.valueOf(component.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+                        ipv6Label.setText(String.valueOf(component.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+                    }
 
                     hostName.setText(component.getHostname());
 

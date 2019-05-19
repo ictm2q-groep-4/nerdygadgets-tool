@@ -42,7 +42,7 @@ public class PopupMenu {
             VBox dialog;
             Component dataContainer = (Component) pane.getUserData();
 
-            boolean isHardware = dataContainer.componentType == ComponentType.DATABASESERVER || dataContainer.componentType == ComponentType.WEBSERVER;
+            boolean isHardware = dataContainer.componentType == ComponentType.WEBSERVER || dataContainer.componentType == ComponentType.DATABASESERVER;
 
             if (isHardware) {
                 dialog = FXMLLoader.load(getClass().getResource("/pages/components/AttributePopup.fxml"));
@@ -101,7 +101,7 @@ public class PopupMenu {
 
                 dataContainer.hostname = hostNameField.getText();
 
-                if(isHardware) {
+                if (isHardware) {
                     dataContainer.setIpv4(IPV4Field.getText().trim().isEmpty() ? "127.0.0.1" : IPV4Field.getText());
                     dataContainer.setIpv6(IPV6Field.getText().trim().isEmpty() ? "::1" : IPV6Field.getText());
 
@@ -118,7 +118,6 @@ public class PopupMenu {
             window.setScene(new Scene(dialog));
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
 

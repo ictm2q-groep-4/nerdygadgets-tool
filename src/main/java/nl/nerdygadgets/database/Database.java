@@ -13,6 +13,7 @@ import java.sql.*;
  * @author Djabir Omar Mohamed
  * @author Joris Vos
  */
+@Deprecated
 public class Database {
     /**
      * This variable stores the connection

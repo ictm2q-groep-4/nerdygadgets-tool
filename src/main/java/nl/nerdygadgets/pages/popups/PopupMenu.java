@@ -1,4 +1,4 @@
-package nl.nerdygadgets.pages;
+package nl.nerdygadgets.pages.popups;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

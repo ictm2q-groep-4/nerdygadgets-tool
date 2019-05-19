@@ -4,9 +4,14 @@ package nl.nerdygadgets.pages.controllers;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.*;
+
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.ComponentType;
@@ -21,7 +26,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
-import nl.nerdygadgets.pages.PopupMenu;
+import nl.nerdygadgets.pages.popups.GenericPopup;
+import nl.nerdygadgets.pages.popups.PopupMenu;
 
 
 /**
@@ -59,6 +65,45 @@ public class DesignerController extends GenericController {
     @FXML
     private void handleDrop(DragEvent dragEvent) {
         Pane component = (Pane) getTransferEvent().getSource();
+
+        // If a component is dropped & the current design wasn't loaded, we clear the infrastructure component list.
+        if (Infrastructure.getCurrentInfrastructure() != null && !Infrastructure.getCurrentInfrastructure().isLoaded()
+                && !Infrastructure.getCurrentInfrastructure().getComponents().isEmpty()) {
+
+            // We are creating a 'generic' popup to make sure they want to continue with the action
+            GenericPopup popup = new GenericPopup("/pages/components/DragComponentAlert.fxml", "Waarschuwing!");
+
+            // Get the necessary pieces of data to register the button events
+            HBox buttonContainer = (HBox) popup.getContainer().getChildren().get(1);
+
+            Button cancelAction = (Button) buttonContainer.getChildren().get(0);
+            Button continueAction = (Button) buttonContainer.getChildren().get(1);
+
+            // just close, because isOk is false by default.
+            cancelAction.setOnMouseClicked(event -> popup.getStage().close());
+
+            // We're continuing
+            continueAction.setOnMouseClicked(event -> {
+                popup.setOk(true);
+                popup.getStage().close();
+            });
+
+            // show the popup
+            popup.getStage().showAndWait();
+
+            // if they agree with clearing the currently existing infrastructure, clear it and set 'loaded' to true so this popup does not happen again.
+            if (popup.isOk()) {
+                Infrastructure.getCurrentInfrastructure().getComponents().clear();
+            } else {
+                // cancel the drop if he does not agree.
+                return;
+            }
+        }
+
+        // If it wasn't loaded before, it is now.
+        if(!Infrastructure.getCurrentInfrastructure().isLoaded()) {
+            Infrastructure.getCurrentInfrastructure().setLoaded(true);
+        }
 
         //Boolean to check if component is already in the layout
         boolean existenceCheck = false;
@@ -138,12 +183,10 @@ public class DesignerController extends GenericController {
      * @param component
      */
     private void editComponentCoordinates(Pane component) {
-        List<Component> components = Infrastructure.getCurrentInfrastructure().getComponents();
-
         Component draggedComponent = (Component) component.getUserData();
 
         draggedComponent.setX((int) component.getLayoutX());
-        draggedComponent.setX((int) component.getLayoutY());
+        draggedComponent.setY((int) component.getLayoutY());
 
         System.out.println("X and Y coordinates of host '" + draggedComponent.hostname + "' are changed. X: " + draggedComponent.getX() + " Y: " + draggedComponent.getY());
     }
@@ -153,12 +196,16 @@ public class DesignerController extends GenericController {
 
 
         Label hostname = (Label) component.getChildren().get(1);
-        Label ipv4Label = (Label) component.getChildren().get(2);
-        Label ipv6Label = (Label) component.getChildren().get(3);
-
         hostname.setText(clickedComponent.hostname);
-        ipv4Label.setText(String.valueOf(clickedComponent.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
-        ipv6Label.setText(String.valueOf(clickedComponent.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+
+        // We only show the IP addresses if it is a hardware component.
+        if (clickedComponent.componentType == ComponentType.WEBSERVER || clickedComponent.componentType == ComponentType.DATABASESERVER) {
+            Label ipv4Label = (Label) component.getChildren().get(2);
+            Label ipv6Label = (Label) component.getChildren().get(3);
+
+            ipv4Label.setText(String.valueOf(clickedComponent.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+            ipv6Label.setText(String.valueOf(clickedComponent.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+        }
     }
 
     /**

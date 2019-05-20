@@ -39,7 +39,6 @@ public class Infrastructure {
      */
     public Infrastructure() {
         components = new ArrayList<>();
-        calculateAvailability();
     }
 
     /**
@@ -54,7 +53,6 @@ public class Infrastructure {
         }
 
         components.add(component);
-        calculateAvailability();
         return true;
     }
 
@@ -79,7 +77,6 @@ public class Infrastructure {
         }
 
         components.remove(component);
-        calculateAvailability();
         return true;
     }
 

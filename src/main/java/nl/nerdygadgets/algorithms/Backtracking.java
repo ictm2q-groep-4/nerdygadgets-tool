@@ -1,7 +1,9 @@
 package nl.nerdygadgets.algorithms;
 
+import javafx.scene.control.Alert;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.components.ComponentManager;
+import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -207,7 +209,10 @@ public class Backtracking {
             }
         } catch (StackOverflowError e) {
             stop();
-            System.out.println("A StackOverflow Error occurred in the solve method. This happens because this method is called recursively and eats up all your resources ;p");
+            NerdyGadgets.showAlert("Backtracking","Er is een 'StackOverflowError' opgetreden.\nDit is mogelijk omdat er te weinig resources beschikbaar zijn.\nDit in combinatie met een te hoog ingevoerde beschikbaarheid.", Alert.AlertType.ERROR);
+        } catch (OutOfMemoryError e) {
+            stop();
+            NerdyGadgets.showAlert("Backtracking", "Er is een 'OutOfMemoryError' opgetreden.\nDit is mogelijk omdat er te weinig resources beschikbaar zijn.\nDit in combinatie met een te hoog ingevoerde beschikbaarheid.", Alert.AlertType.ERROR);
         }
     }
 

@@ -38,8 +38,6 @@ public class NerdyGadgets extends Application {
      * @param args  String[]
      */
     public static void main(String[] args) {
-        Infrastructure currentInfrastructure = new Infrastructure();
-        Infrastructure.setCurrentInfrastructure(currentInfrastructure);
 
         launch(args);
     }

@@ -179,11 +179,23 @@ public class OptimizerController extends GenericController implements Controller
 
     public boolean reloadComponents() {
         if (!selectedComponents.isEmpty()) {
+            List<Component> existingComponents = new ArrayList<>();
+            for (Node node : selectedComponentContainer.getChildren()) {
+                if (node instanceof AnchorPane) {
+                    AnchorPane anchorPane = (AnchorPane) node;
+                    if (anchorPane.getUserData() != null) {
+                        existingComponents.add((Component) anchorPane.getUserData());
+                    }
+                }
+            }
+
             List<Component> components = new ArrayList<>();
             for (AnchorPane pane : selectedComponents) {
                 if (pane.getUserData() != null) {
-                    components.add((Component) pane.getUserData());
-                    pane.setStyle("-fx-background-color: #fff");
+                    if (!existingComponents.contains((Component)pane.getUserData())) {
+                        components.add((Component) pane.getUserData());
+                        pane.setStyle("-fx-background-color: #fff");
+                    }
                 }
             }
             selectedComponents.clear();
@@ -322,7 +334,7 @@ public class OptimizerController extends GenericController implements Controller
                 }
             }
         } else {
-            NerdyGadgets.showAlert("Backtracking ERROR", "Er is een error opgetreden terwijl het backtracking algoritme gestart is.\nDit is mogelijk omdat je geen database server of web server geselecteerd hebt.\nVan beiden moet er minstens 1 geselecteerd zijn!", Alert.AlertType.ERROR);
+            NerdyGadgets.showAlert("Backtracking ERROR", "Er is een error opgetreden terwijl het backtracking algoritme gestart is.\nDit kan meerdere oorzaken hebben, er moeten bijvoorbeeld minimaal 1 database en 1 webserver geselecteerd zijn.\nOok kan het zijn dat er te weinig resources beschikbaar zijn.", Alert.AlertType.ERROR);
         }
     }
 

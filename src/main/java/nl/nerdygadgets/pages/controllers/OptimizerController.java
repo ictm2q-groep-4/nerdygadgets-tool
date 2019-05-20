@@ -192,7 +192,7 @@ public class OptimizerController extends GenericController implements Controller
             List<Component> components = new ArrayList<>();
             for (AnchorPane pane : selectedComponents) {
                 if (pane.getUserData() != null) {
-                    if (!existingComponents.contains((Component)pane.getUserData())) {
+                    if (!existingComponents.contains(pane.getUserData())) {
                         components.add((Component) pane.getUserData());
                         pane.setStyle("-fx-background-color: #fff");
                     }

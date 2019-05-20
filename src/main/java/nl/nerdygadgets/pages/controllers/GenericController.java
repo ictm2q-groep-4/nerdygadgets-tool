@@ -342,7 +342,6 @@ public class GenericController implements Initializable {
      *
      * @param comboBox ComboBox the specified combobox to add the elements to.
      */
-    //TODO check if changing this method from public to private doesnt fuck things up ;p
     private void loadCategoriesIntoTypeSelector(ComboBox<String> comboBox) {
         // add a 'general' category filter so we can see all components
         comboBox.getItems().add("Algemeen");

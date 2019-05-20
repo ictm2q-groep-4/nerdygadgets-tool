@@ -64,6 +64,10 @@ public class DesignerController extends GenericController {
 
     @FXML
     private void handleDrop(DragEvent dragEvent) {
+        if (Infrastructure.getCurrentInfrastructure() == null) {
+            Infrastructure.setCurrentInfrastructure(new Infrastructure());
+        }
+
         Pane component = (Pane) getTransferEvent().getSource();
 
         // If a component is dropped & the current design wasn't loaded, we clear the infrastructure component list.

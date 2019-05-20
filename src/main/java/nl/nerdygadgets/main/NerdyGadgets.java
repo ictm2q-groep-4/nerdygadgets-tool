@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import nl.nerdygadgets.infrastructure.Infrastructure;
@@ -65,7 +66,7 @@ public class NerdyGadgets extends Application {
         stage.setResizable(false);
         stage.centerOnScreen();
 
-//        stage.getIcons().add(new Image("/images/logo.png"));  //TODO Afbeelding geeft error
+        stage.getIcons().add(new Image(NerdyGadgets.class.getResourceAsStream("/images/logo.png")));
 
         // Show the application
         stage.show();

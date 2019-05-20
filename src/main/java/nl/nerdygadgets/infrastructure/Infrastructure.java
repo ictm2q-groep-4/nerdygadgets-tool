@@ -89,18 +89,7 @@ public class Infrastructure {
      * @return boolean
      */
     public boolean save(String filePath) {
-        try {
-            return DesignManager.getDesignManager().save(filePath, components);
-        } catch (Exception e) {
-            return false;
-        }
-        //TODO edit this method according to DesignManager (if it throws an error or not. Don't know at the time of writing this)
-        // option 1: remove try catch and make boolean a void -> option 2: leave it as it is
-    }
-
-    //TODO add javadoc comment
-    private void calculateAvailability() {
-        //TODO get web servers and database separate by using the ENUM
+        return DesignManager.getDesignManager().save(filePath, components);
     }
 
     // region Getters

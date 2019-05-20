@@ -153,10 +153,10 @@ public class Backtracking {
      * @return boolean
      */
     public boolean start() {
-        if (optimalDatabaseConfiguration==null) {
+        if (optimalDatabaseConfiguration==null && !forceStop) {
             solve(new ArrayList<>(), databaseComponents.toArray(Component[]::new));
         }
-        if (optimalWebConfiguration==null) {
+        if (optimalWebConfiguration==null && !forceStop) {
             solve(new ArrayList<>(), webComponents.toArray(Component[]::new));
         }
 

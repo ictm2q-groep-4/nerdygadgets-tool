@@ -288,6 +288,7 @@ public class OptimizerController extends GenericController implements Controller
 
             int i = 1;
 
+            boolean messageShown = false;
             for (Component component : backtracking.getAllComponents()) {
                 Component newComponent = new Component(component, component.name+"-"+(i++), currentX, currentY);
                 newComponent.setIpv6("::1");
@@ -301,9 +302,9 @@ public class OptimizerController extends GenericController implements Controller
                     currentX = minX;
                 }
 
-                if (currentY >= maxY) {
-                    NerdyGadgets.showAlert("Backtracking ERROR", "Er zijn teveel componenten nodig voor de infrastructuur om te laten zien!", Alert.AlertType.ERROR);
-                    return;
+                if (currentY >= maxY && !messageShown) {
+                    NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er zijn teveel componenten nodig voor de infrastructuur om te laten zien!\nDe infrastructuur wordt wel geexporteerd maar zal mogelijk niet goed te zien zijn.", Alert.AlertType.ERROR);
+                    messageShown=true;
                 }
             }
 

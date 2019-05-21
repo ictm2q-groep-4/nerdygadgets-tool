@@ -280,7 +280,7 @@ public class Component implements Statistic {
             JSch jsch = new JSch();
 
             // initiate session
-            Session session = jsch.getSession(user, ipv4.toString().substring(1), 22);
+            Session session = jsch.getSession(user, ipv4.getHostAddress(), 22);
 
             // disable host key verification
             java.util.Properties config = new java.util.Properties();
@@ -291,7 +291,7 @@ public class Component implements Statistic {
             session.setPassword(password);
 
             // connect session
-            session.connect();
+            session.connect(2000);
 
             // open channel
             Channel channel = session.openChannel("shell");

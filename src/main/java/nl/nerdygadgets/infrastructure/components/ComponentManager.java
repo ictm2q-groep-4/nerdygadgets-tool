@@ -26,9 +26,22 @@ import java.util.Map;
 
 import static javafx.application.Application.launch;
 
+/**
+ * This class loads all the necesary components.
+ *
+ * @author Joris Vos
+ */
 public class ComponentManager {
+    /**
+     * This holds the 1 instance of this class that is initialized.
+     */
     private static ComponentManager instance;
 
+    /**
+     * This returns the instance of ComponentManager
+     *
+     * @return  ComponentManager
+     */
     public static ComponentManager instance() {
         if (instance == null) {
             instance = new ComponentManager();
@@ -36,8 +49,14 @@ public class ComponentManager {
         return instance;
     }
 
+    /**
+     * This contains all the components loaded from a xml file
+     */
     private static Map<String, Component> allComponents;
 
+    /**
+     * The default constructor. This is called once, and initializes all the components
+     */
     private ComponentManager() {
         ComponentsAlert componentsAlert = new ComponentsAlert();
         componentsAlert.display();
@@ -82,14 +101,37 @@ public class ComponentManager {
         }
     }
 
+    /**
+     * Returns all the components as an array
+     *
+     * @return  Component[]
+     */
     public static Component[] getAllComponents() { return allComponents.values().toArray(Component[]::new); }
+
+    /**
+     * Returns a component by a name
+     *
+     * @param componentName String
+     * @return              Component
+     */
     public static Component getComponent(String componentName) { return allComponents.get(componentName); }
 
+    /**
+     * This is the alert box
+     */
     class ComponentsAlert {
+        /**
+         * This is called when initializing the alert box
+         *
+         * @param args  String[]
+         */
         public void main(String[] args) {
             launch(args);
         }
 
+        /**
+         * This displays the alertbox
+         */
         public void display() {
             Stage window = new Stage();
             window.initStyle(StageStyle.UTILITY);

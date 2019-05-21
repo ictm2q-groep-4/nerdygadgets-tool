@@ -14,8 +14,14 @@ import nl.nerdygadgets.infrastructure.components.ComponentType;
 
 public class PopupMenu {
 
+    /**
+     * Contains the stage
+     */
     private Stage window;
 
+    /**
+     * TextFields
+     */
     private TextField
             hostNameField,
             IPV4Field,
@@ -23,14 +29,32 @@ public class PopupMenu {
             SSHUsernameField,
             SSHPasswordField;
 
+    /**
+     * Submit button
+     */
     private Button submit;
 
+    /**
+     * Pane
+     */
     private Pane pane;
 
+    /**
+     * Error label
+     */
     private Label errorLabel;
 
+    /**
+     * Ok pressed boolean
+     */
     private boolean ok;
 
+    /**
+     * PopupMenu constructor (sets all the necesary variables)
+     *
+     * @param pane      Pane
+     * @param editing   boolean
+     */
     public PopupMenu(Pane pane, boolean editing) {
         this.pane = pane;
         this.window = new Stage();
@@ -123,44 +147,36 @@ public class PopupMenu {
 
     }
 
+    // region Getters
     public Pane getPane() {
         return pane;
     }
-
     public Stage getWindow() {
         return window;
     }
-
     public Label getErrorLabel() {
         return errorLabel;
     }
-
     public TextField getHostNameField() {
         return hostNameField;
     }
-
     public TextField getIPV4Field() {
         return IPV4Field;
     }
-
     public TextField getIPV6Field() {
         return IPV6Field;
     }
-
     public TextField getSSHUsernameField() {
         return SSHUsernameField;
     }
-
     public TextField getSSHPasswordField() {
         return SSHPasswordField;
     }
-
     public Button getSubmit() {
         return submit;
     }
-
     public boolean isOk() {
         return ok;
     }
-
+    // endregion
 }

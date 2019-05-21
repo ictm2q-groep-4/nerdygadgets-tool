@@ -15,7 +15,8 @@ public enum PageRegister {
     MONITOR("InfrastructureMonitor", "InfrastructureMonitor.fxml"),
     OPTIMIZER("InfrastructureOptimizer", "InfrastructureOptimizer.fxml"),
     OPTIMIZERALERT("OptimizerAlert", "components/OptimizerAlert.fxml"),
-    COMPONENTSALERT("ComponentsAlert", "components/ComponentsAlert.fxml");
+    COMPONENTSALERT("ComponentsAlert", "components/ComponentsAlert.fxml"),
+    PANECOMPONENT("PaneComponent", "components/PaneComponent.fxml");
 
 
     /**

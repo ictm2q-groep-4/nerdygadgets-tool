@@ -72,6 +72,15 @@ public class Component implements Statistic {
      */
     public InetAddress ipv6 = Inet6Address.getLoopbackAddress();
 
+    /**
+     * A constructor for components.
+     * It sets the name, availability, price and component type
+     *
+     * @param name          String
+     * @param availability  double
+     * @param price         int
+     * @param componentType ComponentType
+     */
     public Component(String name, double availability, int price, ComponentType componentType) {
         this.name = name;
         this.availability = availability;
@@ -79,6 +88,12 @@ public class Component implements Statistic {
         this.componentType = componentType;
     }
 
+    /**
+     * Another constructor.
+     * This copies a component.
+     *
+     * @param copyFromComponent Component
+     */
     public Component(Component copyFromComponent) {
         this.name = copyFromComponent.name;
         this.availability = copyFromComponent.availability;
@@ -86,6 +101,15 @@ public class Component implements Statistic {
         this.componentType = copyFromComponent.componentType;
     }
 
+    /**
+     * This constrcutor sets the hostname and x,y coordinates.
+     * It copies the rest from a other component
+     *
+     * @param copyFromComponent Component
+     * @param hostname          String
+     * @param x                 int
+     * @param y                 int
+     */
     public Component(Component copyFromComponent, String hostname, int x, int y) {
         this(copyFromComponent);
         this.hostname = hostname;
@@ -93,6 +117,21 @@ public class Component implements Statistic {
         this.y = y;
     }
 
+    /**
+     * This is a constructor that sets all the variables
+     *
+     * @param name          String
+     * @param availability  double
+     * @param price         int
+     * @param componentType ComponentType
+     * @param hostname      String
+     * @param x             int
+     * @param y             int
+     * @param username      String
+     * @param password      String
+     * @param ipv4          InetAddress
+     * @param ipv6          InetAddress
+     */
     public Component(String name, double availability, int price, ComponentType componentType,
                      String hostname, int x, int y, String username, String password,
                      InetAddress ipv4, InetAddress ipv6) {
@@ -116,35 +155,33 @@ public class Component implements Statistic {
 
         try {
             new Socket(ipv4.toString().split("/")[1], 22).close();
+
+            // If there is no error thrown, it's online. So now make the connection!
+            Channel channel = getSSHChannel(username, password);
+
+            try {
+                if(channel != null) {
+                    // open channel
+                    channel.connect();
+
+                    isUp = channel.isConnected();
+
+                    // close channel
+                    channel.disconnect();
+
+                    return isUp;
+                }
+            } catch (Exception e) {
+                System.err.println("Something went wrong while connecting to the SSH server");
+                e.printStackTrace();
+            }
+
             return true;
         } catch (IOException e) {
             System.err.println("Something went wrong while connecting to the SSH server");
             //e.printStackTrace();
             return false;
         }
-
-        /*
-        // get ssh channel
-        Channel channel = getSSHChannel(username, password);
-
-        try {
-            if(channel != null) {
-                // open channel
-                channel.connect();
-
-                isUp = channel.isConnected();
-
-                // close channel
-                channel.disconnect();
-
-                return isUp;
-            }
-        } catch (Exception e) {
-            System.err.println("Something went wrong while connecting to the SSH server");
-            e.printStackTrace();
-        }
-        return false;
-         */
     }
 
     /**
@@ -266,10 +303,13 @@ public class Component implements Statistic {
         }
     }
 
+    // region Getters
     public String getHostname() { return hostname; }
     public int getX() { return x; }
     public int getY() { return y; }
+    // endregion
 
+    // region Setters
     public void setX(int x) { this.x = x; }
     public void setY(int y) { this.y = y; }
     public void setUser(String username) { this.username = username; }
@@ -288,7 +328,13 @@ public class Component implements Statistic {
             e.printStackTrace();
         }
     }
+    // endregion
 
+    /**
+     * This is an override of the toString method.
+     *
+     * @return  String
+     */
     @Override
     public String toString() {
         return name;

@@ -4,12 +4,10 @@ package nl.nerdygadgets.pages.controllers;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.*;
 
 import nl.nerdygadgets.infrastructure.Infrastructure;
@@ -26,12 +24,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
+import nl.nerdygadgets.pages.PageRegister;
 import nl.nerdygadgets.pages.popups.GenericPopup;
 import nl.nerdygadgets.pages.popups.PopupMenu;
 
 
 /**
+ * This handles the logic for the Designer (Builder)
+ *
  * @author Stefan Booij
+ * @author Joris Vos
  */
 public class DesignerController extends GenericController {
 
@@ -45,7 +47,7 @@ public class DesignerController extends GenericController {
     /**
      * Detects dragging over the imageview
      *
-     * @param dragEvent
+     * @param dragEvent DragEvent
      */
     @FXML
     private void handleDragOver(DragEvent dragEvent) {
@@ -59,7 +61,7 @@ public class DesignerController extends GenericController {
     /**
      * Handles dropping. It alters the coordinates for the component on the layout
      *
-     * @param dragEvent
+     * @param dragEvent DragEvent
      */
 
     @FXML
@@ -167,7 +169,7 @@ public class DesignerController extends GenericController {
     /**
      * Adds a component to the infrastructure when it's placed in the layout.
      *
-     * @param component
+     * @param component Pane
      */
     private void addComponentToInfrastructure(Pane component) {
         List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
@@ -184,7 +186,7 @@ public class DesignerController extends GenericController {
 
 
     /**
-     * @param component
+     * @param component Pane
      */
     private void editComponentCoordinates(Pane component) {
         Component draggedComponent = (Component) component.getUserData();
@@ -195,6 +197,11 @@ public class DesignerController extends GenericController {
         System.out.println("X and Y coordinates of host '" + draggedComponent.hostname + "' are changed. X: " + draggedComponent.getX() + " Y: " + draggedComponent.getY());
     }
 
+    /**
+     * This changes the attributelabel
+     *
+     * @param component Pane
+     */
     private static void editComponentAttributeLabels(Pane component) {
         Component clickedComponent = (Component) component.getUserData();
 
@@ -215,8 +222,8 @@ public class DesignerController extends GenericController {
     /**
      * Copies the attributes from the component out of componentlist, and places it into a draggable pane with the createDraggablePane method.
      *
-     * @param component
-     * @return Pane component
+     * @param component Pane
+     * @return          Pane
      */
     private Pane copyAttributes(Pane component) {
         Pane draggablePane = createDraggablePane(component);
@@ -246,7 +253,7 @@ public class DesignerController extends GenericController {
      */
     public AnchorPane createDraggablePane(Pane component) {
         try {
-            AnchorPane draggableComponent = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
+            AnchorPane draggableComponent = FXMLLoader.load(getClass().getResource(PageRegister.get("PaneComponent").getFilePath()));
 
             draggableComponent.setOnDragDetected(DesignerController::handleDragDetection);
 
@@ -264,7 +271,7 @@ public class DesignerController extends GenericController {
     /**
      * Handles the detection of dragging
      *
-     * @param mouseEvent
+     * @param mouseEvent    MouseEvent
      */
     @FXML
     public static void handleDragDetection(MouseEvent mouseEvent) {
@@ -283,6 +290,12 @@ public class DesignerController extends GenericController {
         mouseEvent.consume();
     }
 
+    /**
+     * This handles the mouse click.
+     * This enables the user to edit component attributes
+     *
+     * @param event MouseEvent
+     */
     public static void handleMouseClickDetection(MouseEvent event) {
         System.out.println(event.getSource());
         PopupMenu eventMenu = new PopupMenu((Pane) event.getSource(), true);
@@ -318,10 +331,20 @@ public class DesignerController extends GenericController {
         }
     }
 
+    /**
+     * Return the transferevent
+     *
+     * @return  Event
+     */
     public static Event getTransferEvent() {
         return transferEvent;
     }
 
+    /**
+     * Set the transferevent
+     *
+     * @param event Event
+     */
     public static void setTransferEvent(Event event) {
         transferEvent = event;
     }

@@ -12,6 +12,7 @@ import java.io.IOException;
  * A generic popup class.
  *
  * @author Lucas Ouwens
+ * @author Joris Vos
  */
 public class GenericPopup {
 
@@ -46,20 +47,21 @@ public class GenericPopup {
         }
     }
 
-
+    // region Setters
     public void setOk(boolean ok) {
         this.ok = ok;
     }
+    // endregion
 
+    // region Getters
     public boolean isOk() {
         return ok;
     }
-
     public Stage getStage() {
         return stage;
     }
-
     public Pane getContainer() {
         return container;
     }
+    // endregion
 }

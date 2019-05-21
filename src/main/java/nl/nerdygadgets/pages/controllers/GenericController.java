@@ -92,7 +92,9 @@ public class GenericController implements Initializable {
         }
     }
 
-
+    /**
+     * This enables the user to open the current design (Infrastructure.getCurrentInfrastructure())
+     */
     @FXML
     private void handleOpenCurrentDesign() {
         if (Infrastructure.getCurrentInfrastructure() != null && Infrastructure.getCurrentInfrastructure().getComponents() != null) {
@@ -352,6 +354,11 @@ public class GenericController implements Initializable {
         }
     }
 
+    /**
+     * This filters the component
+     *
+     * @param action    ActionEvent
+     */
     @FXML
     public void filterComponents(ActionEvent action) {
         // get the combobox which triggered this event
@@ -370,7 +377,14 @@ public class GenericController implements Initializable {
         this.loadSelectableElements(category);
     }
 
-
+    /**
+     * This method loads all the components in a given pane
+     *
+     * @param container     AnchorPane
+     * @param components    Component[]
+     * @param type          ComponentType
+     * @throws IOException
+     */
     void loadComponents(AnchorPane container, Component[] components, ComponentType type) throws IOException {
         int multiplier = container.getChildren().size();
         for (int i = 0; i < components.length; i++) {

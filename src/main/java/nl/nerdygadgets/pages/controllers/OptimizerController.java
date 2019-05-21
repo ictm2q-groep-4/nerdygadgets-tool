@@ -176,7 +176,11 @@ public class OptimizerController extends GenericController implements Controller
         toggleSelected(pane, true);
     }
 
-
+    /**
+     * Reload all components
+     *
+     * @return  boolean
+     */
     public boolean reloadComponents() {
         if (!selectedComponents.isEmpty()) {
             List<Component> existingComponents = new ArrayList<>();
@@ -217,6 +221,9 @@ public class OptimizerController extends GenericController implements Controller
         return false;
     }
 
+    /**
+     * This contains the logic for the Optimize button
+     */
     @FXML
     private void handleOptimizeButton() {
         double minimumAvailability = 0;
@@ -339,19 +346,38 @@ public class OptimizerController extends GenericController implements Controller
         }
     }
 
+    /**
+     * Used by the OptimizerAlert to validate which button was pressed.
+     */
     public enum ACTION {
         SAVE,
         SET,
         CLOSE,
     }
 
+    /**
+     * This is a alert shown by the optimizer, to check what the user wants.
+     */
     class OptimizerAlert {
+        /**
+         * Contains the chosen action by the user
+         */
         private ACTION action = ACTION.CLOSE;
 
+        /**
+         * Main method
+         *
+         * @param args String[]
+         */
         public void main(String[] args) {
             launch(args);
         }
 
+        /**
+         * This is the main entry of the alert
+         *
+         * @return  Action
+         */
         public ACTION display() {
             Stage window = new Stage();
             window.initStyle(StageStyle.UTILITY);

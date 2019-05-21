@@ -90,13 +90,8 @@ public class Infrastructure {
     }
 
     // region Getters
-    public List<Component> getComponents() {
-        return components;
-    }
-
-    public double getAvailability() {
-        return availability;
-    }
+    public List<Component> getComponents() { return components; }
+    public double getAvailability() { return availability; }
 
     /**
      * Returns the infrastructure if it has already been loaded before, will otherwise return null.
@@ -118,6 +113,5 @@ public class Infrastructure {
     public void setLoaded(boolean loaded) {
         this.loaded = loaded;
     }
-
     // endregion
 }

@@ -39,12 +39,11 @@ public class Database {
     }
 
     /**
-     * Dummy method for returning the upTime of a database
+     * Executes query
      */
-    public void getUpTime() {
-        String sql = "SELECT id,name_first FROM user";
+    public void executeQuery(String query) {
         try {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(query);
             System.out.println(stmt.execute());
         }
         catch (SQLException e) {

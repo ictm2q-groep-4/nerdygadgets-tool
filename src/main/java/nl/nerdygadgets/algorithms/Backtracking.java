@@ -265,8 +265,6 @@ public class Backtracking {
         System.out.println(getSolution());
     }
 
-    // region Getters
-
     /**
      * This returns the availability of components, this should always be an array that contains one ComponentType
      *
@@ -346,6 +344,11 @@ public class Backtracking {
                 +getPrice(optimalDatabaseConfiguration);
     }
 
+    /**
+     * Returns a list with all the components combined (optimal solution)
+     *
+     * @return List<Component>
+     */
     public List<Component> getAllComponents() {
         List<Component> allComponents = new ArrayList<>();
 
@@ -513,10 +516,6 @@ public class Backtracking {
         return solution.toString();
     }
 
-    // endregion
-
-    // region Setters
-
     /**
      * This sets the optimalWebComponents equal to usedWebComponents and calculates only the database components if optimalDatabaseComponents equals null
      *
@@ -572,6 +571,4 @@ public class Backtracking {
 
         calculateAvailabilityPerComponentType();
     }
-
-    // endregion
 }

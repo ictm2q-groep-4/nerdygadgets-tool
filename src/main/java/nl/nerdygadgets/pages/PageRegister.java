@@ -13,7 +13,9 @@ public enum PageRegister {
     MAIN("MainScene", "Main.fxml"),
     DESIGNER("InfrastructureDesigner", "InfrastructureDesigner.fxml"),
     MONITOR("InfrastructureMonitor", "InfrastructureMonitor.fxml"),
-    OPTIMIZER("InfrastructureOptimizer", "InfrastructureOptimizer.fxml");
+    OPTIMIZER("InfrastructureOptimizer", "InfrastructureOptimizer.fxml"),
+    OPTIMIZERALERT("OptimizerAlert", "components/OptimizerAlert.fxml"),
+    COMPONENTSALERT("ComponentsAlert", "components/ComponentsAlert.fxml");
 
 
     /**

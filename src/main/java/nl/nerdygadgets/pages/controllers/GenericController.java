@@ -4,18 +4,22 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 
+import nl.nerdygadgets.algorithms.Backtracking;
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.design.DesignManager;
+import nl.nerdygadgets.infrastructure.components.ComponentManager;
 import nl.nerdygadgets.main.NerdyGadgets;
 import nl.nerdygadgets.pages.PageRegister;
 
@@ -23,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -30,31 +36,45 @@ import java.util.ResourceBundle;
  * All things which need to be handled the same way on every page should be registered here.
  *
  * @author Lucas Ouwens
+ * @author Joris Vos
  */
 public class GenericController implements Initializable {
 
     @FXML
-    protected Rectangle componentPane;
+    protected AnchorPane componentPane;
 
     @FXML
-    private AnchorPane anchorPane;
+    protected AnchorPane anchorPane;
 
     @FXML
-    private Label totalAvailability;
+    protected Label totalAvailability;
 
     @FXML
-    private Label totalCosts;
+    protected Label totalCosts;
+
+    @FXML
+    protected Label totalConfigurationsTested;
 
     @FXML
     private AnchorPane componentContainer;
 
     @FXML
-    private ComboBox selectableCategory;
+    private ComboBox<String> selectableCategory;
 
     /**
      * A boolean to check if we're in the 'optimizer' view.
      */
     private boolean optimizer = false;
+
+    /**
+     * A boolean to check if we're on the monitor page.
+     */
+    private boolean monitor = false;
+
+    /**
+     * A boolean to check if we're on the builder page.
+     */
+    private boolean builder = false;
 
     /**
      * The controller for the 'back to main menu' controller in (almost) every view.
@@ -63,18 +83,29 @@ public class GenericController implements Initializable {
      */
     @FXML
     private void handleBackButton() {
-        try {
-            NerdyGadgets.getNerdyGadgets().setScene(PageRegister.MAIN.getIdentifier());
+        NerdyGadgets.getNerdyGadgets().setScene(PageRegister.MAIN.getIdentifier());
 
-            // since we're leaving a view which could contain already loaded components, we set 'loaded' to false again
-            // so the design can be loaded again at a later time. We don't want duplicated elements!
-            if (Infrastructure.getCurrentInfrastructure() != null) {
-                Infrastructure.getCurrentInfrastructure().setLoaded(false);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        // since we're leaving a view which could contain already loaded components, we set 'loaded' to false again
+        // so the design can be loaded again at a later time. We don't want duplicated elements!
+        if (Infrastructure.getCurrentInfrastructure() != null) {
+            Infrastructure.getCurrentInfrastructure().setLoaded(false);
         }
     }
+
+
+    @FXML
+    private void handleOpenCurrentDesign() {
+        if (Infrastructure.getCurrentInfrastructure() != null && Infrastructure.getCurrentInfrastructure().getComponents() != null) {
+            if (Infrastructure.getCurrentInfrastructure().isLoaded()) {
+                NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden!\nDeze infrastructuur is al ingeladen.", Alert.AlertType.WARNING);
+            } else {
+                this.loadDesignIntoMonitor();
+            }
+        } else {
+            NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden!\nEr is geen beschikbare infrastructuur. Gebruik 'open ontwerp'.", Alert.AlertType.WARNING);
+        }
+    }
+
 
     /**
      * A method which handles the choosing of files, making sure it is an XML file & making sure it is an infrastructure design.
@@ -93,21 +124,28 @@ public class GenericController implements Initializable {
             if ((infrastructureFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     // verify mime type
-                    if (Files.probeContentType(infrastructureFile.toPath()).equals("application/xml")) {
+                    if (Files.probeContentType(infrastructureFile.toPath()).equals("application/xml") || Files.probeContentType(infrastructureFile.toPath()).equals("text/xml")) {
                         // Load the infrastructure which was picked using the filechooser
                         Infrastructure.setCurrentInfrastructure(DesignManager.getDesignManager().load(infrastructureFile));
 
                         // draw the components, set the availability and costs
                         this.loadDesignIntoMonitor();
                     } else {
-                        NerdyGadgets.showAlert("Er is een fout opgetreden!", "Het aangereikte bestand is van een onjuist formaat.", Alert.AlertType.ERROR);
+                        NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden van een design!\n" +
+                                "Het aangereikte bestand is van een onjuist formaat.", Alert.AlertType.WARNING);
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
+                    NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden van een design!\n" +
+                            "Er is een iets fout gegaan, controlleer de terminal voor de 'stacktrace'.", Alert.AlertType.ERROR);
                     e.printStackTrace();
                 }
             } else {
-                NerdyGadgets.showAlert("Er is een fout opgetreden!", "Bestand is geen infrastructuur design", Alert.AlertType.ERROR);
+                NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden van een design!\n" +
+                        "Bestand is geen infrastructuur design (eindigend op .xml)", Alert.AlertType.WARNING);
             }
+        } else {
+            NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het openen van een design!\n" +
+                    "Er is geen bestand geselecteerd!", Alert.AlertType.WARNING);
         }
     }
 
@@ -116,61 +154,101 @@ public class GenericController implements Initializable {
      * <p>
      * Used in: InfrastructureMonitor, InfrastructureDesigner
      */
-    protected void loadDesignIntoMonitor() {
-        double startX = componentPane.getLayoutX();
-        double startY = componentPane.getLayoutY();
+    void loadDesignIntoMonitor() {
+        if (!(componentPane.getChildren().isEmpty())) {
+            Rectangle rectangle = (Rectangle) componentPane.getChildren().get(0); // first child is a rectangle (the background)
+            ArrayList<Node> toRemove = new ArrayList<>();
+            for (Node n : componentPane.getChildren()) {
+                if (n.equals(rectangle)) {
+                    continue;
+                }
+                toRemove.add(n);
+            }
 
-        Infrastructure current = Infrastructure.getCurrentInfrastructure();
+            componentPane.getChildren().removeAll(toRemove);
+        }
 
-        if (current != null && current.getComponents() != null) {
-            current.getComponents().forEach(component -> {
+        Infrastructure currentInfrastructure = Infrastructure.getCurrentInfrastructure();
+
+        if (currentInfrastructure != null && currentInfrastructure.getComponents() != null) {
+            currentInfrastructure.getComponents().forEach(component -> {
                 try {
-                    Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
-                    componentPane.setUserData(component);
-                    Label hostName = (Label) componentPane.getChildren().get(1);
-                    Rectangle box = (Rectangle) componentPane.getChildren().get(0);
+                    Pane pane = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
+                    pane.setUserData(component);
+                    Label hostName = (Label) pane.getChildren().get(1);
+                    Rectangle box = (Rectangle) pane.getChildren().get(0);
 
-                    Tooltip statisticTooltip = new Tooltip();
-                    statisticTooltip.setPrefSize(220, 180);
+                    // Only add tooltip with statistics when we're on the monitor page.
+                    if (this.monitor) {
 
-                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                        // Only the hardware components should gain a tooltip with statistics
+                        if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                            Tooltip statisticTooltip = new Tooltip();
+                            statisticTooltip.setUserData(component);
+                            statisticTooltip.setOnShowing(windowEvent -> {
+                                try {
+                                    Tooltip statistic = (Tooltip) windowEvent.getSource();
+                                    Component tooltipComponent = (Component) statistic.getUserData();
 
-//                        if(component.isOnline()) {
-//                            box.setFill(Color.GREEN);
-//                        } else {
-//                            box.setFill(Color.DARKRED);
-//                        }
+                                    if (tooltipComponent != null) {
+                                        statistic.setText(
+                                                "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
+                                                        "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
+                                                        "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
+                                        );
+                                    }
+                                } catch (NullPointerException e) {
+                                    NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden van de tooltip bij een component!\n" +
+                                            "Er is een 'NullPointerException' opgetreden tijdens het laden van de tooltip.\n" +
+                                            "Controleer de terminal voor de 'stacktrace'.", Alert.AlertType.ERROR);
+                                    e.printStackTrace();
+                                }
+                            });
 
-                        statisticTooltip.setText(
-//                                "Currently: " + (component.isOnline() ? "online" : "offline") + "\n" +
-//                                "Disk usage: " + (component.isOnline()) ? (component.getDiskUsage()) : "Unavailable" + "\n" +
-//                                "Processor usage: " + (component.isOnline()) ? (component.getProcessorUsage()) : "Unavailable"
-                                "" // remove this and uncomment the above once implemented.
-                        );
-                    }
+                            // If the component is online make it green, if not make it red.
+                            if (component.isOnline()) {
+                                box.setFill(Color.GREEN);
+                            } else {
+                                box.setFill(Color.DARKRED);
+                            }
 
-                    Tooltip.install(componentPane, statisticTooltip);
-                    // set the layout axises of the box
-                    box.setLayoutX(0);
-                    box.setLayoutY(0);
+                            statisticTooltip.setText(
+                                    "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
+                                            "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
+                                            "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
+                            );
 
-                    // Set the text and layout of the hostname
-                    hostName.setText(component.getHostname());
-                    hostName.setLayoutX(0);
-                    hostName.setLayoutY(box.getHeight() + 5);
-
-                    // set the layout axises of the component pane
-                    componentPane.setLayoutX(startX + component.getX());
-                    componentPane.setLayoutY(startY + component.getY());
-
-                    componentPane.getChildren().set(1, hostName);
-                    if (componentPane.getLayoutX() <= 1280) {
-                        if (componentPane.getLayoutY() <= (componentPane.getLayoutY() + componentPane.getHeight())) {
-                            anchorPane.getChildren().add(componentPane);
+                            Tooltip.install(pane, statisticTooltip);
                         }
                     }
 
+                    if (this.getClass().isAssignableFrom(DesignerController.class)) {
+                        pane.setOnDragDetected(DesignerController::handleDragDetection);
+                        pane.setOnMouseClicked(DesignerController::handleMouseClickDetection);
+                    }
+
+                    // Only hardware components should have IP addresses shown.
+                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                        Label ipv4Label = (Label) pane.getChildren().get(2);
+                        Label ipv6Label = (Label) pane.getChildren().get(3);
+
+                        ipv4Label.setText(String.valueOf(component.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+                        ipv6Label.setText(String.valueOf(component.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+                    }
+
+                    hostName.setText(component.getHostname());
+
+                    pane.setLayoutX(component.getX());
+                    pane.setLayoutY(component.getY());
+
+                    pane.getChildren().set(1, hostName);
+                    if (pane.getLayoutX() <= 1280) {
+                        componentPane.getChildren().add(pane);
+                    }
+
                 } catch (IOException e) {
+                    NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden en tekenen van de infrastructuur in de monitor.\n" +
+                            "Controleer de terminal voor de 'stacktrace'.", Alert.AlertType.ERROR);
                     e.printStackTrace();
                 }
             });
@@ -182,7 +260,8 @@ public class GenericController implements Initializable {
             this.setTotalAvailability(Infrastructure.getCurrentInfrastructure().getComponents());
             this.setTotalCosts(Infrastructure.getCurrentInfrastructure().getComponents());
         } else {
-            NerdyGadgets.showAlert("Er is een fout opgetreden!", "We kunnen geen componenten binnen het aangereikte bestand vinden om toe te voegen.", Alert.AlertType.ERROR);
+            NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden en tekenen van de infrastructuur in de monitor.\n" +
+                    "We kunnen geen componenten binnen het aangereikte bestand vinden om toe te voegen.", Alert.AlertType.WARNING);
         }
     }
 
@@ -192,53 +271,68 @@ public class GenericController implements Initializable {
      * @param components List<Component>
      */
     private void setTotalCosts(List<Component> components) {
-        double price = 0.00;
-        for (Component c : components) {
-            price += c.price;
+        int price = 0;
+
+        for (Component component : components) {
+            price += component.price;
         }
 
-        totalCosts.setText("Totale kosten: € " + price);
+        totalCosts.setText("Totale kosten: €" + price + ",-");
     }
 
     /**
-     * TODO @Stefan use the proper calculation: 1-(1-availability A) x (1-availability B)…x (1-availability n)
-     * TODO important: Availability in the calculation is the components availability divided by 100.
      * Calculation for availability.
      *
      * @param components List<Component>
      */
     private void setTotalAvailability(List<Component> components) {
-        double availability = 0.00;
-        for (Component c : components) {
-            availability += c.availability;
+        double availability = 1;
+
+        List<Component> webComponents = new ArrayList<>();
+        List<Component> databaseComponents = new ArrayList<>();
+        List<Component> otherComponents = new ArrayList<>();
+
+        for (Component component : components) {
+            if (component.componentType.equals(ComponentType.WEBSERVER)) {
+                webComponents.add(component);
+            } else if (component.componentType.equals(ComponentType.DATABASESERVER)) {
+                databaseComponents.add(component);
+            } else {
+                otherComponents.add(component);
+            }
         }
-        totalAvailability.setText("Totale beschikbaarheid: " + (availability / components.size()) + "%");
+
+        if (otherComponents.size() > 0) {
+            for (Component component : otherComponents) {
+                availability *= (component.availability * 0.01);
+            }
+        }
+
+        if (webComponents.size() > 0) {
+            availability *= (Backtracking.getAvailability(webComponents.toArray(Component[]::new)) * 0.01);
+        }
+
+        if (databaseComponents.size() > 0) {
+            availability *= (Backtracking.getAvailability(databaseComponents.toArray(Component[]::new)) * 0.01);
+        }
+
+        availability *= 100;
+
+        totalAvailability.setText("Totale beschikbaarheid: " + new DecimalFormat("#.###").format(availability).replace(',', '.') + "%");
     }
 
     /**
      * Load the elements which will be used to fill the design/optimizer.
      */
     private void loadSelectableElements(ComponentType type) {
-        // Create an array of all the currently existing components.
-        // We assume these will be the only ones in existence.
-        Component[] components = {
-                new DBLoadBalancer("DBLoadbalancer", 0, 0),
-                new HAL9001DB("HAL9001DB", 0, 0),
-                new HAL9002DB("HAL9002DB", 0, 0),
-                new HAL9003DB("HAL9003DB", 0, 0),
-                new HAL9001W("HAL9001W", 0, 0),
-                new HAL9002W("HAL9002W", 0, 0),
-                new HAL9003W("HAL9003W", 0, 0),
-                new pfSense("pfSense", 0, 0)
-        };
-
         try {
-
             // Load the components
-            this.loadComponents(componentContainer, components, type);
+            this.loadComponents(componentContainer, ComponentManager.getAllComponents(), type);
 
         } catch (IOException e) {
             // In case of errors: Activate panic-mode (Not implemented, but the devs will panic.)
+            NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden van alle verschillende componenten in de select box.\n" +
+                    "Controleer de terminal voor een eventuele 'stacktrace'.", Alert.AlertType.ERROR);
             e.printStackTrace();
         }
     }
@@ -248,7 +342,7 @@ public class GenericController implements Initializable {
      *
      * @param comboBox ComboBox the specified combobox to add the elements to.
      */
-    public void loadCategoriesIntoTypeSelector(ComboBox comboBox) {
+    private void loadCategoriesIntoTypeSelector(ComboBox<String> comboBox) {
         // add a 'general' category filter so we can see all components
         comboBox.getItems().add("Algemeen");
 
@@ -277,40 +371,47 @@ public class GenericController implements Initializable {
     }
 
 
-    protected void loadComponents(AnchorPane container, Component[] components, ComponentType type) throws IOException {
+    void loadComponents(AnchorPane container, Component[] components, ComponentType type) throws IOException {
         int multiplier = container.getChildren().size();
         for (int i = 0; i < components.length; i++) {
             if (type == null || components[i].componentType == type) {
                 // Get the necessary labels to modify
-                Pane componentPane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
-                Label title = (Label) componentPane.getChildren().get(1);
-                Label availability = (Label) componentPane.getChildren().get(2);
-                Label cost = (Label) componentPane.getChildren().get(3);
+                Pane pane = FXMLLoader.load(getClass().getResource("/pages/components/DraggableDesignerElement.fxml"));
+                Label title = (Label) pane.getChildren().get(1);
+                Label availability = (Label) pane.getChildren().get(2);
+                Label cost = (Label) pane.getChildren().get(3);
+
 
                 // Set the user data, will be useful for status checks
-                componentPane.setUserData(components[i]);
-                componentPane.setId("is-addable");
+                pane.setUserData(components[i]);
+                pane.setId("is-addable");
+
+                // set event, static reference to the handleDragDetection method in the DesignerController class
+                if (this.getClass().isAssignableFrom(DesignerController.class)) {
+                    pane.setOnDragDetected(DesignerController::handleDragDetection);
+
+                }
 
                 if (this.optimizer) {
-                    componentPane.setOnMouseClicked(OptimizerController::selectElement);
+                    pane.setOnMouseClicked(OptimizerController::selectElement);
                 }
 
                 // set the data
-                title.setText(components[i].getHostname());
+                title.setText(components[i].name);
                 availability.setText("Beschikbaarheid: " + (components[i].availability) + "%");
-                cost.setText("Prijs: € " + components[i].price);
+                cost.setText("Prijs: €" + components[i].price + ",-");
 
                 // add a white background, this is for beauty purposes
-                componentPane.setStyle("-fx-background-color: #fff");
+                pane.setStyle("-fx-background-color: #fff");
 
-                // We're only adding a layoutY if it's not the first element, which is determined by the value of the multipleir
+                // We're only adding a layoutY if it's not the first element, which is determined by the value of the multiplier
                 if (multiplier > 0) {
-                    componentPane.setLayoutY(componentPane.getLayoutX() + componentPane.getPrefHeight() * multiplier);
+                    pane.setLayoutY(pane.getLayoutX() + pane.getPrefHeight() * multiplier);
                 }
                 multiplier++;
 
                 // add the component pane to the container.
-                container.getChildren().add(componentPane);
+                container.getChildren().add(pane);
             }
         }
     }
@@ -329,6 +430,8 @@ public class GenericController implements Initializable {
         if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
             if (url.getFile().endsWith("InfrastructureOptimizer.fxml")) {
                 this.optimizer = true;
+            } else if ((url.getFile().endsWith("InfrastructureDesigner.fxml"))) {
+                this.builder = true;
             }
 
             // load the 'general' selectable elements
@@ -336,6 +439,9 @@ public class GenericController implements Initializable {
 
             // load the categories into the combobox
             this.loadCategoriesIntoTypeSelector(selectableCategory);
+        } else {
+            this.monitor = true;
         }
     }
+
 }

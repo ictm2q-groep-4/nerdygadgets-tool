@@ -3,12 +3,9 @@ package nl.nerdygadgets.infrastructure.components;
 import com.jcraft.jsch.*;
 
 import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * The abstract class that is extended by all components
@@ -16,8 +13,14 @@ import java.net.UnknownHostException;
  * @author Lucas Ouwens
  * @author Joris Vos
  * @author Djabir Omar Mohamed
+ * @author Lou Elzer
  */
-public abstract class Component implements Statistic {
+public class Component implements Statistic {
+
+    /**
+     *
+     */
+    public final String name;
 
     /**
      * This is the availability for the server, so how long the server is available
@@ -37,94 +40,70 @@ public abstract class Component implements Statistic {
     /**
      * This is the x coordinate
      */
-    private int x;
+    public int x=0;
 
     /**
      * This is the y coordinate
      */
-    private int y;
+    public int y=0;
 
     /**
      * This is the hostname
      */
-    private String hostname;
+    public String hostname;
 
     /**
      * This is the SSH username
      */
-    private String user;
-
-    /**
-     * This is the SSH host url/ip
-     */
-    private String host;
+    public String username="username";
 
     /**
      * This is the password used for the SSH connection
      */
-    private String pass;
-  
+    public String password="password";
+
     /**
      * This is the ipv4 address of the server
      */
-    private InetAddress ipv4;
+    public InetAddress ipv4 = Inet4Address.getLoopbackAddress();
 
     /**
      * This is the ipv6 address of the server
      */
-    private InetAddress ipv6;
+    public InetAddress ipv6 = Inet6Address.getLoopbackAddress();
 
-    /**
-     * This is the port number of the server
-     */
-    private int portnumber;
-
-    /**
-     * This is a constructor for components. It sets all the final variables in this class.
-     *
-     * @param hostname      String
-     * @param availability  double
-     * @param price         int
-     * @param componentType ComponentType
-     *
-     */
-    public Component(String hostname, double availability, int price, ComponentType componentType) {
-        this.hostname = hostname;
+    public Component(String name, double availability, int price, ComponentType componentType) {
+        this.name = name;
         this.availability = availability;
         this.price = price;
         this.componentType = componentType;
     }
 
-    /**
-     * This is a constructor for components. It sets all the variables in this class.
-     *
-     * @param hostname      String
-     * @param availability  double
-     * @param price         int
-     * @param componentType ComponentType
-     * @param x             int
-     * @param y             int
-     */
-    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y) {
+    public Component(Component copyFromComponent) {
+        this.name = copyFromComponent.name;
+        this.availability = copyFromComponent.availability;
+        this.price = copyFromComponent.price;
+        this.componentType = copyFromComponent.componentType;
+    }
+
+    public Component(Component copyFromComponent, String hostname, int x, int y) {
+        this(copyFromComponent);
         this.hostname = hostname;
-        this.availability = availability;
-        this.price = price;
-        this.componentType = componentType;
         this.x = x;
         this.y = y;
     }
 
-    /**
-     * This is a constructor for components which includes SSH credentials
-     * @param user          String
-     * @param host          String
-     * @param pass          String
-     */
-    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y, String user, String host, String pass) {
-        this(hostname, availability, price, componentType, x, y);
-        this.user = user;
-        this.host = host;
-        this.pass = pass;
+    public Component(String name, double availability, int price, ComponentType componentType,
+                     String hostname, int x, int y, String username, String password,
+                     InetAddress ipv4, InetAddress ipv6) {
+        this(name, availability, price, componentType);
+        this.hostname = hostname;
+        this.x = x;
+        this.y = y;
+        this.username = username;
+        this.password = password;
+        this.ipv4 = ipv4;
+        this.ipv6 = ipv6;
     }
 
     /**
@@ -135,24 +114,37 @@ public abstract class Component implements Statistic {
     public boolean isOnline() {
         boolean isUp = false;
 
+        try {
+            new Socket(ipv4.toString().split("/")[1], 22).close();
+            return true;
+        } catch (IOException e) {
+            System.err.println("Something went wrong while connecting to the SSH server");
+            //e.printStackTrace();
+            return false;
+        }
+
+        /*
         // get ssh channel
-        Channel channel = getSSHChannel(user, host, pass);
+        Channel channel = getSSHChannel(username, password);
 
         try {
-            // open channel
-            channel.connect();
+            if(channel != null) {
+                // open channel
+                channel.connect();
 
-            isUp = channel.isConnected();
+                isUp = channel.isConnected();
 
-            // close channel
-            channel.disconnect();
+                // close channel
+                channel.disconnect();
 
-            return isUp;
+                return isUp;
+            }
         } catch (Exception e) {
             System.err.println("Something went wrong while connecting to the SSH server");
             e.printStackTrace();
         }
         return false;
+         */
     }
 
     /**
@@ -198,7 +190,7 @@ public abstract class Component implements Statistic {
     private List<String> runCommand(String command) {
         try {
             // get ssh channel
-            Channel channel = getSSHChannel(user, host, pass);
+            Channel channel = getSSHChannel(username, password);
 
             // set streams
             OutputStream ops = channel.getOutputStream();
@@ -242,17 +234,16 @@ public abstract class Component implements Statistic {
      * This method opens a SSH channel with a remote host
      *
      * @param user          The username for the connection
-     * @param host          The hostname
      * @param password      The password
      * @return              Returns a channel which can be used to initiate a connection
      */
-    public Channel getSSHChannel(String user, String host, String password) {
+    private Channel getSSHChannel(String user, String password) {
         try {
             // initiate Java Secure Channel object
             JSch jsch = new JSch();
 
             // initiate session
-            Session session = jsch.getSession(user, host, 22);
+            Session session = jsch.getSession(user, ipv4.toString().substring(1), 22);
 
             // disable host key verification
             java.util.Properties config = new java.util.Properties();
@@ -274,147 +265,32 @@ public abstract class Component implements Statistic {
             return null;
         }
     }
-  
-    /**
-     * This is a constructor for components. It sets all the variables in this class.
-     *
-     * @param hostname      String
-     * @param availability  double
-     * @param price         int
-     * @param componentType ComponentType
-     * @param x             int
-     * @param y             int
-     * @param ipv4          String
-     * @param ipv6          String
-     * @param portnumber    int
-     */
-    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y,String ipv4, String ipv6, int portnumber) {
-        this.hostname = hostname;
-        this.availability = availability;
-        this.price = price;
-        this.componentType = componentType;
-        this.x = x;
-        this.y = y;
-        try {
-            this.ipv4 = Inet4Address.getByName(ipv4);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        try {
-            this.ipv6 = Inet6Address.getByName(ipv6);
-        } catch(UnknownHostException e) {
-            e.printStackTrace();
-        }
-        this.portnumber = portnumber;
-    }
 
-    /**
-     * This is a constructor for components. It sets all the variables in this class.
-     *
-     * @param hostname      String
-     * @param availability  double
-     * @param price         int
-     * @param componentType ComponentType
-     * @param x             int
-     * @param y             int
-     * @param ipv4          String
-     * @param portnumber    int
-     */
-    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y,String ipv4, int portnumber) {
-        this.hostname = hostname;
-        this.availability = availability;
-        this.price = price;
-        this.componentType = componentType;
-        this.x = x;
-        this.y = y;
-        try {
-            this.ipv4 = Inet4Address.getByName(ipv4);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        this.portnumber = portnumber;
-    }
+    public String getHostname() { return hostname; }
+    public int getX() { return x; }
+    public int getY() { return y; }
 
-    /**
-     * This is a constructor for components. It sets all the variables in this class.
-     *
-     * @param hostname      String
-     * @param availability  double
-     * @param price         int
-     * @param componentType ComponentType
-     * @param x             int
-     * @param y             int
-     * @param ipv6          String
-     * @param portnumber    int
-     */
-    public Component(String hostname, double availability, int price, ComponentType componentType, int x, int y,int portnumber,String ipv6) {
-        this.hostname = hostname;
-        this.availability = availability;
-        this.price = price;
-        this.componentType = componentType;
-        this.x = x;
-        this.y = y;
-        try {
-            this.ipv6 = Inet6Address.getByName(ipv6);
-        } catch(UnknownHostException e) {
-            e.printStackTrace();
-        }
-        this.portnumber = portnumber;
-    }
-
-    // region Getters
-    public String getHostname() {
-        return hostname;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-    public InetAddress getIpv4() {
-        return ipv4;
-    }
-    public InetAddress getIpv6() {
-        return ipv6;
-    }
-    // endregion
-
-    // region Setters
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
+    public void setX(int x) { this.x = x; }
+    public void setY(int y) { this.y = y; }
+    public void setUser(String username) { this.username = username; }
+    public void setPass(String password) { this.password = password; }
     public void setIpv4(String ipv4) {
         try {
-            this.ipv4 = Inet4Address.getByName(ipv4);
+            this.ipv4 = InetAddress.getByName(ipv4);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-
     }
-
     public void setIpv6(String ipv6) {
         try {
             this.ipv6 = Inet6Address.getByName(ipv6);
-        } catch(UnknownHostException e) {
+        } catch (UnknownHostException e) {
             e.printStackTrace();
         }
     }
-    // endregion
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName();
+        return name;
     }
 }

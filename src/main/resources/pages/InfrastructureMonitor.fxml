@@ -2,26 +2,36 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
 <VBox prefHeight="400.0" prefWidth="640.0" style="-fx-min-width: 1280px; -fx-min-height: 720px; -fx-max-height: 720px; -fx-max-width: 1280px;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.nerdygadgets.pages.controllers.MonitorController">
   <children>
     <AnchorPane fx:id="anchorPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="-fx-max-width: 1280px; -fx-min-width: 1280px; -fx-max-height: 720px; -fx-min-height: 720px;" VBox.vgrow="ALWAYS">
          <children>
             <Rectangle fill="#cdcdcd" height="30.0" smooth="false" strokeType="INSIDE" width="1280.0" />
-            <Label layoutX="14.0" layoutY="7.0" text="Infrastructuur real-time monitor" />
+            <Label layoutX="14.0" layoutY="7.0" text="Infrastructuur Real-Time Monitor" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eff0f2" height="690.0" layoutY="30.0" strokeType="INSIDE" width="297.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#dadada" height="134.0" layoutX="14.0" layoutY="45.0" stroke="BLACK" strokeType="INSIDE" width="262.0" />
-            <Button id="openDesignButton" fx:id="openDesignButton" layoutX="62.0" layoutY="65.0" mnemonicParsing="false" onMouseClicked="#handleOpenDesign" prefHeight="39.0" prefWidth="167.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open ontwerp" textFill="WHITE" />
-            <Button id="openCurrentDesign" fx:id="openCurrentDesign" layoutX="30.0" layoutY="119.0" mnemonicParsing="false" onMouseClicked="#handleOpenCurrentDesign" prefHeight="39.0" prefWidth="230.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open huidig ontwerp" textFill="WHITE" />
-            <Button layoutX="14.0" layoutY="653.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#dadada" height="160.0" layoutX="14.0" layoutY="45.0" stroke="#9e9e9e" strokeType="INSIDE" width="262.0" />
+            <Button id="openDesignButton" fx:id="openDesignButton" layoutX="74.0" layoutY="66.0" mnemonicParsing="false" onMouseClicked="#handleOpenDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open ontwerp" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+            <Button id="openCurrentDesign" fx:id="openCurrentDesign" layoutX="30.0" layoutY="129.0" mnemonicParsing="false" onMouseClicked="#handleOpenCurrentDesign" prefHeight="50.0" prefWidth="230.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open huidig ontwerp" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbfbf" height="30.0" layoutY="691.0" strokeType="INSIDE" width="1280.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="83.0" layoutX="297.0" layoutY="608.0" strokeType="INSIDE" width="983.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="83.0" layoutY="608.0" strokeType="INSIDE" width="1280.0" />
+            <Button layoutX="14.0" layoutY="653.0" mnemonicParsing="false" onMouseClicked="#handleBackButton" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Terug naar hoofdmenu" textFill="WHITE" />
             <Label fx:id="totalAvailability" layoutX="328.0" layoutY="621.0" text="Totale beschikbaarheid: ...%" />
             <Label fx:id="totalCosts" layoutX="328.0" layoutY="637.0" text="Totale kosten: ..." />
-            <Rectangle id="monitor" fx:id="componentPane" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="578.0" layoutX="297.0" layoutY="30.0" strokeType="INSIDE" width="983.0" />
+            <ScrollPane layoutX="297.0" layoutY="44.0" prefHeight="548.0" prefWidth="969.0">
+                <AnchorPane fx:id="componentPane" layoutX="297.0" layoutY="44.0" prefHeight="553.0" prefWidth="969.0" style="-fx-background-color: #fff; -fx-border-color: #9e9e9e;" />
+            </ScrollPane>
          </children>
     </AnchorPane>
   </children>

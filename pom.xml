@@ -35,6 +35,18 @@
             <version>1.4.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.55</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.15</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -52,9 +64,9 @@
                 <version>0.0.2</version>
                 <configuration>
                     <release>12</release>
-                    <jlinkImageName>hellofx</jlinkImageName>
+                    <jlinkImageName>NerdyGadgets</jlinkImageName>
                     <launcher>launcher</launcher>
-                    <mainClass>hellofx/org.openjfx.App</mainClass>
+                    <mainClass>nl.nerdygadgets.main.NerdyGadgets</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -6,16 +6,16 @@ import java.util.Arrays;
  * An enumeration for the registration of scenes.
  *
  * @author Lucas Ouwens
+ * @author Joris Vos
  */
 public enum PageRegister {
-
-    // pages/<page>
-    // pages/templates
 
     MAIN("MainScene", "Main.fxml"),
     DESIGNER("InfrastructureDesigner", "InfrastructureDesigner.fxml"),
     MONITOR("InfrastructureMonitor", "InfrastructureMonitor.fxml"),
-    OPTIMIZER("InfrastructureOptimizer", "InfrastructureOptimizer.fxml");
+    OPTIMIZER("InfrastructureOptimizer", "InfrastructureOptimizer.fxml"),
+    OPTIMIZERALERT("OptimizerAlert", "components/OptimizerAlert.fxml"),
+    COMPONENTSALERT("ComponentsAlert", "components/ComponentsAlert.fxml");
 
 
     /**
@@ -31,8 +31,8 @@ public enum PageRegister {
     /**
      * The constructor which defines the values each enum must have.
      *
-     * @param identifier String an 'identifier' to easily load the scene
-     * @param filePath   String the 'path' including the filename itself. Starts from the 'pages' folder. (Location of the 'view')
+     * @param identifier    String an 'identifier' to easily load the scene
+     * @param filePath      String the 'path' including the filename itself. Starts from the 'pages' folder. (Location of the 'view')
      */
     PageRegister(String identifier, String filePath) {
         this.identifier = identifier;
@@ -42,9 +42,10 @@ public enum PageRegister {
 
     /**
      * Easily get a PageRegister enum by its identifier, will return null if the identifier does not exist.
+     * This is done using Arrays.stream
      *
-     * @param identifier String the identifier
-     * @return PageRegister|null
+     * @param identifier    String the identifier
+     * @return              PageRegister|null
      */
     public static PageRegister get(String identifier) {
         return Arrays.stream(PageRegister.values())
@@ -54,7 +55,7 @@ public enum PageRegister {
     }
 
     /**
-     * get the identifier of a specific enum
+     * get the identifier of a specific enum (page)
      *
      * @return String
      */
@@ -70,8 +71,6 @@ public enum PageRegister {
     public String getFilePath() {
         return "/pages/" + filePath;
     }
-
-
 }
 
 

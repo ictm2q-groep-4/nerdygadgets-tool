@@ -324,7 +324,7 @@ public class DesignerController extends GenericController {
 
             } catch (Exception E) {
                 E.printStackTrace();
-                NerdyGadgets.showAlert("Er is een fout opgetreden!", "", Alert.AlertType.ERROR);
+                NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er moet een naam opgegeven worden en er moeten ook componenten in het ontwerp zitten!", Alert.AlertType.ERROR);
             }
         } else {
             NerdyGadgets.showAlert("Er is een fout opgetreden!", "Geen XML bestand!", Alert.AlertType.ERROR);

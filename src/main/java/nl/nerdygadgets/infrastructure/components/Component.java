@@ -176,7 +176,7 @@ public class Component implements Statistic {
                 e.printStackTrace();
             }
 
-            return true;
+            return isUp;
         } catch (IOException e) {
             System.err.println("Something went wrong while connecting to the SSH server");
             //e.printStackTrace();
@@ -230,37 +230,40 @@ public class Component implements Statistic {
             Channel channel = getSSHChannel(username, password);
 
             // set streams
-            OutputStream ops = channel.getOutputStream();
-            PrintStream ps = new PrintStream(ops);
+            if(channel != null) {
+                OutputStream ops = channel.getOutputStream();
+                PrintStream ps = new PrintStream(ops);
 
-            // open channel
-            channel.connect();
+                // open channel
+                channel.connect();
 
-            // run command
-            ps.println(command);
+                // run command
+                ps.println(command);
 
-            // close printstream
-            ps.flush();
-            ps.close();
+                // close printstream
+                ps.flush();
+                ps.close();
 
-            // initiate inputstream and bufferedreader
-            InputStream in = channel.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                // initiate inputstream and bufferedreader
+                InputStream in = channel.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-            // read the output
-            String line;
-            List<String> output = new ArrayList<>();
+                // read the output
+                String line;
+                List<String> output = new ArrayList<>();
 
-            while ((line = reader.readLine()) != null) {
-                output.add(line);
+                while ((line = reader.readLine()) != null) {
+                    output.add(line);
+                }
+
+                // close reader and channel
+                reader.close();
+                channel.disconnect();
+
+                return output;
+            } else {
+                System.err.println("Could not connect to the SSH channel");
             }
-
-            // close reader and channel
-            reader.close();
-            channel.disconnect();
-
-            return output;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -294,9 +297,7 @@ public class Component implements Statistic {
             session.connect(2000);
 
             // open channel
-            Channel channel = session.openChannel("shell");
-
-            return channel;
+            return session.openChannel("shell");
         } catch (Exception e) {
             System.err.println("Something went wrong while opening the SSH channel");
             return null;

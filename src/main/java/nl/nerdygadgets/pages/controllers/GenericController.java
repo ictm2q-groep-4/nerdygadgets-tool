@@ -173,6 +173,12 @@ public class GenericController implements Initializable {
         Infrastructure currentInfrastructure = Infrastructure.getCurrentInfrastructure();
 
         if (currentInfrastructure != null && currentInfrastructure.getComponents() != null) {
+            // The monitor connects with ssh, this connection has a timeout of around 2000 milliseconds which is 2 seconds
+            if(this.monitor) {
+                NerdyGadgets.showAlert("Een ogenblikje!", "De componenten worden nu ingeladen, dit duurt maximaal "
+                        + ((2 * currentInfrastructure.getComponents().size()) * 4)
+                        + " seconden.\nHet is mogelijk dat u een melding krijgen dat de applicatie niet reageert, sluit de applicatie niet. Het laden duurt lang, dat vindt de operating system niet leuk.", Alert.AlertType.INFORMATION);
+            }
             currentInfrastructure.getComponents().forEach(component -> {
                 try {
                     Pane pane = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));

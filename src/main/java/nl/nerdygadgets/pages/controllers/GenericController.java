@@ -176,7 +176,7 @@ public class GenericController implements Initializable {
             // The monitor connects with ssh, this connection has a timeout of around 2000 milliseconds which is 2 seconds
             if(this.monitor) {
                 NerdyGadgets.showAlert("Een ogenblikje!", "De componenten worden nu ingeladen, dit duurt maximaal "
-                        + ((2 * currentInfrastructure.getComponents().size()) * 4)
+                        + (currentInfrastructure.getComponents().size() * 2)
                         + " seconden.\nHet is mogelijk dat u een melding krijgen dat de applicatie niet reageert, sluit de applicatie niet. Het laden duurt lang, dat vindt de operating system niet leuk.", Alert.AlertType.INFORMATION);
             }
             currentInfrastructure.getComponents().forEach(component -> {
@@ -199,10 +199,11 @@ public class GenericController implements Initializable {
                                     Component tooltipComponent = (Component) statistic.getUserData();
 
                                     if (tooltipComponent != null) {
+                                        boolean isOnline = component.isOnline();
                                         statistic.setText(
-                                                "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
-                                                        "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
-                                                        "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
+                                                "Status: " + (isOnline ? "Online" : "Offline") + "\n" +
+                                                        "Schijfruimte: " + (isOnline ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
+                                                        "Processor gebruik: " + (isOnline ? (component.getProcessorUsage()) : "Onbeschikbaar")
                                         );
                                     }
                                 } catch (NullPointerException e) {
@@ -213,17 +214,19 @@ public class GenericController implements Initializable {
                                 }
                             });
 
+                            boolean isOnline = component.isOnline();
+
                             // If the component is online make it green, if not make it red.
-                            if (component.isOnline()) {
+                            if (isOnline) {
                                 box.setFill(Color.GREEN);
                             } else {
                                 box.setFill(Color.DARKRED);
                             }
 
                             statisticTooltip.setText(
-                                    "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
-                                            "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
-                                            "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
+                                    "Status: " + (isOnline ? "Online" : "Offline") + "\n" +
+                                            "Schijfruimte: " + (isOnline ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
+                                            "Processor gebruik: " + (isOnline ? (component.getProcessorUsage()) : "Onbeschikbaar")
                             );
 
                             Tooltip.install(pane, statisticTooltip);

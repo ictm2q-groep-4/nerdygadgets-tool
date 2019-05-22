@@ -152,7 +152,11 @@ public class ComponentManager {
             window.setTitle("Optimizer");
             window.setScene(new Scene(componentsDialog));
 
+            window.setAlwaysOnTop(true);
+            window.toFront();
+
             window.showAndWait();
+
         }
     }
 }

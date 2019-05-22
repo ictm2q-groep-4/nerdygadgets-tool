@@ -294,7 +294,7 @@ public class Component implements Statistic {
             session.setPassword(password);
 
             // connect session
-            session.connect(2000);
+            session.connect(500);
 
             // open channel
             return session.openChannel("shell");

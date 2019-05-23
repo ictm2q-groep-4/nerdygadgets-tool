@@ -56,7 +56,7 @@
                <children>
                   <ComboBox fx:id="selectableCategory" onAction="#filterComponents" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
                   <Label text="Beschikbare componenten" />
-                  <ScrollPane prefWidth="350.0" style="-fx-border-color: #9a9a9a;">
+                  <ScrollPane hbarPolicy="NEVER" prefWidth="350.0" style="-fx-border-color: #9a9a9a;">
                     <content>
                       <AnchorPane fx:id="componentContainer" minHeight="0.0" minWidth="0.0" prefWidth="333.0">
                            <children>

@@ -161,7 +161,7 @@ public class GenericController implements Initializable {
             Rectangle rectangle = (Rectangle) componentPane.getChildren().get(0); // first child is a rectangle (the background)
             ArrayList<Node> toRemove = new ArrayList<>();
             for (Node n : componentPane.getChildren()) {
-                if (n.equals(rectangle)) {
+                if (n.equals(rectangle) && this.builder) {
                     continue;
                 }
                 toRemove.add(n);

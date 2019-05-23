@@ -77,10 +77,8 @@ public class OptimizerController extends GenericController implements Controller
     @FXML
     public void addComponentsToList(ActionEvent e) {
         if (!this.reloadComponents()) {
-            NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er zijn geen componenten geselecteerd om toe te voegen.", Alert.AlertType.WARNING);
+            NerdyGadgets.showAlert("Optimizer", "Er is een fout opgetreden!\nEr zijn geen componenten geselecteerd om toe te voegen.", Alert.AlertType.WARNING);
         }
-        selectedComponents.clear();
-
     }
 
     /**
@@ -96,7 +94,7 @@ public class OptimizerController extends GenericController implements Controller
 
             selectedComponents.clear();
         } else {
-            NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er zijn geen componenten geselecteerd.", Alert.AlertType.WARNING);
+            NerdyGadgets.showAlert("Optimizer", "Er is een fout opgetreden!\nEr zijn geen componenten geselecteerd.", Alert.AlertType.WARNING);
         }
     }
 
@@ -110,7 +108,7 @@ public class OptimizerController extends GenericController implements Controller
             infrastructureToOptimize.getComponents().clear();
             selectedComponentContainer.getChildren().clear();
         } else {
-            NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er zijn geen componenten die teruggezet kunnen worden.", Alert.AlertType.WARNING);
+            NerdyGadgets.showAlert("Optimizer", "Er is een fout opgetreden!\nEr zijn geen componenten die teruggezet kunnen worden.", Alert.AlertType.WARNING);
         }
     }
 
@@ -194,15 +192,19 @@ public class OptimizerController extends GenericController implements Controller
             }
 
             List<Component> components = new ArrayList<>();
+            List<AnchorPane> addedComponents = new ArrayList<>();
+
             for (AnchorPane pane : selectedComponents) {
                 if (pane.getUserData() != null) {
                     if (!existingComponents.contains(pane.getUserData())) {
                         components.add((Component) pane.getUserData());
                         pane.setStyle("-fx-background-color: #fff");
+                        addedComponents.add(pane);
                     }
                 }
             }
-            selectedComponents.clear();
+
+            selectedComponents.removeAll(addedComponents);
 
             try {
                 this.loadComponents(selectedComponentContainer, (components.toArray(new Component[0])), null);

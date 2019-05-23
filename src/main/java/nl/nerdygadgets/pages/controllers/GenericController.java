@@ -158,16 +158,23 @@ public class GenericController implements Initializable {
      */
     void loadDesignIntoMonitor() {
         if (!(componentPane.getChildren().isEmpty())) {
-            Rectangle rectangle = (Rectangle) componentPane.getChildren().get(0); // first child is a rectangle (the background)
-            ArrayList<Node> toRemove = new ArrayList<>();
-            for (Node n : componentPane.getChildren()) {
-                if (n.equals(rectangle) && this.builder) {
-                    continue;
+            if (this.builder) {
+                Rectangle rectangle = (Rectangle) componentPane.getChildren().get(0); // first child is a rectangle (the background)
+                ArrayList<Node> toRemove = new ArrayList<>();
+                for (Node n : componentPane.getChildren()) {
+                    if (n.equals(rectangle)) {
+                        continue;
+                    }
+                    toRemove.add(n);
                 }
-                toRemove.add(n);
+                componentPane.getChildren().removeAll(toRemove);
+            } else {
+                ArrayList<Node> toRemove = new ArrayList<>();
+                for (Node n : componentPane.getChildren()) {
+                    toRemove.add(n);
+                }
+                componentPane.getChildren().removeAll(toRemove);
             }
-
-            componentPane.getChildren().removeAll(toRemove);
         }
 
         Infrastructure currentInfrastructure = Infrastructure.getCurrentInfrastructure();

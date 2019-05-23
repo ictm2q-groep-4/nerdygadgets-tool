@@ -198,13 +198,11 @@ public class GenericController implements Initializable {
                                     Tooltip statistic = (Tooltip) windowEvent.getSource();
                                     Component tooltipComponent = (Component) statistic.getUserData();
 
+
+
                                     if (tooltipComponent != null) {
-                                        boolean isOnline = component.isOnline();
-                                        statistic.setText(
-                                                "Status: " + (isOnline ? "Online" : "Offline") + "\n" +
-                                                        "Schijfruimte: " + (isOnline ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
-                                                        "Processor gebruik: " + (isOnline ? (component.getProcessorUsage()) : "Onbeschikbaar")
-                                        );
+                                        // Set tooltip data
+                                        setTooltipDetails(pane, box, statisticTooltip, component, component.isOnline());
                                     }
                                 } catch (NullPointerException e) {
                                     NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden van de tooltip bij een component!\n" +
@@ -214,22 +212,8 @@ public class GenericController implements Initializable {
                                 }
                             });
 
-                            boolean isOnline = component.isOnline();
-
-                            // If the component is online make it green, if not make it red.
-                            if (isOnline) {
-                                box.setFill(Color.GREEN);
-                            } else {
-                                box.setFill(Color.DARKRED);
-                            }
-
-                            statisticTooltip.setText(
-                                    "Status: " + (isOnline ? "Online" : "Offline") + "\n" +
-                                            "Schijfruimte: " + (isOnline ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
-                                            "Processor gebruik: " + (isOnline ? (component.getProcessorUsage()) : "Onbeschikbaar")
-                            );
-
-                            Tooltip.install(pane, statisticTooltip);
+                            // Set tooltip data
+                            setTooltipDetails(pane, box, statisticTooltip, component, component.isOnline());
                         }
                     }
 
@@ -465,6 +449,26 @@ public class GenericController implements Initializable {
         } else {
             this.monitor = true;
         }
+    }
+
+    private void setTooltipDetails(Pane pane, Rectangle box, Tooltip statisticTooltip, Component component, boolean isOnline) {
+        if (isOnline) {
+            box.setFill(Color.GREEN);
+            statisticTooltip.setText(
+                    "Status: Online\n" +
+                            "Schijfruimte: " + component.getDiskUsage() + "\n" +
+                            "Processor gebruik: " + (component.getProcessorUsage())
+            );
+        } else {
+            box.setFill(Color.DARKRED);
+            statisticTooltip.setText(
+                    "Status: Offline\n" +
+                            "Schrijfruimte: Onbeschikbaar\n" +
+                            "Processor gebruik: Onbeschikbaar"
+            );
+        }
+
+        Tooltip.install(pane, statisticTooltip);
     }
 
 }

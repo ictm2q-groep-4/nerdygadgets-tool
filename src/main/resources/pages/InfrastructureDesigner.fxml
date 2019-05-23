@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
 <VBox prefHeight="400.0" prefWidth="640.0" style="-fx-min-width: 1280px; -fx-min-height: 720px; -fx-max-height: 720px; -fx-max-width: 1280px;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.nerdygadgets.pages.controllers.DesignerController">
   <children>
@@ -20,11 +21,20 @@
                <children>
                   <HBox spacing="10.0">
                      <children>
-                        <Button id="openDesignButton" fx:id="openDesignButton" mnemonicParsing="false" onMouseClicked="#handleOpenDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open ontwerp" textFill="WHITE" />
-                        <Button id="openDesignButton" fx:id="saveDesignButton" mnemonicParsing="false" onAction="#handleSaveDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Ontwerp opslaan" textFill="WHITE" />
+                        <Button id="openDesignButton" fx:id="openDesignButton" mnemonicParsing="false" onMouseClicked="#handleOpenDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open ontwerp" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Button>
+                        <Button id="openDesignButton" fx:id="saveDesignButton" mnemonicParsing="false" onAction="#handleSaveDesign" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Ontwerp opslaan" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Button>
                      </children>
                   </HBox>
-                  <Button id="openDesignButton" fx:id="openCurrentDesign" mnemonicParsing="false" onAction="#handleOpenCurrentDesign" prefHeight="50.0" prefWidth="310.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open huidig ontwerp" textFill="WHITE" />
+                  <Button id="openDesignButton" fx:id="openCurrentDesign" mnemonicParsing="false" onAction="#handleOpenCurrentDesign" prefHeight="50.0" prefWidth="310.0" style="-fx-background-color: #5297b2; -fx-border-color: #608ea0; -fx-border-width: 3; -fx-border-radius: 4;" text="Open huidig ontwerp" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
                </children>
                <padding>
                   <Insets left="20.0" top="20.0" />
@@ -37,12 +47,12 @@
 
             <AnchorPane fx:id="componentPane" layoutX="391.0" layoutY="45.0" onDragDropped="#handleDrop" onDragOver="#handleDragOver">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="580.0" stroke="#9a9a9a" strokeType="INSIDE" width="880.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="570.0" stroke="#9e9e9e" strokeType="INSIDE" width="880.0" />
                </children>
             </AnchorPane>
             <Rectangle fill="#cdcdcd" height="30.0" smooth="false" strokeType="INSIDE" width="1280.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="59.0" layoutY="632.0" strokeType="INSIDE" width="1280.0" />
-            <VBox layoutX="14.0" layoutY="206.0" prefHeight="428.0" prefWidth="350.0" spacing="5.0">
+            <VBox layoutX="14.0" layoutY="206.0" prefHeight="410.0" prefWidth="350.0" spacing="5.0">
                <children>
                   <ComboBox fx:id="selectableCategory" onAction="#filterComponents" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
                   <Label text="Beschikbare componenten" />

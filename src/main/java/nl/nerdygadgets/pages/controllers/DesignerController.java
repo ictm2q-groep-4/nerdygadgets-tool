@@ -4,13 +4,12 @@ package nl.nerdygadgets.pages.controllers;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.*;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.HBox;
 import javafx.stage.*;
+
 import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.Component;
 import nl.nerdygadgets.infrastructure.components.ComponentType;
@@ -25,11 +24,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
-import javafx.scene.layout.VBox;
+import nl.nerdygadgets.pages.PageRegister;
+import nl.nerdygadgets.pages.popups.GenericPopup;
+import nl.nerdygadgets.pages.popups.PopupMenu;
 
 
 /**
+ * This handles the logic for the Designer (Builder)
+ *
  * @author Stefan Booij
+ * @author Joris Vos
  */
 public class DesignerController extends GenericController {
 
@@ -43,7 +47,7 @@ public class DesignerController extends GenericController {
     /**
      * Detects dragging over the imageview
      *
-     * @param dragEvent
+     * @param dragEvent DragEvent
      */
     @FXML
     private void handleDragOver(DragEvent dragEvent) {
@@ -57,12 +61,55 @@ public class DesignerController extends GenericController {
     /**
      * Handles dropping. It alters the coordinates for the component on the layout
      *
-     * @param dragEvent
+     * @param dragEvent DragEvent
      */
 
     @FXML
     private void handleDrop(DragEvent dragEvent) {
+        if (Infrastructure.getCurrentInfrastructure() == null) {
+            Infrastructure.setCurrentInfrastructure(new Infrastructure());
+        }
+
         Pane component = (Pane) getTransferEvent().getSource();
+
+        // If a component is dropped & the current design wasn't loaded, we clear the infrastructure component list.
+        if (Infrastructure.getCurrentInfrastructure() != null && !Infrastructure.getCurrentInfrastructure().isLoaded()
+                && !Infrastructure.getCurrentInfrastructure().getComponents().isEmpty()) {
+
+            // We are creating a 'generic' popup to make sure they want to continue with the action
+            GenericPopup popup = new GenericPopup("/pages/components/DragComponentAlert.fxml", "Waarschuwing!");
+
+            // Get the necessary pieces of data to register the button events
+            HBox buttonContainer = (HBox) popup.getContainer().getChildren().get(1);
+
+            Button cancelAction = (Button) buttonContainer.getChildren().get(0);
+            Button continueAction = (Button) buttonContainer.getChildren().get(1);
+
+            // just close, because isOk is false by default.
+            cancelAction.setOnMouseClicked(event -> popup.getStage().close());
+
+            // We're continuing
+            continueAction.setOnMouseClicked(event -> {
+                popup.setOk(true);
+                popup.getStage().close();
+            });
+
+            // show the popup
+            popup.getStage().showAndWait();
+
+            // if they agree with clearing the currently existing infrastructure, clear it and set 'loaded' to true so this popup does not happen again.
+            if (popup.isOk()) {
+                Infrastructure.getCurrentInfrastructure().getComponents().clear();
+            } else {
+                // cancel the drop if he does not agree.
+                return;
+            }
+        }
+
+        // If it wasn't loaded before, it is now.
+        if(!Infrastructure.getCurrentInfrastructure().isLoaded()) {
+            Infrastructure.getCurrentInfrastructure().setLoaded(true);
+        }
 
         //Boolean to check if component is already in the layout
         boolean existenceCheck = false;
@@ -76,17 +123,11 @@ public class DesignerController extends GenericController {
             if (menu.isOk()) {
                 component = copyAttributes(component);
 
-                component.setOnMouseClicked(event -> {
-                    System.out.println(event.getSource());
-                    PopupMenu eventMenu = new PopupMenu((Pane) event.getSource(), true);
-                    eventMenu.getWindow().showAndWait();
-
-                    if (eventMenu.isOk()) {
-                        System.out.println("New data.");
-                    }
-                });
+                component.setOnMouseClicked(DesignerController::handleMouseClickDetection);
 
                 componentPane.getChildren().add(component);
+            } else {
+                return;
             }
         } else {
             existenceCheck = true;
@@ -118,32 +159,71 @@ public class DesignerController extends GenericController {
 
         if (existenceCheck) {
             //Edits the coordinates of an existing component
-            editComponentObject(component);
+            editComponentCoordinates(component);
+        } else {
+            addComponentToInfrastructure(component);
         }
+
+    }
+
+    /**
+     * Adds a component to the infrastructure when it's placed in the layout.
+     *
+     * @param component Pane
+     */
+    private void addComponentToInfrastructure(Pane component) {
+        List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
+
+        Component newComponent = (Component) component.getUserData();
+
+        newComponent.setX((int) component.getLayoutX());
+        newComponent.setY((int) component.getLayoutY());
+
+        infraComponents.add(newComponent);
+        System.out.println("Component added to infrastructure. X and Y coordinates of host '" + newComponent.hostname + "' are: X: " + newComponent.getX() + " Y: " + newComponent.getY());
 
     }
 
 
     /**
-     * @param component
+     * @param component Pane
      */
-    private void editComponentObject(Pane component) {
-        List<Component> components = Infrastructure.getCurrentInfrastructure().getComponents();
+    private void editComponentCoordinates(Pane component) {
+        Component draggedComponent = (Component) component.getUserData();
 
-//        for (Component x : components) {
-//            String hostname = getHostname(component);
-//            if (x.getHostname().equals(hostname)) {
-//                x.setX((int) component.getLayoutX());
-//                x.setY((int) component.getLayoutY());
-//                System.out.println("X and Y coordinates of host '" + hostname + "' are changed. X: " + x.getX() + " Y: " + x.getY());
-//            }
+        draggedComponent.setX((int) component.getLayoutX());
+        draggedComponent.setY((int) component.getLayoutY());
+
+        System.out.println("X and Y coordinates of host '" + draggedComponent.hostname + "' are changed. X: " + draggedComponent.getX() + " Y: " + draggedComponent.getY());
+    }
+
+    /**
+     * This changes the attributelabel
+     *
+     * @param component Pane
+     */
+    private static void editComponentAttributeLabels(Pane component) {
+        Component clickedComponent = (Component) component.getUserData();
+
+
+        Label hostname = (Label) component.getChildren().get(1);
+        hostname.setText(clickedComponent.hostname);
+
+        // We only show the IP addresses if it is a hardware component.
+        if (clickedComponent.componentType == ComponentType.WEBSERVER || clickedComponent.componentType == ComponentType.DATABASESERVER) {
+            Label ipv4Label = (Label) component.getChildren().get(2);
+            Label ipv6Label = (Label) component.getChildren().get(3);
+
+            ipv4Label.setText(String.valueOf(clickedComponent.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+            ipv6Label.setText(String.valueOf(clickedComponent.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+        }
     }
 
     /**
      * Copies the attributes from the component out of componentlist, and places it into a draggable pane with the createDraggablePane method.
      *
-     * @param component
-     * @return Pane component
+     * @param component Pane
+     * @return          Pane
      */
     private Pane copyAttributes(Pane component) {
         Pane draggablePane = createDraggablePane(component);
@@ -153,6 +233,15 @@ public class DesignerController extends GenericController {
         //Copy icon to componentpane
         Label hostnameLabel = (Label) draggablePane.getChildren().get(1);
         hostnameLabel.setText(dataContainer.getHostname());
+
+        // Only hardware components should display the IP addresses
+        if (dataContainer.componentType == ComponentType.DATABASESERVER || dataContainer.componentType == ComponentType.WEBSERVER) {
+            Label ipv4Label = (Label) draggablePane.getChildren().get(2);
+            Label ipv6Label = (Label) draggablePane.getChildren().get(3);
+
+            ipv4Label.setText(String.valueOf(dataContainer.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+            ipv6Label.setText(String.valueOf(dataContainer.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+        }
 
         return draggablePane;
     }
@@ -164,7 +253,7 @@ public class DesignerController extends GenericController {
      */
     public AnchorPane createDraggablePane(Pane component) {
         try {
-            AnchorPane draggableComponent = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
+            AnchorPane draggableComponent = FXMLLoader.load(getClass().getResource(PageRegister.get("PaneComponent").getFilePath()));
 
             draggableComponent.setOnDragDetected(DesignerController::handleDragDetection);
 
@@ -175,14 +264,14 @@ public class DesignerController extends GenericController {
             e.printStackTrace();
         }
 
-        return  null;
+        return null;
     }
 
 
     /**
      * Handles the detection of dragging
      *
-     * @param mouseEvent
+     * @param mouseEvent    MouseEvent
      */
     @FXML
     public static void handleDragDetection(MouseEvent mouseEvent) {
@@ -202,6 +291,22 @@ public class DesignerController extends GenericController {
     }
 
     /**
+     * This handles the mouse click.
+     * This enables the user to edit component attributes
+     *
+     * @param event MouseEvent
+     */
+    public static void handleMouseClickDetection(MouseEvent event) {
+        System.out.println(event.getSource());
+        PopupMenu eventMenu = new PopupMenu((Pane) event.getSource(), true);
+        eventMenu.getWindow().showAndWait();
+
+        if (eventMenu.isOk()) {
+            editComponentAttributeLabels((Pane) event.getSource());
+        }
+    }
+
+    /**
      * Starts the operation of saving the XML file.
      */
     @FXML
@@ -213,179 +318,34 @@ public class DesignerController extends GenericController {
 
         File selectedDirectory = fileChooser.showSaveDialog(NerdyGadgets.getNerdyGadgets().getStage());
 
-        //TODO Check that the component has IPv4 for saving
         if (selectedDirectory != null && selectedDirectory.getName().endsWith(".xml")) {
             try {
                 Infrastructure.getCurrentInfrastructure().save(selectedDirectory.getAbsolutePath());
 
             } catch (Exception E) {
                 E.printStackTrace();
-                NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er moet een naam opgeven worden en er moeten ook components in de designer gesleept zijn.", Alert.AlertType.ERROR);
+                NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er moet een naam opgegeven worden en er moeten ook componenten in het ontwerp zitten!", Alert.AlertType.ERROR);
             }
         } else {
             NerdyGadgets.showAlert("Er is een fout opgetreden!", "Geen XML bestand!", Alert.AlertType.ERROR);
         }
     }
 
+    /**
+     * Return the transferevent
+     *
+     * @return  Event
+     */
     public static Event getTransferEvent() {
         return transferEvent;
     }
 
+    /**
+     * Set the transferevent
+     *
+     * @param event Event
+     */
     public static void setTransferEvent(Event event) {
         transferEvent = event;
     }
-
-    class PopupMenu {
-
-        private Stage window;
-
-        private TextField
-                hostNameField,
-                IPV4Field,
-                IPV6Field,
-                SSHUsernameField,
-                SSHPasswordField;
-
-        private Button submit;
-
-        private Pane pane;
-
-        private Label errorLabel;
-
-        private boolean ok;
-
-        public PopupMenu(Pane pane, boolean editing) {
-            this.pane = pane;
-            this.window = new Stage();
-
-            window.initModality(Modality.APPLICATION_MODAL);
-
-            try {
-
-                VBox dialog;
-                Component dataContainer = (Component) pane.getUserData();
-
-                boolean isHardware = dataContainer.componentType == ComponentType.DATABASESERVER || dataContainer.componentType == ComponentType.WEBSERVER;
-
-                if (isHardware) {
-                    dialog = FXMLLoader.load(getClass().getResource("/pages/components/AttributePopup.fxml"));
-
-                    IPV4Field = (TextField) dialog.getChildren().get(3);
-                    IPV6Field = (TextField) dialog.getChildren().get(5);
-                    SSHUsernameField = (TextField) dialog.getChildren().get(7);
-                    SSHPasswordField = (TextField) dialog.getChildren().get(9);
-                } else {
-                    dialog = FXMLLoader.load(getClass().getResource("/pages/components/HostnameAlert.fxml"));
-                }
-
-                hostNameField = (TextField) dialog.getChildren().get(1);
-
-
-                if (editing) {
-
-                    hostNameField.setText(dataContainer.getHostname());
-
-                    if (isHardware) {
-                        if (dataContainer.ipv4 != null && dataContainer.ipv4.toString() != null) {
-                            IPV4Field.setText(dataContainer.ipv4.toString());
-                        }
-
-                        if (dataContainer.ipv6 != null && dataContainer.ipv6.toString() != null) {
-                            IPV6Field.setText(dataContainer.ipv6.toString());
-                        }
-
-                        if (dataContainer.username != null) {
-                            SSHUsernameField.setText(dataContainer.username);
-                        }
-
-                        if (dataContainer.password != null) {
-                            SSHPasswordField.setText(dataContainer.password);
-                        }
-                    }
-
-                }
-
-                if (isHardware) {
-                    errorLabel = (Label) dialog.getChildren().get(10);
-                    submit = (Button) dialog.getChildren().get(11);
-                } else {
-                    errorLabel = (Label) dialog.getChildren().get(2);
-                    submit = (Button) dialog.getChildren().get(3);
-                }
-
-                submit.setOnAction(event -> {
-
-                    if (hostNameField.getText().trim().isEmpty()) {
-                        errorLabel.setText("Vul alstublieft een hostnaam in.");
-                        errorLabel.setVisible(true);
-                        return;
-                    }
-
-                    dataContainer.hostname = hostNameField.getText();
-
-                    if(isHardware) {
-                        dataContainer.setIpv4(IPV4Field.getText());
-                        dataContainer.setIpv6(IPV6Field.getText());
-
-                        dataContainer.setUser(SSHUsernameField.getText());
-                        dataContainer.setPass(SSHPasswordField.getText());
-                    }
-
-                    pane.setUserData(dataContainer);
-
-                    this.ok = true;
-                    window.close();
-                });
-
-                window.setScene(new Scene(dialog));
-
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-            }
-
-        }
-
-        public Pane getPane() {
-            return pane;
-        }
-
-        public Stage getWindow() {
-            return window;
-        }
-
-        public Label getErrorLabel() {
-            return errorLabel;
-        }
-
-        public TextField getHostNameField() {
-            return hostNameField;
-        }
-
-        public TextField getIPV4Field() {
-            return IPV4Field;
-        }
-
-        public TextField getIPV6Field() {
-            return IPV6Field;
-        }
-
-        public TextField getSSHUsernameField() {
-            return SSHUsernameField;
-        }
-
-        public TextField getSSHPasswordField() {
-            return SSHPasswordField;
-        }
-
-        public Button getSubmit() {
-            return submit;
-        }
-
-        public boolean isOk() {
-            return ok;
-        }
-
-    }
-
 }

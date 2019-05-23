@@ -15,6 +15,8 @@ import java.util.List;
  *
  * @author Lucas Ouwens
  * @author Joris Vos
+ * @author Stefan Booij
+ * @author Lou Elzer
  */
 public class DesignManager {
 

@@ -128,6 +128,16 @@ public class XMLImporter {
         return null;
     }
 
+    /**
+     * This makes an component object from the given parameters.
+     * The first param is a component, to copy default values.
+     *
+     * @param component Component
+     * @param hostname  String
+     * @param x         int
+     * @param y         int
+     * @return          Component
+     */
     private Component createDeviceObject(Component component, String hostname, int x, int y) {
         Component _component = new Component(component);
         _component.hostname = hostname;
@@ -137,6 +147,20 @@ public class XMLImporter {
         return _component;
     }
 
+    /**
+     * This makes an component object from the given parameters
+     * The first param is a component, to copy default values.
+     *
+     * @param component     Component
+     * @param hostname      String
+     * @param x             int
+     * @param y             int
+     * @param sshUsername   String
+     * @param sshPassword   String
+     * @param ipv4          String
+     * @param ipv6          String
+     * @return              Component
+     */
     private Component createDeviceObject(Component component, String hostname, int x, int y, String sshUsername, String sshPassword, String ipv4, String ipv6) {
         try {
             Component _component = new Component(component);

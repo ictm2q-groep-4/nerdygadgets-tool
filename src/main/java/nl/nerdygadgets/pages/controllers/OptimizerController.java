@@ -170,20 +170,36 @@ public class OptimizerController extends GenericController implements Controller
     /**
      * Overloaded method for selection of pane event
      *
-     * @param pane AnchorPAne
+     * @param pane AnchorPane
      */
     private static void toggleSelected(AnchorPane pane) {
         toggleSelected(pane, true);
     }
 
-
+    /**
+     * Reload all components
+     *
+     * @return  boolean
+     */
     public boolean reloadComponents() {
         if (!selectedComponents.isEmpty()) {
+            List<Component> existingComponents = new ArrayList<>();
+            for (Node node : selectedComponentContainer.getChildren()) {
+                if (node instanceof AnchorPane) {
+                    AnchorPane anchorPane = (AnchorPane) node;
+                    if (anchorPane.getUserData() != null) {
+                        existingComponents.add((Component) anchorPane.getUserData());
+                    }
+                }
+            }
+
             List<Component> components = new ArrayList<>();
             for (AnchorPane pane : selectedComponents) {
                 if (pane.getUserData() != null) {
-                    components.add((Component) pane.getUserData());
-                    pane.setStyle("-fx-background-color: #fff");
+                    if (!existingComponents.contains(pane.getUserData())) {
+                        components.add((Component) pane.getUserData());
+                        pane.setStyle("-fx-background-color: #fff");
+                    }
                 }
             }
             selectedComponents.clear();
@@ -205,6 +221,9 @@ public class OptimizerController extends GenericController implements Controller
         return false;
     }
 
+    /**
+     * This contains the logic for the Optimize button
+     */
     @FXML
     private void handleOptimizeButton() {
         double minimumAvailability = 0;
@@ -276,8 +295,12 @@ public class OptimizerController extends GenericController implements Controller
 
             int i = 1;
 
+            boolean messageShown = false;
             for (Component component : backtracking.getAllComponents()) {
-                newInfrastructure.getComponents().add(new Component(component, component.name+"-"+(i++), currentX, currentY));
+                Component newComponent = new Component(component, component.name+"-"+(i++), currentX, currentY);
+                newComponent.setIpv6("::1");
+
+                newInfrastructure.getComponents().add(newComponent);
 
                 currentX += 150;
 
@@ -286,9 +309,9 @@ public class OptimizerController extends GenericController implements Controller
                     currentX = minX;
                 }
 
-                if (currentY >= maxY) {
-                    NerdyGadgets.showAlert("Backtracking ERROR", "Er zijn teveel componenten nodig voor de infrastructuur om te laten zien!", Alert.AlertType.ERROR);
-                    return;
+                if (currentY >= maxY && !messageShown) {
+                    NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er zijn teveel componenten nodig voor de infrastructuur om te laten zien!\nDe infrastructuur wordt wel geexporteerd maar zal mogelijk niet goed te zien zijn.", Alert.AlertType.ERROR);
+                    messageShown=true;
                 }
             }
 
@@ -319,23 +342,42 @@ public class OptimizerController extends GenericController implements Controller
                 }
             }
         } else {
-            NerdyGadgets.showAlert("Backtracking ERROR", "Er is een error opgetreden terwijl het backtracking algoritme gestart is.\nDit is mogelijk omdat je geen database server of web server geselecteerd hebt.\nVan beiden moet er minstens 1 geselecteerd zijn!", Alert.AlertType.ERROR);
+            NerdyGadgets.showAlert("Backtracking ERROR", "Er is een error opgetreden terwijl het backtracking algoritme gestart is.\nDit kan meerdere oorzaken hebben, er moeten bijvoorbeeld minimaal 1 database en 1 webserver geselecteerd zijn.\nOok kan het zijn dat er te weinig resources beschikbaar zijn.", Alert.AlertType.ERROR);
         }
     }
 
+    /**
+     * Used by the OptimizerAlert to validate which button was pressed.
+     */
     public enum ACTION {
         SAVE,
         SET,
         CLOSE,
     }
 
+    /**
+     * This is a alert shown by the optimizer, to check what the user wants.
+     */
     class OptimizerAlert {
+        /**
+         * Contains the chosen action by the user
+         */
         private ACTION action = ACTION.CLOSE;
 
+        /**
+         * Main method
+         *
+         * @param args String[]
+         */
         public void main(String[] args) {
             launch(args);
         }
 
+        /**
+         * This is the main entry of the alert
+         *
+         * @return  Action
+         */
         public ACTION display() {
             Stage window = new Stage();
             window.initStyle(StageStyle.UTILITY);

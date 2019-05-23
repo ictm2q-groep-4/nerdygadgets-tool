@@ -1,7 +1,9 @@
 package nl.nerdygadgets.algorithms;
 
+import javafx.scene.control.Alert;
 import nl.nerdygadgets.infrastructure.components.*;
 import nl.nerdygadgets.infrastructure.components.ComponentManager;
+import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,10 +153,10 @@ public class Backtracking {
      * @return boolean
      */
     public boolean start() {
-        if (optimalDatabaseConfiguration==null) {
+        if (optimalDatabaseConfiguration==null && !forceStop) {
             solve(new ArrayList<>(), databaseComponents.toArray(Component[]::new));
         }
-        if (optimalWebConfiguration==null) {
+        if (optimalWebConfiguration==null && !forceStop) {
             solve(new ArrayList<>(), webComponents.toArray(Component[]::new));
         }
 
@@ -207,7 +209,10 @@ public class Backtracking {
             }
         } catch (StackOverflowError e) {
             stop();
-            System.out.println("A StackOverflow Error occurred in the solve method. This happens because this method is called recursively and eats up all your resources ;p");
+            NerdyGadgets.showAlert("Backtracking","Er is een 'StackOverflowError' opgetreden.\nDit is mogelijk omdat er te weinig resources beschikbaar zijn.\nDit in combinatie met een te hoog ingevoerde beschikbaarheid.", Alert.AlertType.ERROR);
+        } catch (OutOfMemoryError e) {
+            stop();
+            NerdyGadgets.showAlert("Backtracking", "Er is een 'OutOfMemoryError' opgetreden.\nDit is mogelijk omdat er te weinig resources beschikbaar zijn.\nDit in combinatie met een te hoog ingevoerde beschikbaarheid.", Alert.AlertType.ERROR);
         }
     }
 
@@ -259,8 +264,6 @@ public class Backtracking {
 
         System.out.println(getSolution());
     }
-
-    // region Getters
 
     /**
      * This returns the availability of components, this should always be an array that contains one ComponentType
@@ -341,6 +344,11 @@ public class Backtracking {
                 +getPrice(optimalDatabaseConfiguration);
     }
 
+    /**
+     * Returns a list with all the components combined (optimal solution)
+     *
+     * @return List<Component>
+     */
     public List<Component> getAllComponents() {
         List<Component> allComponents = new ArrayList<>();
 
@@ -508,10 +516,6 @@ public class Backtracking {
         return solution.toString();
     }
 
-    // endregion
-
-    // region Setters
-
     /**
      * This sets the optimalWebComponents equal to usedWebComponents and calculates only the database components if optimalDatabaseComponents equals null
      *
@@ -567,6 +571,4 @@ public class Backtracking {
 
         calculateAvailabilityPerComponentType();
     }
-
-    // endregion
 }

@@ -70,8 +70,17 @@ public class Component implements Statistic {
     /**
      * This is the ipv6 address of the server
      */
-    public InetAddress ipv6=Inet6Address.getLoopbackAddress();
+    public InetAddress ipv6 = Inet6Address.getLoopbackAddress();
 
+    /**
+     * A constructor for components.
+     * It sets the name, availability, price and component type
+     *
+     * @param name          String
+     * @param availability  double
+     * @param price         int
+     * @param componentType ComponentType
+     */
     public Component(String name, double availability, int price, ComponentType componentType) {
         this.name = name;
         this.availability = availability;
@@ -79,6 +88,12 @@ public class Component implements Statistic {
         this.componentType = componentType;
     }
 
+    /**
+     * Another constructor.
+     * This copies a component.
+     *
+     * @param copyFromComponent Component
+     */
     public Component(Component copyFromComponent) {
         this.name = copyFromComponent.name;
         this.availability = copyFromComponent.availability;
@@ -86,6 +101,15 @@ public class Component implements Statistic {
         this.componentType = copyFromComponent.componentType;
     }
 
+    /**
+     * This constrcutor sets the hostname and x,y coordinates.
+     * It copies the rest from a other component
+     *
+     * @param copyFromComponent Component
+     * @param hostname          String
+     * @param x                 int
+     * @param y                 int
+     */
     public Component(Component copyFromComponent, String hostname, int x, int y) {
         this(copyFromComponent);
         this.hostname = hostname;
@@ -93,6 +117,21 @@ public class Component implements Statistic {
         this.y = y;
     }
 
+    /**
+     * This is a constructor that sets all the variables
+     *
+     * @param name          String
+     * @param availability  double
+     * @param price         int
+     * @param componentType ComponentType
+     * @param hostname      String
+     * @param x             int
+     * @param y             int
+     * @param username      String
+     * @param password      String
+     * @param ipv4          InetAddress
+     * @param ipv6          InetAddress
+     */
     public Component(String name, double availability, int price, ComponentType componentType,
                      String hostname, int x, int y, String username, String password,
                      InetAddress ipv4, InetAddress ipv6) {
@@ -116,35 +155,33 @@ public class Component implements Statistic {
 
         try {
             new Socket(ipv4.toString().split("/")[1], 22).close();
-            return true;
+
+            // If there is no error thrown, it's online. So now make the connection!
+            Channel channel = getSSHChannel(username, password);
+
+            try {
+                if(channel != null) {
+                    // open channel
+                    channel.connect();
+
+                    isUp = channel.isConnected();
+
+                    // close channel
+                    channel.disconnect();
+
+                    return isUp;
+                }
+            } catch (Exception e) {
+                System.err.println("Something went wrong while connecting to the SSH server");
+                e.printStackTrace();
+            }
+
+            return isUp;
         } catch (IOException e) {
             System.err.println("Something went wrong while connecting to the SSH server");
             //e.printStackTrace();
             return false;
         }
-
-        /*
-        // get ssh channel
-        Channel channel = getSSHChannel(username, password);
-
-        try {
-            if(channel != null) {
-                // open channel
-                channel.connect();
-
-                isUp = channel.isConnected();
-
-                // close channel
-                channel.disconnect();
-
-                return isUp;
-            }
-        } catch (Exception e) {
-            System.err.println("Something went wrong while connecting to the SSH server");
-            e.printStackTrace();
-        }
-        return false;
-         */
     }
 
     /**
@@ -193,37 +230,40 @@ public class Component implements Statistic {
             Channel channel = getSSHChannel(username, password);
 
             // set streams
-            OutputStream ops = channel.getOutputStream();
-            PrintStream ps = new PrintStream(ops);
+            if(channel != null) {
+                OutputStream ops = channel.getOutputStream();
+                PrintStream ps = new PrintStream(ops);
 
-            // open channel
-            channel.connect();
+                // open channel
+                channel.connect();
 
-            // run command
-            ps.println(command);
+                // run command
+                ps.println(command);
 
-            // close printstream
-            ps.flush();
-            ps.close();
+                // close printstream
+                ps.flush();
+                ps.close();
 
-            // initiate inputstream and bufferedreader
-            InputStream in = channel.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                // initiate inputstream and bufferedreader
+                InputStream in = channel.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-            // read the output
-            String line;
-            List<String> output = new ArrayList<>();
+                // read the output
+                String line;
+                List<String> output = new ArrayList<>();
 
-            while ((line = reader.readLine()) != null) {
-                output.add(line);
+                while ((line = reader.readLine()) != null) {
+                    output.add(line);
+                }
+
+                // close reader and channel
+                reader.close();
+                channel.disconnect();
+
+                return output;
+            } else {
+                System.err.println("Could not connect to the SSH channel");
             }
-
-            // close reader and channel
-            reader.close();
-            channel.disconnect();
-
-            return output;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -243,7 +283,7 @@ public class Component implements Statistic {
             JSch jsch = new JSch();
 
             // initiate session
-            Session session = jsch.getSession(user, ipv4.toString().substring(1), 22);
+            Session session = jsch.getSession(user, ipv4.getHostAddress(), 22);
 
             // disable host key verification
             java.util.Properties config = new java.util.Properties();
@@ -254,22 +294,23 @@ public class Component implements Statistic {
             session.setPassword(password);
 
             // connect session
-            session.connect();
+            session.connect(500);
 
             // open channel
-            Channel channel = session.openChannel("shell");
-
-            return channel;
+            return session.openChannel("shell");
         } catch (Exception e) {
             System.err.println("Something went wrong while opening the SSH channel");
             return null;
         }
     }
 
+    // region Getters
     public String getHostname() { return hostname; }
     public int getX() { return x; }
     public int getY() { return y; }
+    // endregion
 
+    // region Setters
     public void setX(int x) { this.x = x; }
     public void setY(int y) { this.y = y; }
     public void setUser(String username) { this.username = username; }
@@ -283,12 +324,18 @@ public class Component implements Statistic {
     }
     public void setIpv6(String ipv6) {
         try {
-            this.ipv6 = InetAddress.getByName(ipv6);
+            this.ipv6 = Inet6Address.getByName(ipv6);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
     }
+    // endregion
 
+    /**
+     * This is an override of the toString method.
+     *
+     * @return  String
+     */
     @Override
     public String toString() {
         return name;

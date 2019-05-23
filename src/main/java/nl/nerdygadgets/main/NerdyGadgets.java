@@ -5,9 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import nl.nerdygadgets.infrastructure.Infrastructure;
 import nl.nerdygadgets.infrastructure.components.ComponentManager;
 import nl.nerdygadgets.pages.PageRegister;
 
@@ -38,8 +38,6 @@ public class NerdyGadgets extends Application {
      * @param args  String[]
      */
     public static void main(String[] args) {
-        Infrastructure currentInfrastructure = new Infrastructure();
-        Infrastructure.setCurrentInfrastructure(currentInfrastructure);
 
         launch(args);
     }
@@ -67,7 +65,7 @@ public class NerdyGadgets extends Application {
         stage.setResizable(false);
         stage.centerOnScreen();
 
-//        stage.getIcons().add(new Image("/images/logo.png"));  //TODO Afbeelding geeft error
+        stage.getIcons().add(new Image(NerdyGadgets.class.getResourceAsStream("/images/logo.png")));
 
         // Show the application
         stage.show();
@@ -87,8 +85,6 @@ public class NerdyGadgets extends Application {
         XMLAlert.showAndWait();
     }
 
-    // region Getters
-
     /**
      * Get access to the main class, mainly for the usage of 'setScene'
      *
@@ -106,10 +102,6 @@ public class NerdyGadgets extends Application {
     public Stage getStage() {
         return stage;
     }
-
-    // endregion
-
-    // region Setters
 
     /**
      * Load a view by its identifier.
@@ -130,6 +122,4 @@ public class NerdyGadgets extends Application {
             e.printStackTrace();
         }
     }
-
-    // endregion
 }

@@ -72,6 +72,11 @@ public class GenericController implements Initializable {
     private boolean monitor = false;
 
     /**
+     * A boolean to check if we're on the builder page.
+     */
+    private boolean builder = false;
+
+    /**
      * The controller for the 'back to main menu' controller in (almost) every view.
      * <p>
      * Used in: All pages except the main menu.
@@ -87,17 +92,19 @@ public class GenericController implements Initializable {
         }
     }
 
-
+    /**
+     * This enables the user to open the current design (Infrastructure.getCurrentInfrastructure())
+     */
     @FXML
     private void handleOpenCurrentDesign() {
         if (Infrastructure.getCurrentInfrastructure() != null && Infrastructure.getCurrentInfrastructure().getComponents() != null) {
             if (Infrastructure.getCurrentInfrastructure().isLoaded()) {
-                NerdyGadgets.showAlert("Er is een fout opgetreden!", "Deze infrastructuur is al ingeladen.", Alert.AlertType.WARNING);
+                NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden!\nDeze infrastructuur is al ingeladen.", Alert.AlertType.WARNING);
             } else {
                 this.loadDesignIntoMonitor();
             }
         } else {
-            NerdyGadgets.showAlert("Er is een fout opgetreden!", "Er is geen beschikbare infrastructuur. Gebruik 'open ontwerp'.", Alert.AlertType.WARNING);
+            NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden!\nEr is geen beschikbare infrastructuur. Gebruik 'open ontwerp'.", Alert.AlertType.WARNING);
         }
     }
 
@@ -162,12 +169,16 @@ public class GenericController implements Initializable {
 
             componentPane.getChildren().removeAll(toRemove);
         }
-        double startX = componentPane.getLayoutX();
-        double startY = componentPane.getLayoutY();
 
         Infrastructure currentInfrastructure = Infrastructure.getCurrentInfrastructure();
 
         if (currentInfrastructure != null && currentInfrastructure.getComponents() != null) {
+            // The monitor connects with ssh, this connection has a timeout of around 2000 milliseconds which is 2 seconds
+            if(this.monitor) {
+                NerdyGadgets.showAlert("Een ogenblikje!", "De componenten worden nu ingeladen, dit duurt maximaal "
+                        + (currentInfrastructure.getComponents().size() * 2)
+                        + " seconden.\nHet is mogelijk dat u een melding krijgen dat de applicatie niet reageert, sluit de applicatie niet. Het laden duurt lang, dat vindt de operating system niet leuk.", Alert.AlertType.INFORMATION);
+            }
             currentInfrastructure.getComponents().forEach(component -> {
                 try {
                     Pane pane = FXMLLoader.load(getClass().getResource("/pages/components/PaneComponent.fxml"));
@@ -177,6 +188,8 @@ public class GenericController implements Initializable {
 
                     // Only add tooltip with statistics when we're on the monitor page.
                     if (this.monitor) {
+
+                        // Only the hardware components should gain a tooltip with statistics
                         if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
                             Tooltip statisticTooltip = new Tooltip();
                             statisticTooltip.setUserData(component);
@@ -185,12 +198,11 @@ public class GenericController implements Initializable {
                                     Tooltip statistic = (Tooltip) windowEvent.getSource();
                                     Component tooltipComponent = (Component) statistic.getUserData();
 
+
+
                                     if (tooltipComponent != null) {
-                                        statistic.setText(
-                                                "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
-                                                        "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
-                                                        "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
-                                        );
+                                        // Set tooltip data
+                                        setTooltipDetails(pane, box, statisticTooltip, component, component.isOnline());
                                     }
                                 } catch (NullPointerException e) {
                                     NerdyGadgets.showAlert(this.getClass().getSimpleName(), "Er is een fout opgetreden tijdens het laden van de tooltip bij een component!\n" +
@@ -200,45 +212,33 @@ public class GenericController implements Initializable {
                                 }
                             });
 
-                            // If the component is online make it green, if not make it red.
-                            if (component.isOnline()) {
-                                box.setFill(Color.GREEN);
-                            } else {
-                                box.setFill(Color.DARKRED);
-                            }
-
-                            statisticTooltip.setText(
-                                    "Status: " + (component.isOnline() ? "Online" : "Offline") + "\n" +
-                                            "Schijfruimte: " + (component.isOnline() ? component.getDiskUsage() : "Onbeschikbaar") + "\n" +
-                                            "Processor gebruik: " + (component.isOnline() ? (component.getProcessorUsage()) : "Onbeschikbaar")
-                            );
-
-                            Tooltip.install(pane, statisticTooltip);
+                            // Set tooltip data
+                            setTooltipDetails(pane, box, statisticTooltip, component, component.isOnline());
                         }
                     }
 
                     if (this.getClass().isAssignableFrom(DesignerController.class)) {
                         pane.setOnDragDetected(DesignerController::handleDragDetection);
+                        pane.setOnMouseClicked(DesignerController::handleMouseClickDetection);
                     }
 
-                    // set the layout axises of the box
-                    box.setLayoutX(0);
-                    box.setLayoutY(0);
+                    // Only hardware components should have IP addresses shown.
+                    if (component.componentType == ComponentType.DATABASESERVER || component.componentType == ComponentType.WEBSERVER) {
+                        Label ipv4Label = (Label) pane.getChildren().get(2);
+                        Label ipv6Label = (Label) pane.getChildren().get(3);
 
-                    // Set the text and layout of the hostname
+                        ipv4Label.setText(String.valueOf(component.ipv4).replaceAll("/", "").replaceAll("localhost", ""));
+                        ipv6Label.setText(String.valueOf(component.ipv6).replaceAll("/", "").replaceAll("localhost", ""));
+                    }
+
                     hostName.setText(component.getHostname());
-                    hostName.setLayoutX(0);
-                    hostName.setLayoutY(box.getHeight() + 5);
 
-                    // set the layout axises of the component pane
-                    pane.setLayoutX(startX + component.getX());
-                    pane.setLayoutY(startY + component.getY());
+                    pane.setLayoutX(component.getX());
+                    pane.setLayoutY(component.getY());
 
                     pane.getChildren().set(1, hostName);
                     if (pane.getLayoutX() <= 1280) {
-                        if (pane.getLayoutY() <= (pane.getLayoutY() + pane.getHeight())) {
-                            anchorPane.getChildren().add(pane);
-                        }
+                        componentPane.getChildren().add(pane);
                     }
 
                 } catch (IOException e) {
@@ -337,7 +337,6 @@ public class GenericController implements Initializable {
      *
      * @param comboBox ComboBox the specified combobox to add the elements to.
      */
-    //TODO check if changing this method from public to private doesnt fuck things up ;p
     private void loadCategoriesIntoTypeSelector(ComboBox<String> comboBox) {
         // add a 'general' category filter so we can see all components
         comboBox.getItems().add("Algemeen");
@@ -348,6 +347,11 @@ public class GenericController implements Initializable {
         }
     }
 
+    /**
+     * This filters the component
+     *
+     * @param action    ActionEvent
+     */
     @FXML
     public void filterComponents(ActionEvent action) {
         // get the combobox which triggered this event
@@ -366,7 +370,14 @@ public class GenericController implements Initializable {
         this.loadSelectableElements(category);
     }
 
-
+    /**
+     * This method loads all the components in a given pane
+     *
+     * @param container     AnchorPane
+     * @param components    Component[]
+     * @param type          ComponentType
+     * @throws IOException
+     */
     void loadComponents(AnchorPane container, Component[] components, ComponentType type) throws IOException {
         int multiplier = container.getChildren().size();
         for (int i = 0; i < components.length; i++) {
@@ -385,6 +396,7 @@ public class GenericController implements Initializable {
                 // set event, static reference to the handleDragDetection method in the DesignerController class
                 if (this.getClass().isAssignableFrom(DesignerController.class)) {
                     pane.setOnDragDetected(DesignerController::handleDragDetection);
+
                 }
 
                 if (this.optimizer) {
@@ -425,6 +437,8 @@ public class GenericController implements Initializable {
         if (!(url.getFile().endsWith("InfrastructureMonitor.fxml"))) {
             if (url.getFile().endsWith("InfrastructureOptimizer.fxml")) {
                 this.optimizer = true;
+            } else if ((url.getFile().endsWith("InfrastructureDesigner.fxml"))) {
+                this.builder = true;
             }
 
             // load the 'general' selectable elements
@@ -435,6 +449,26 @@ public class GenericController implements Initializable {
         } else {
             this.monitor = true;
         }
+    }
+
+    private void setTooltipDetails(Pane pane, Rectangle box, Tooltip statisticTooltip, Component component, boolean isOnline) {
+        if (isOnline) {
+            box.setFill(Color.GREEN);
+            statisticTooltip.setText(
+                    "Status: Online\n" +
+                            "Schijfruimte: " + component.getDiskUsage() + "\n" +
+                            "Processor gebruik: " + (component.getProcessorUsage())
+            );
+        } else {
+            box.setFill(Color.DARKRED);
+            statisticTooltip.setText(
+                    "Status: Offline\n" +
+                            "Schrijfruimte: Onbeschikbaar\n" +
+                            "Processor gebruik: Onbeschikbaar"
+            );
+        }
+
+        Tooltip.install(pane, statisticTooltip);
     }
 
 }

@@ -57,6 +57,21 @@ public class DesignerController extends GenericController {
 
     }
 
+    /**
+     * Detects dragging over removal pane. Checks if it's a component that's from the componentPane.
+     *
+     * @param dragEvent DragEvent
+     */
+
+    @FXML
+    private void handleRemovalDragOver(DragEvent dragEvent){
+        Pane component = (Pane) getTransferEvent().getSource();
+
+        if (componentPane.getChildren().contains(component)){
+            dragEvent.acceptTransferModes(TransferMode.ANY);
+        }
+    }
+
 
     /**
      * Handles dropping. It alters the coordinates for the component on the layout
@@ -164,6 +179,22 @@ public class DesignerController extends GenericController {
             addComponentToInfrastructure(component);
         }
 
+    }
+
+    /**
+     * Handles the removal of component out of the infrastructure and layout
+     *
+     * @param dragEvent DragEvemt
+     */
+    public void handleDelete(DragEvent dragEvent) {
+        Pane component = (Pane) getTransferEvent().getSource();
+        Component toRemoveComponent = (Component) component.getUserData();
+
+        List<Component> infraComponents = Infrastructure.getCurrentInfrastructure().getComponents();
+
+        infraComponents.remove(toRemoveComponent);
+
+        componentPane.getChildren().remove(component);
     }
 
     /**
@@ -348,4 +379,6 @@ public class DesignerController extends GenericController {
     public static void setTransferEvent(Event event) {
         transferEvent = event;
     }
+
+
 }

@@ -51,7 +51,7 @@
                </children>
             </AnchorPane>
             <Rectangle fill="#cdcdcd" height="30.0" smooth="false" strokeType="INSIDE" width="1280.0" />
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="59.0" layoutY="632.0" strokeType="INSIDE" width="1280.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ebebeb" height="71.0" layoutY="632.0" strokeType="INSIDE" width="1280.0" />
             <VBox layoutX="14.0" layoutY="206.0" prefHeight="410.0" prefWidth="350.0" spacing="5.0">
                <children>
                   <ComboBox fx:id="selectableCategory" onAction="#filterComponents" prefHeight="26.0" prefWidth="174.0" promptText="Component type" />
@@ -72,6 +72,13 @@
             <Label fx:id="totalAvailability" layoutX="409.0" layoutY="642.0" text="Totale beschikbaarheid: ...%" />
             <Label fx:id="totalCosts" layoutX="409.0" layoutY="666.0" text="Totale kosten: ..." />
             <Label layoutX="14.0" layoutY="7.0" text="Infrastructuur builder" />
+            <AnchorPane fx:id="removePane" layoutX="1184.0" layoutY="629.0" onDragDropped="#handleDelete" onDragOver="#handleRemovalDragOver" prefHeight="59.0" prefWidth="86.0">
+               <children>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ababab94" height="59.0" stroke="#9e9e9e" strokeType="INSIDE" width="85.0" />
+                  <Label alignment="BOTTOM_CENTER" prefHeight="26.0" prefWidth="85.0" text="Verwijder" />
+                  <Label alignment="TOP_CENTER" layoutX="2.0" layoutY="24.0" prefHeight="36.0" prefWidth="85.0" text="Component" />
+               </children>
+            </AnchorPane>
          </children>
     </AnchorPane>
   </children>

@@ -164,6 +164,11 @@ public class DesignerController extends GenericController {
             addComponentToInfrastructure(component);
         }
 
+        if (Infrastructure.getCurrentInfrastructure().getComponents().size()>0) {
+            // Set the availability and total costs of the components
+            setTotalAvailability(Infrastructure.getCurrentInfrastructure().getComponents());
+            setTotalCosts(Infrastructure.getCurrentInfrastructure().getComponents());
+        }
     }
 
     /**

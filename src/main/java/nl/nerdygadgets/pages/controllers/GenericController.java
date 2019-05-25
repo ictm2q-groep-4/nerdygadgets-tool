@@ -272,7 +272,7 @@ public class GenericController implements Initializable {
      *
      * @param components List<Component>
      */
-    private void setTotalCosts(List<Component> components) {
+    protected void setTotalCosts(List<Component> components) {
         int price = 0;
 
         for (Component component : components) {
@@ -287,7 +287,7 @@ public class GenericController implements Initializable {
      *
      * @param components List<Component>
      */
-    private void setTotalAvailability(List<Component> components) {
+    protected void setTotalAvailability(List<Component> components) {
         double availability = 1;
 
         List<Component> webComponents = new ArrayList<>();

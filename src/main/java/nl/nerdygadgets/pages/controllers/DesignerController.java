@@ -17,6 +17,7 @@ import nl.nerdygadgets.main.NerdyGadgets;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javafx.scene.control.Label;
@@ -179,11 +180,9 @@ public class DesignerController extends GenericController {
             addComponentToInfrastructure(component);
         }
 
-        if (Infrastructure.getCurrentInfrastructure().getComponents().size()>0) {
-            // Set the availability and total costs of the components
-            setTotalAvailability(Infrastructure.getCurrentInfrastructure().getComponents());
-            setTotalCosts(Infrastructure.getCurrentInfrastructure().getComponents());
-        }
+        // Set the availability and total costs of the components
+        setTotalAvailability(Infrastructure.getCurrentInfrastructure().getComponents());
+        setTotalCosts(Infrastructure.getCurrentInfrastructure().getComponents());
     }
 
     /**
@@ -200,6 +199,10 @@ public class DesignerController extends GenericController {
         infraComponents.remove(toRemoveComponent);
 
         componentPane.getChildren().remove(component);
+
+        // Set the availability and total costs of the components
+        setTotalAvailability(Infrastructure.getCurrentInfrastructure().getComponents());
+        setTotalCosts(Infrastructure.getCurrentInfrastructure().getComponents());
     }
 
     /**
